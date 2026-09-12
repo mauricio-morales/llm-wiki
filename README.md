@@ -1,43 +1,60 @@
 # LLM Wiki
 
-A self-maintaining knowledge base that lives inside a Claude project.
+A self-maintaining knowledge base that lives in a folder on your machine.
 
 Ask it a question, it searches what it knows. Tell it something, it files it. Every morning it reads your
-meetings, chats, email and tickets on its own, and sends you a brief on what happened and what is coming.
+meetings, chats, email and tickets on its own, and sends you a brief on what happened and what's coming.
 
-No CLI. No repository to clone. No install. You set it up once by answering a few questions.
-
-> Built on the L1/L2 wiki architecture from **[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by
-> **Mehmet Gökçe** (MIT). See [Credits](#credits-and-license).
+Plain markdown, no database, no CLI. You share it by sharing the folder.
 
 ---
 
-## For the person setting it up
+## Quick start
 
-**1. Add the plugin.** Add this repo as a marketplace, which is what keeps you on the latest version:
+**1. Add the plugin.**
 
 ```
 /plugin marketplace add mauricio-morales/llm-wiki
 ```
 
 Or download the zip from [Releases](https://github.com/mauricio-morales/llm-wiki/releases) and upload it
-in Claude's plugin settings.
+in Claude's plugin settings — though the marketplace is what delivers updates, and an uploaded zip can't.
 
 **2. Make a folder for the wiki.** To share it with a team, put it somewhere synced — a OneDrive,
 Dropbox or Google Drive folder your team already has.
 
-**3. Open a new Cowork session on that folder.** Point it at the folder itself, not a project — the
-wiki needs to write files.
+**3. Open a Cowork session on that folder.** Point it at the folder itself, not a project — the wiki
+needs to write files.
 
 **4. Run `/wiki-setup`.**
 
-That is the whole setup. It walks you through it — what to call the wiki, who it is for, which of your
-connected tools it should read, when it should run, and how far back it should reach. A few minutes of
-multiple choice.
+It asks a handful of multiple-choice questions: what to call it, who can read it, which of your connected
+tools it should read, when it should run, how far back to reach. A few minutes. *"Just do whatever's
+normal"* is a complete answer to any of them.
 
-That one command is the only one you ever type. After setup, the folder's `CLAUDE.md` takes over.
+**That one command is the only one you ever type.** After setup the folder's `CLAUDE.md` takes over — ask
+a question and it searches the wiki, say "save this" and it files it, say "reconfigure the wiki" to change
+anything.
 
-### What it asks you
+### Joining a wiki someone else set up
+
+Skip steps 2-4. **Sync the folder, open a Cowork session on it, and start asking** — it already knows what
+to do, because the instructions and the skills live in the folder. There's nothing else to install.
+
+**Don't run `/wiki-setup` there.** Only one person runs the scheduled ingest. A second one means two jobs
+appending to the same pages every morning, each pulling from a different person's email and chat — and
+since the pages are append-only, nothing errors. It just quietly doubles, with someone's private inbox in
+a shared wiki.
+
+If you want your own morning brief, say **"set up a brief for me"** and it adds just that. A brief is
+personal: it reads your pending asks and your calendar and goes to your Slack.
+
+> Built on the L1/L2 wiki architecture from **[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by
+> **Mehmet Gökçe** (MIT). See [Credits](#credits-and-license).
+
+---
+
+## What setup asks you
 
 | | |
 |---|---|
@@ -58,7 +75,7 @@ reads those from the connectors and your environment and confirms them in one li
 should never have to go and look up your own member id. Working hours it doesn't even guess: the brief
 learns them from your actual calendar.
 
-### What it builds
+## What it builds
 
 ```
 llm-wiki.yml              the configuration — everything reads this first
