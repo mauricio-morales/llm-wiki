@@ -12,6 +12,14 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## Unreleased
+
+- README quick start rewritten for people who don't use a terminal. The install step led with
+  `/plugin marketplace add`, which only exists in Claude Code — someone in the desktop app had nothing to
+  act on. The app's Settings → Plugins path now leads, with the slash command as the alternative and the
+  zip as a last resort. Added the prerequisite nobody had stated: this needs the desktop app, not Claude
+  in a browser. "Cowork session" replaced with plain language throughout.
+
 ## 1.7.0 — 2026-09-12
 
 **Published as an open-source repository.**
