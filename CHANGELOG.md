@@ -12,7 +12,7 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
-## Unreleased
+## 1.8.0 — 2026-09-12
 
 **Added — the folder's copy of the skills keeps itself current.**
 - Setup now also writes `.claude/skills/.baseline/`, a pristine copy of exactly what was installed. It is
@@ -33,6 +33,7 @@ propagates to everyone who syncs it.
 - The monthly lint now reports baseline integrity and lists locally-modified skill files, and will
   re-stamp a missing baseline only when the live files are unmodified.
 
+**Fixed**
 - README quick start rewritten for people who don't use a terminal. The install step led with
   `/plugin marketplace add`, which only exists in Claude Code — someone in the desktop app had nothing to
   act on. The app's Settings → Plugins path now leads, with the slash command as the alternative and the
