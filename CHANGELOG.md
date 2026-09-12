@@ -1,0 +1,194 @@
+# Changelog
+
+Derived from [llm-wiki](https://github.com/MehmetGoekce/llm-wiki) by Mehmet Gökçe (MIT) — see
+[LICENSE](LICENSE).
+
+Versions your team can act on. Bumped on every repackage.
+
+- **Patch** — wording, fixes, sharper instructions. Nothing to do.
+- **Minor** — new behavior. Worth re-running `/wiki-setup` in reconfigure mode to pick it up.
+- **Major** — changes how you start a wiki, or invalidates an existing setup. Read the entry.
+
+On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
+propagates to everyone who syncs it.
+
+## 1.7.0 — 2026-09-12
+
+**Published as an open-source repository.**
+- Repo doubles as its own marketplace: `.claude-plugin/marketplace.json` alongside `plugin.json`, with
+  the plugin at `source: "./"`. Installable with `/plugin marketplace add mauricio-morales/llm-wiki`,
+  which is also the path that delivers updates — an uploaded zip is machine-local and can never update.
+- Added a release workflow: tagging `v*` builds the zip and attaches it to a GitHub Release. It refuses
+  to publish if the tag, `plugin.json` and `marketplace.json` disagree on the version — the three drifting
+  apart is the failure this project has already had once.
+- The zip is **not committed**. It is generated from this repo, so a committed copy would duplicate the
+  source and go stale on the next edit. `.gitignore` excludes it.
+- README carries real install instructions.
+
+## 1.6.3 — 2026-09-12
+
+- Attribution to **Mehmet Gökçe** / [llm-wiki](https://github.com/MehmetGoekce/llm-wiki) extended beyond
+  README and LICENSE to both skills, the CHANGELOG header, the share message, and the generated
+  `Wiki/Schema.md` — the most directly derived artifact, so every wiki created carries the credit rather
+  than only the package that made it.
+
+## 1.6.2 — 2026-09-12
+
+- Repository owner's GitHub handle substituted; `homepage` and `repository` set.
+- README states explicitly that this is an independent derivative work, not affiliated with or endorsed
+  by the original author.
+
+## 1.6.1 — 2026-09-12
+
+**Prepared for open-source publication.**
+- Added `LICENSE` (MIT) — the manifest declared MIT but no license file existed. It reproduces the
+  upstream **llm-wiki** MIT notice in full, as that license requires: the schema, hub, dashboard and
+  access-log templates are derived from it, with substantial overlap remaining.
+- README gained proper credits and a contributing note, including the standing rule that no personal or
+  organizational specifics belong in this package.
+- Removed the author's corporate email from the manifest; added `homepage` and an author `url`, both
+  needing the repository owner's GitHub handle substituted before publishing.
+- Example address changed to `example.com` (RFC 2606 reserved) rather than a real domain.
+
+## 1.6.0 — 2026-09-12
+
+**Added — Focus Areas: first-class topics with their own reporting.**
+- Setup asks for **up to three** things the user's role is accountable for and must stay on top of. The
+  cap is the feature: "everything is first-class" means nothing is. **Zero is frictionless** — name none
+  and nothing is created or mentioned again.
+- Each Focus Area gets its own namespace (`_index.md`, `Log.md`, `Decisions.md`, `Goals.md`, `Reports/`)
+  and a one-line **statement** that becomes the routing key — matched against instead of the bare name,
+  so ingest catches related material the title would miss.
+- **Double routing**, enforced in the ingest job and the generated `CLAUDE.md`: anything touching a Focus
+  Area is written to its normal home *and* the Focus Area's pages, captured in full rather than
+  summarized. An item living only in a chronological log has not been captured.
+- **Typed items** — `decision` / `idea` / `follow-up` / `question` / `signal` — with authority mandatory
+  on decisions. The type decides which report section an item lands in; untyped items produce a list of
+  events rather than a report.
+- **One report task per Focus Area**, on the user's chosen day and cadence. Each run writes a run page
+  (the source of truth), regenerates a cumulative HTML report, and sends a summary that leads with what
+  needs the user rather than with an activity count.
+- The HTML is a **single self-contained file**: sidebar of every run with an overview at the top, content
+  on the right. No iframes and no external files — browsers restrict `file://` iframes and local fetch,
+  and relative paths break when a synced file is moved or forwarded. Same behavior, but it survives being
+  emailed. Regenerated whole each run from the run pages, so correcting a page corrects the report.
+- Metrics are structural and automatic (items, open threads, decisions, threads closed, oldest open
+  thread, periods since last decision) plus any the user names. Every metric carries its direction versus
+  the previous run — a number without a direction is trivia. A metric with no feeding source reports as
+  **"not tracked", never as zero**.
+
+## 1.5.0 — 2026-09-11
+
+**Changed — the wiki now captures what it learns instead of asking whether to.**
+- Query write-back was "optional" and required confirmation before every write, so a session that went
+  outside the wiki to answer something would *ask* whether to keep it. Asked often enough, that question
+  stops being read. Now: **if answering required a source outside the wiki, the finding is filed** —
+  silently, reported in one line.
+- Added the capture rule, in both the engine skill and the generated `CLAUDE.md` so it applies in every
+  session whether or not the skill is explicitly loaded:
+  - **File without asking** when the fact came from a source actually opened, is a fact rather than a
+    reading of one, and fits an existing namespace. Provenance is mandatory — name and link the document.
+  - **Ask once, after the answer**, when the fact is inferred or hedged, sensitive, contradicts an
+    existing page, needs structural change, or is opinion rather than fact.
+  - Filing means filing properly: right page, routing line in the nearest enclosing hub, cross-links,
+    `updated` set, source recorded. A fact dumped somewhere unroutable is hidden, not captured.
+
+## 1.4.0 — 2026-09-11
+
+**Fixed — routing could not reach nested pages.**
+- `query` read only the top-level namespace hub and stopped. Any wiki that nests — a client folder with
+  its own projects, say — had the sub-hub's `### Index` sitting there unreachable, so the pages that
+  actually answered a question were invisible to routing and only findable by grep. Routing now
+  **descends**: a routing line marked `#hub` is another index, not an answer, and it keeps matching down
+  to 3 hops (namespace → entity → sub-namespace). Hub reads stay cheap, so this is still an index walk,
+  not a scan.
+- `ingest` now writes the routing line into the **nearest enclosing hub** rather than the top-level one,
+  creates an `_index.md` whenever it creates a folder, and keeps a promoted page as its new folder's
+  `_index.md` so inbound `[[links]]` still resolve.
+- Schema documented sub-namespaces explicitly and raised max depth from 3 segments to 4
+  (`Wiki/Clients/Acme/Projects/Page`). The old cap forbade structures that already exist and work.
+- New lint rules: **missing sub-hub** (a folder with children and no `_index.md` — a routing dead end),
+  **unmarked sub-hub** (a hub-pointing line without `#hub`, so routing never descends), and
+  **over-deep nesting**.
+
+**Added**
+- **`My-Team`** namespace in both presets — the user's own team, with the meaning resolved at setup: a
+  manager's direct reports and the running of the team, or the team an individual contributor sits in.
+  Kept distinct from `People` (everyone else), and flagged as usually the most sensitive namespace on a
+  manager's wiki, so the privacy rules must cover it explicitly.
+
+## 1.3.0 — 2026-09-11
+
+**Changed**
+- Namespace defaults are now two presets instead of one generic list. **A. Client services / delivery
+  org** — Clients, Prospective-Clients, Former-Clients, Consultants, People, Operations, Strategy, Tech,
+  Reference, Personal — recommended when the stated purpose mentions clients, delivery, accounts or
+  staffing. **B. General knowledge base** — the previous set — otherwise. The old default came from the
+  upstream project and was missing the namespaces a client-facing org actually fills first.
+- Setup also proposes namespaces from the purpose sentence, rather than only offering a fixed list.
+
+**Added**
+- Guidance that the client lifecycle is three namespaces (Prospective → Clients → Former), offered
+  together or not at all, so an ending client moves rather than disappears.
+- `Clients` holds one page or folder per client; no per-client top-level namespaces.
+- Do not create a namespace with no source feeding it — an empty hub is worse than a missing one, since
+  it joins routing, matches nothing, and costs a read on every query touching its topic.
+- The primary namespace is described as a destination, not a topic: where ingest writes when a fact has
+  no better home.
+
+## 1.2.1 — 2026-09-11
+
+**Fixed**
+- Removed the `commands/` directory and the explicit `commands`/`skills` arrays from `plugin.json`.
+  Both skills are already invocable as `/wiki` and `/wiki-setup`, so the command file was dead weight —
+  the entry point people actually type never came from it. Declaring the arrays is also non-standard:
+  no official plugin does it, and auto-discovery from the conventional directories is the current
+  format. No change in how anything is invoked.
+
+## 1.2.0 — 2026-09-11
+
+**Added**
+- Version stamping: `wiki_version` and `skills_version` in `llm-wiki.yml`, plus
+  `.claude/skills/.llm-wiki-version` in the folder.
+- The monthly lint reports version drift between the folder's copied skills and the running plugin —
+  on a synced folder there was otherwise no signal that a teammate was running an old version.
+  Reported as information, never as an error; a wiki a version behind works fine.
+
+## 1.1.0 — 2026-09-11
+
+**Changed — this is the version that works against a local folder.**
+- Wikis now live in a **writable local folder** opened in a Cowork session, not a project. Setup
+  verifies the folder is writable before asking anything.
+- Entry point is **`/wiki-setup`**, invoked explicitly. The earlier "say hi and it starts" trigger is
+  gone; the SessionStart hook is now only a pointer.
+- Storage guidance is about folder weight and sync cost rather than a project quota. Same text-only
+  archiving rule, better reason: on a synced folder every megabyte reaches everyone on every change.
+
+**Added**
+- **Short name**, required. Prefixes every scheduled task id and title (`acme-wiki-ingest`,
+  "Acme · daily ingest") so several wikis on one machine stay tellable apart. Setup refuses a prefix
+  already in use.
+- **Per-source customization notes** — free text, in the user's words ("only the sales distribution
+  list, not my inbox"), stored and pasted into the task prompt **verbatim**, never paraphrased. On a
+  shared wiki a note that narrows scope is a privacy boundary, not a filter.
+- **Sharing model**, documented and enforced: one designated ingest owner, personal briefs, and sync
+  conflict copies surfaced by the lint rather than deleted. A teammate who runs `/wiki-setup` on an
+  already-configured folder is now told what is running and who owns it.
+- Setup copies the skills into the folder's `.claude/skills/`, so syncing the folder is enough — a
+  teammate installs nothing.
+
+**Fixed**
+- **Identity is resolved, not requested.** Name, email, timezone and chat user id come from the
+  connectors and the environment, confirmed in one correctable line. Nobody is asked to look up their
+  own member id. Working hours are not asked or guessed; the brief infers them from the calendar.
+- **Skip logic is structural.** A brief is silenced only by an entry covering the whole working day.
+  Partial blocks — evening protection, lunch, focus time — are never absence, whatever they are called
+  and whether or not they are flagged out-of-office. The previous wording generalized one person's
+  calendar habits into a claimed norm and primed the model to hunt for them. Calendar naming is
+  personal; coverage is not. The pattern observed at setup is now recorded as an observation the user
+  can correct, and a skipped day must name the entry that caused it.
+
+## 1.0.0 — 2026-09-11
+
+First build. L1/L2 wiki with hub-index routing and LRU-demote, a guided setup, resumable historical
+backfill, and three scheduled jobs: daily ingest, daily brief, monthly lint.

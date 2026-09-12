@@ -1,0 +1,87 @@
+# llm-wiki configuration
+# Written by the wiki-setup skill on {{DATE}}. Re-run setup in reconfigure mode to change it,
+# or edit it by hand — every wiki operation reads this file fresh on each run.
+
+wiki_name: "{{WIKI_NAME}}"
+slug: {{WIKI_SLUG}}            # short handle; prefixes every scheduled task id and title
+
+# Version of the llm-wiki plugin that last set this wiki up or reconfigured it, and the version of
+# the skills copied into .claude/skills/ in this folder. The monthly lint compares these against
+# whatever plugin is actually running and reports drift — on a synced folder, a teammate can
+# otherwise run last month's logic for months without any sign that anything is behind.
+wiki_version: "{{PLUGIN_VERSION}}"
+skills_version: "{{PLUGIN_VERSION}}"
+purpose: "{{PURPOSE}}"
+
+# Who this wiki belongs to. The scheduled jobs address this person, decide whose sent messages
+# count as outbound asks, and judge what "today" and "out of office" mean.
+#
+# These are RESOLVED from the connectors and the environment at setup — not collected from the user.
+# Nothing here is a credential. Any field may be null: a job that needs a null field resolves it at
+# run time rather than failing, and writes back what it found.
+owner:
+  name: "{{OWNER_NAME}}"
+  email: "{{OWNER_EMAIL}}"
+  timezone: "{{OWNER_TZ}}"            # IANA, from the environment — e.g. Europe/Warsaw
+  working_hours: null                 # null on purpose: the brief infers it from the calendar
+  chat_user_id: "{{OWNER_CHAT_ID}}"   # from the chat connector's current-user lookup; null is fine
+
+tool: {{TOOL}}                 # obsidian (folders, YAML frontmatter) | logseq (flat files, outliner)
+wiki_path: {{WIKI_PATH}}       # absolute path to this folder
+pages_dir: "{{PAGES_DIR}}"     # relative to wiki_path ("" for obsidian, "pages" for logseq)
+memory_path: "{{MEMORY_PATH}}" # L1 memory dir, optional
+
+audience: {{AUDIENCE}}         # personal (one reader) | team (shared — privacy filter applies)
+language: {{LANGUAGE}}         # every wiki page is written in this language
+
+namespaces:
+{{NAMESPACE_YAML}}
+
+# The scheduled jobs run on this machine, while the Claude app is open. A job due while it was
+# closed runs on next launch. The wiki is a local folder, so only a local run can write to it.
+
+# On a shared (synced) wiki, exactly ONE person runs the scheduled ingest — three synced copies with
+# three ingest jobs means three runs appending to the same pages, each pulling from a different
+# person's connectors. Everyone else queries, ingests manually, and runs their own brief if they want.
+ingest_owner: "{{INGEST_OWNER}}"
+shared_folder: {{SHARED_FOLDER}}   # true if this folder is on a synced drive
+
+# Sources the ingest job checks. status: enabled | no_connector | declined
+#
+# `notes` is the user's own customization, VERBATIM — e.g. "only the sales distribution list, not my
+# inbox", "just #incidents and #releases". It is copied into the task prompt as written. Never
+# paraphrase it into a category; a paraphrase reverts to the wrong behavior on the first loose reading.
+sources:
+{{SOURCES_YAML}}
+
+# First-class topics. Up to three, or an empty list. Anything touching one of these is captured in
+# full and double-routed: its normal home AND the Focus Area's own pages.
+focus_areas:
+{{FOCUS_AREAS_YAML}}
+#  - name: Tech-Vertical
+#    statement: "the Tech vertical - its clients, their growth targets, and the AI-enabled services we sell into them"
+#    metrics: ["pipeline in the vertical", "clients with a growth plan", "AI-services deals in flight"]
+#    report: { enabled: true, task_id: "acme-focus-tech-vertical", schedule: "0 8 * * 1", delivery: slack, destination: "..." }
+
+jobs:
+  ingest:
+    enabled: {{INGEST_ENABLED}}
+    task_id: "{{INGEST_TASK_ID}}"
+    schedule: "{{INGEST_CRON}}"
+    state_file: "wiki-ingest-state.json"
+  brief:
+    enabled: {{BRIEF_ENABLED}}
+    task_id: "{{BRIEF_TASK_ID}}"
+    schedule: "{{BRIEF_CRON}}"
+    state_file: "wiki-brief-state.json"
+    delivery: {{BRIEF_DELIVERY}}
+    destination: "{{BRIEF_DESTINATION}}"
+    # A brief is skipped only when an entry covers the WHOLE working day. That rule is fixed.
+    # Below is what this person's calendar looked like at setup — an observation, not a rule, and
+    # safe to correct by hand. Naming conventions are personal; the coverage rule is not.
+    skip_pattern_observed: "{{SKIP_PATTERN}}"
+  lint:
+    enabled: {{LINT_ENABLED}}
+    task_id: "{{LINT_TASK_ID}}"
+    schedule: "{{LINT_CRON}}"
+    prune_months: {{PRUNE_MONTHS}}

@@ -1,0 +1,65 @@
+name: Release
+
+# Builds the distributable zip from the repo and attaches it to a GitHub Release.
+# The zip is never committed: it is generated from this source, so a committed copy
+# would duplicate the repo and silently go stale the moment anything is edited.
+#
+# To cut a release: bump "version" in .claude-plugin/plugin.json, add a CHANGELOG
+# entry, commit, then tag and push:
+#     git tag v1.7.0 && git push origin v1.7.0
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches plugin.json
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          MANIFEST=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "tag=$TAG manifest=$MANIFEST"
+          if [ "$TAG" != "$MANIFEST" ]; then
+            echo "::error::Tag v$TAG does not match plugin.json version $MANIFEST. Bump one of them."
+            exit 1
+          fi
+
+      - name: Check the marketplace entry agrees
+        run: |
+          python3 - <<'PY'
+          import json,sys
+          p=json.load(open('.claude-plugin/plugin.json'))
+          m=json.load(open('.claude-plugin/marketplace.json'))
+          e=next(x for x in m['plugins'] if x['name']==p['name'])
+          if e.get('version')!=p['version']:
+              sys.exit(f"::error::marketplace.json lists {e.get('version')}, plugin.json says {p['version']}")
+          print("manifests agree on", p['version'])
+          PY
+
+      - name: Build the zip
+        run: |
+          mkdir -p dist staging/llm-wiki
+          cp -R .claude-plugin skills hooks README.md CHANGELOG.md LICENSE staging/llm-wiki/
+          (cd staging && zip -rq ../dist/llm-wiki-${GITHUB_REF_NAME}.zip llm-wiki -x '*.DS_Store')
+          ls -lh dist/
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
+          body: |
+            Install by adding the marketplace (recommended — you get updates):
+
+                /plugin marketplace add mauricio-morales/llm-wiki
+
+            Or download the zip below and upload it in Claude's plugin settings.
+            See CHANGELOG.md for what changed.

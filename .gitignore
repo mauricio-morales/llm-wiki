@@ -1,0 +1,6 @@
+# Build output — the distributable zip is attached to GitHub Releases, never committed.
+# It is generated from this repo, so committing it would duplicate the source and go stale.
+*.zip
+dist/
+
+.DS_Store

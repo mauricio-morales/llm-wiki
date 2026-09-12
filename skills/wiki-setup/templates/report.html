@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{FOCUS_AREA}} — Focus Report</title>
+<style>
+  :root{
+    --bg:#fbfaf9; --panel:#fff; --ink:#1c1b1a; --muted:#6b6764; --line:#e5e1dd;
+    --accent:#3d6b57; --up:#2f7d5d; --down:#a4492f; --flat:#6b6764;
+    --radius:10px; --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#171815; --panel:#1f211d; --ink:#eceae7; --muted:#a2a09c; --line:#33352f;
+      --accent:#7fb99c; --up:#6fbf95; --down:#d9886b; --flat:#a2a09c;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#171815; --panel:#1f211d; --ink:#eceae7; --muted:#a2a09c; --line:#33352f;
+    --accent:#7fb99c; --up:#6fbf95; --down:#d9886b; --flat:#a2a09c;
+  }
+  html{color-scheme:light dark}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans)}
+  .wrap{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh}
+  /* sidebar */
+  nav{border-right:1px solid var(--line);padding:22px 0;background:var(--panel);position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav h1{font-size:15px;margin:0 20px 4px;letter-spacing:-.01em}
+  nav .sub{margin:0 20px 18px;color:var(--muted);font-size:12.5px}
+  nav .grouplabel{margin:18px 20px 6px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+  nav a{display:block;padding:7px 20px;color:var(--ink);text-decoration:none;font-size:13.5px;border-left:2px solid transparent}
+  nav a:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+  nav a[aria-current="true"]{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);font-weight:600}
+  nav a .when{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
+  /* content */
+  main{padding:34px 40px 80px;max-width:860px}
+  section[hidden]{display:none!important}
+  h2{font-size:22px;margin:0 0 2px;letter-spacing:-.02em}
+  .stamp{color:var(--muted);font-size:13px;margin-bottom:26px}
+  h3{font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  /* metrics */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:0 0 8px}
+  .m{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+  .m .label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .m .val{font-size:25px;font-weight:600;letter-spacing:-.02em;margin-top:3px}
+  .m .delta{font-size:12.5px;margin-top:1px}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--flat)}
+  /* items */
+  ul.items{list-style:none;padding:0;margin:0}
+  ul.items li{padding:11px 0;border-bottom:1px solid var(--line)}
+  ul.items li:last-child{border-bottom:0}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted);margin-right:8px;vertical-align:1px}
+  .who{color:var(--muted);font-size:13px}
+  .empty{color:var(--muted);font-style:italic}
+  a.src{color:var(--accent)}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+  .scroll{overflow-x:auto}
+  @media (max-width:820px){
+    .wrap{grid-template-columns:1fr}
+    nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+    main{padding:24px 20px 60px}
+  }
+  @media print{nav{display:none} section[hidden]{display:block!important} main{max-width:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <h1>{{FOCUS_AREA}}</h1>
+    <p class="sub">{{FOCUS_STATEMENT}}</p>
+    <a href="#overview" data-pane="overview" aria-current="true">Overview</a>
+    <div class="grouplabel">Reports</div>
+    <!-- NAV:START — newest first, one <a> per run. Regenerated every time. -->
+{{NAV_LINKS}}
+    <!-- NAV:END -->
+  </nav>
+
+  <main>
+    <!-- PANES:START — one <section> per run, plus the overview. Regenerated every time. -->
+    <section id="overview">
+{{OVERVIEW}}
+    </section>
+{{PANES}}
+    <!-- PANES:END -->
+  </main>
+</div>
+
+<script>
+(function(){
+  var panes = document.querySelectorAll('main section');
+  var links = document.querySelectorAll('nav a[data-pane]');
+  function show(id, push){
+    var found = false;
+    panes.forEach(function(p){ var on = p.id === id; p.hidden = !on; if(on) found = true; });
+    if(!found){ if(panes[0]){ panes[0].hidden = false; id = panes[0].id; } }
+    links.forEach(function(a){ a.setAttribute('aria-current', a.dataset.pane === id ? 'true' : 'false'); });
+    if(push && location.hash !== '#'+id) history.replaceState(null,'','#'+id);
+    document.querySelector('main').scrollTop = 0; window.scrollTo(0,0);
+  }
+  links.forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); show(a.dataset.pane, true); });
+  });
+  window.addEventListener('hashchange', function(){ show(location.hash.slice(1), false); });
+  show(location.hash ? location.hash.slice(1) : 'overview', false);
+})();
+</script>
+</body>
+</html>
