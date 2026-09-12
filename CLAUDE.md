@@ -40,6 +40,32 @@ there is no `llm-wiki.yml` and no `Wiki/` here, because this repo is the plugin,
 The engine skill should decline, and the SessionStart hook stays silent by design. Do not run
 `/wiki-setup` in this repo — it would scaffold a wiki on top of the source.
 
+## Spec Kit is installed here — and it means three different `skills` directories
+
+This repo has [Spec Kit](https://github.com/github/spec-kit) (v0.8.9) installed for developing the
+plugin. `.specify/` and `.claude/skills/speckit-*` are its files, committed deliberately so the workflow
+is reproducible.
+
+**They are tooling, not product.** They do not ship: the release workflow copies `.claude-plugin`,
+`skills`, `hooks`, `README.md`, `CHANGELOG.md` and `LICENSE`, so nothing under `.specify/` or `.claude/`
+reaches a user.
+
+That leaves three directories with "skills" in the path. Confusing them is the most likely way to break
+something here:
+
+| Path | What it is | Ships? |
+|---|---|---|
+| `skills/` | **The plugin's skills.** The product. `wiki` and `wiki-setup`. | Yes |
+| `skills/wiki-setup/templates/` | Templates written into a *user's* wiki folder — including a copy of the engine skill. | Yes, as templates |
+| `.claude/skills/speckit-*` | **Spec Kit's** commands for working in this repo. Nothing to do with the plugin. | No |
+
+Editing a `speckit-*` skill changes how you work on the plugin. Editing `skills/wiki/SKILL.md` changes
+the plugin. They look alike in a file listing and are completely unrelated.
+
+Spec Kit is also configured with `context_file: CLAUDE.md` (see `.specify/init-options.json`), so its
+commands may read and update **this file**. If a Spec Kit command rewrites sections here, check that it
+has not flattened the distinctions above — they are the thing this file exists to preserve.
+
 ## Layout
 
 ```
