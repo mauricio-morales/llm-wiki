@@ -167,6 +167,15 @@ ingest also drains a few units every run, so a long backfill finishes on its own
 case: 44.8 MB → 74.6 KB, every word and link intact). On a synced folder every megabyte is copied to
 everyone who has it, so the monthly job reports the size and flags growth early.
 
+**It keeps itself current.** The folder gets its own copy of the skills, so it works for anyone who syncs
+it — which means it can fall behind. Every so often (at most weekly, and only after it has finished what
+you asked) a session checks whether a newer version is published and offers it in one line. Updates merge
+rather than overwrite: anything you've customized is preserved, and a genuine conflict is shown to you
+instead of guessed at. Scheduled jobs never update themselves.
+
+Keep your own rules in `CLAUDE.md` and `Wiki/Schema.md` rather than in the skill files — those two are
+yours, and no update touches them.
+
 **No version history.** The folder isn't a repository. So the rule everywhere is **append, never
 overwrite**, and nothing is ever deleted except on your explicit instruction.
 

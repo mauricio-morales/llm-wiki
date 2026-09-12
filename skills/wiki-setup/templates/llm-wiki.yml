@@ -11,6 +11,9 @@ slug: {{WIKI_SLUG}}            # short handle; prefixes every scheduled task id 
 # otherwise run last month's logic for months without any sign that anything is behind.
 wiki_version: "{{PLUGIN_VERSION}}"
 skills_version: "{{PLUGIN_VERSION}}"
+# Last time a session checked for a newer published version. Checked at most weekly, only when the
+# plugin is present, only after a request is finished, and never during a scheduled run.
+lastUpdateCheck: null
 purpose: "{{PURPOSE}}"
 
 # Who this wiki belongs to. The scheduled jobs address this person, decide whose sent messages

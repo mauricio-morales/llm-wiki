@@ -365,7 +365,11 @@ All paths relative to the wiki folder.
     and the `CLAUDE.md` together, with no plugin to install. Copy `wiki-setup` alongside it if the wiki
     is shared, so a teammate can reconfigure without chasing the plugin. If the folder is not shared,
     this copy is still worth making — it keeps the wiki working if the plugin is ever uninstalled.
-12. `.claude/skills/.llm-wiki-version` — a single line holding the plugin version these copies came
+12. `.claude/skills/.baseline/` — a **second, pristine copy** of every skill file just written. Never
+    edited, never read at runtime. It is what lets a later update tell a local edit apart from an upstream
+    change; without it the two are indistinguishable and no safe merge exists. Refresh it whenever the
+    live copies are refreshed — the two must always describe the same version. See `references/updates.md`.
+13. `.claude/skills/.llm-wiki-version` — a single line holding the plugin version these copies came
     from. Also write it to `wiki_version` and `skills_version` in `llm-wiki.yml`. **Re-copy the skills
     and re-stamp this on every reconfigure**, so a plugin update actually reaches the folder — on a
     shared wiki the folder is the distribution channel, and a copy nobody refreshes is a team quietly

@@ -144,6 +144,33 @@ transcriber got it wrong — that is not the speaker misspeaking.
   dates. Flag rather than assert when one garbled token carries a fact.
 - If context doesn't disambiguate, write that the figure is ambiguous rather than picking one.
 
+## Staying current
+
+The skills in this folder are a copy, taken at setup. They can fall behind the published plugin.
+
+**After finishing a user's request** — never before it, never in the middle — check whether an update is
+worth mentioning, but only when all of these hold:
+
+- The llm-wiki **plugin is present in this session** (the only place to read a newer version from).
+- **`lastUpdateCheck` in `llm-wiki.yml` is more than 7 days ago.**
+- This is **not a scheduled run.** Ingest, brief, lint and report jobs never update the code they are
+  running — unattended self-modification is unreviewable when it later misbehaves.
+
+The check is one file read: `skills_version` in `llm-wiki.yml` versus the plugin's `plugin.json`. Equal,
+or the folder is newer — do nothing at all, silently, and write today's date to `lastUpdateCheck`.
+
+If the plugin is newer, mention it in one line and ask once. If declined, record the check and do not ask
+again for 7 days. **Do not let this interrupt or precede the actual work.**
+
+To apply one, follow `references/updates.md` in the `wiki-setup` skill: unmodified files are replaced
+outright, locally-modified files get a three-way merge against the pristine baseline in
+`.claude/skills/.baseline/`, and a conflict is shown rather than guessed at. Only the `ingest_owner`
+applies updates on a shared wiki.
+
+**Personalizations do not belong in these skill files.** Wiki-specific behavior goes in `CLAUDE.md`,
+conventions in `Wiki/Schema.md` — both are never overwritten by an update. When a user asks to change how
+their wiki behaves, change `CLAUDE.md`; a rule written into a skill file is a future merge conflict.
+
 ## Capturing discovered facts
 
 **The most common way this wiki fails is not a bad answer — it is a good answer that never gets written

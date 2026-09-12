@@ -82,6 +82,11 @@ Filing means filing **properly** — right page, routing line in the nearest enc
 - `wiki-ingest-state.json`, `wiki-brief-state.json` — job cursors at the folder root, outside `Wiki/` so
   they are never mistaken for wiki content. They hold cursors and tracking data, never credentials.
 - `.claude/skills/` — a copy of the wiki skills, so this folder works on its own for anyone who syncs it.
+  **Do not personalize these files.** They are replaced by updates. Wiki-specific behavior belongs in this
+  file; conventions belong in `Wiki/Schema.md`. Both survive every update untouched and take effect
+  immediately, which a rule buried in a skill file does not.
+- `.claude/skills/.baseline/` — a pristine copy of the skills as installed, so an update can tell a local
+  edit from an upstream change. Never edit it, and never read it at runtime.
 
 ## Hard rules
 

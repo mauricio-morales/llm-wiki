@@ -50,6 +50,16 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    - Folder copy **newer** than the plugin → this person's plugin is behind. The folder copy is the
      authority; say so, so nobody "fixes" it backwards.
    - Any of them `unknown` or missing → report exactly that. Do not infer a version from behavior.
+   - **Baseline present and matching?** `.claude/skills/.baseline/` must exist and hold the same version
+     as the live copies. Missing or mismatched, a future update cannot tell a local edit from an upstream
+     change and has no safe merge available — report it, and offer to re-stamp the baseline from the
+     current version **only if the live files are unmodified**. Re-stamping modified files would silently
+     adopt local edits as though they were upstream, permanently losing the distinction.
+   - **Locally modified skill files** — list any live file differing from its baseline. Not a fault; it is
+     what the merge exists for. But say which, because each one is a future conflict, and note that a
+     personalization is usually better moved into `CLAUDE.md` where it stops conflicting forever.
+
+   **The lint never applies an update.** It reports; a person decides.
 
    Drift is not an error and must not be reported as one — a wiki a version behind works fine. It is
    reported because on a synced folder there is otherwise **no signal at all** that a teammate has been

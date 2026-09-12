@@ -14,6 +14,25 @@ propagates to everyone who syncs it.
 
 ## Unreleased
 
+**Added — the folder's copy of the skills keeps itself current.**
+- Setup now also writes `.claude/skills/.baseline/`, a pristine copy of exactly what was installed. It is
+  never edited or read at runtime; it exists so an update can tell a **local edit** (baseline → live) from
+  an **upstream change** (baseline → new). Without it the two are indistinguishable and every update is
+  either a clobber or a no-op.
+- A session checks for a newer published version **at most weekly**, only when the plugin is present, and
+  **only after finishing the user's request** — never before it, and never during a scheduled run, since a
+  job that rewrites its own instructions mid-flight is unreviewable when it later misbehaves. Declining
+  silences it for 7 days. No scheduled task was added for this.
+- Applying an update: unmodified files are replaced outright (the common case, zero risk); modified files
+  get a three-way merge. Conflicts are **shown, never guessed** — a silently mis-merged instruction is
+  worse than no update, because it will be followed. A local change is never dropped to take an upstream
+  one. Only the `ingest_owner` updates a shared wiki.
+- Guidance, stated in the skills and the generated `CLAUDE.md`: **personalizations belong in `CLAUDE.md`
+  and `Wiki/Schema.md`, not in skill files.** Those two are never overwritten, so a rule written there
+  survives every update and takes effect immediately — the best merge conflict is the one never created.
+- The monthly lint now reports baseline integrity and lists locally-modified skill files, and will
+  re-stamp a missing baseline only when the live files are unmodified.
+
 - README quick start rewritten for people who don't use a terminal. The install step led with
   `/plugin marketplace add`, which only exists in Claude Code — someone in the desktop app had nothing to
   act on. The app's Settings → Plugins path now leads, with the slash command as the alternative and the
