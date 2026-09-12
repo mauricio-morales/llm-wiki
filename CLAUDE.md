@@ -68,16 +68,33 @@ has not flattened the distinctions above — they are the thing this file exists
 
 ## Layout
 
+**The plugin lives in `plugins/llm-wiki/`, and only that directory is the plugin.** Everything else in
+this repo is development tooling that must never reach a user.
+
 ```
-.claude-plugin/plugin.json       the plugin manifest
-.claude-plugin/marketplace.json  makes this repo installable as a marketplace (source: "./")
-skills/wiki/SKILL.md             the engine: query, ingest, prune, lint, status, import
-skills/wiki-setup/SKILL.md       the setup wizard — the only command a user types
-skills/wiki-setup/references/    loaded by the wizard as needed: source catalog, backfill protocol,
-                                 the scheduled-task prompt templates, update/merge protocol
-skills/wiki-setup/templates/     what gets written into a user's folder
-.github/workflows/release.yml    builds the zip on tag, attaches it to a Release
+plugins/llm-wiki/                  <- THE PLUGIN. Everything shipped lives here.
+  .claude-plugin/plugin.json         the plugin manifest
+  skills/wiki/SKILL.md               the engine: query, ingest, prune, lint, status, import
+  skills/wiki-setup/SKILL.md         the setup wizard — the only command a user types
+  skills/wiki-setup/references/      loaded by the wizard on demand: source catalog, backfill
+                                     protocol, scheduled-task templates, update/merge protocol
+  skills/wiki-setup/templates/       what gets written into a user's folder
+  hooks/                             SessionStart orientation check
+
+.claude-plugin/marketplace.json    makes this repo installable; points at ./plugins/llm-wiki
+.github/workflows/release.yml      builds the zip on tag, attaches it to a Release
+README.md CHANGELOG.md LICENSE     repo root is the single copy; the workflow copies them into the zip
+CLAUDE.md                          this file — development only, never shipped
+.specify/ .claude/                 Spec Kit tooling — development only, never shipped
 ```
+
+**Why the plugin is in a subdirectory:** the plugin's root is what an installer sees. When the repo root
+was the plugin root, everything beside it — Spec Kit's `.specify/` and `.claude/skills/speckit-*` — sat
+inside the plugin's boundary. Nesting it makes the separation structural instead of a matter of trusting
+skill-discovery rules, and the release workflow fails the build if dev tooling ever appears in the zip.
+
+**Anything added to the repo root is development tooling by default.** If a new file should reach users,
+it belongs under `plugins/llm-wiki/` — or, for README/CHANGELOG/LICENSE, in the workflow's copy list.
 
 `references/` holds detail the wizard reads on demand, keeping `SKILL.md` navigable. When a section grows
 past roughly a screen and is only needed in one phase, move it to `references/` and link it.

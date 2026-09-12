@@ -25,7 +25,7 @@ jobs:
       - name: Check the tag matches plugin.json
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          MANIFEST=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          MANIFEST=$(python3 -c "import json;print(json.load(open('plugins/llm-wiki/.claude-plugin/plugin.json'))['version'])")
           echo "tag=$TAG manifest=$MANIFEST"
           if [ "$TAG" != "$MANIFEST" ]; then
             echo "::error::Tag v$TAG does not match plugin.json version $MANIFEST. Bump one of them."
@@ -36,7 +36,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json,sys
-          p=json.load(open('.claude-plugin/plugin.json'))
+          p=json.load(open('plugins/llm-wiki/.claude-plugin/plugin.json'))
           m=json.load(open('.claude-plugin/marketplace.json'))
           e=next(x for x in m['plugins'] if x['name']==p['name'])
           if e.get('version')!=p['version']:
@@ -46,10 +46,18 @@ jobs:
 
       - name: Build the zip
         run: |
-          mkdir -p dist staging/llm-wiki
-          cp -R .claude-plugin skills hooks README.md CHANGELOG.md LICENSE staging/llm-wiki/
+          mkdir -p dist staging
+          # Only the plugin directory ships. Everything else in this repo — .specify/,
+          # .claude/, CLAUDE.md — is development tooling and must never reach a user.
+          cp -R plugins/llm-wiki staging/llm-wiki
+          # README/CHANGELOG/LICENSE live at the repo root as the single copy; the zip gets them too,
+          # and the MIT notice travelling with the distribution is a license obligation, not a nicety.
+          cp README.md CHANGELOG.md LICENSE staging/llm-wiki/
+          if find staging/llm-wiki -name '.specify' -o -name 'speckit-*' | grep -q .; then
+            echo "::error::Development tooling leaked into the plugin zip"; exit 1
+          fi
           (cd staging && zip -rq ../dist/llm-wiki-${GITHUB_REF_NAME}.zip llm-wiki -x '*.DS_Store')
-          ls -lh dist/
+          unzip -l dist/*.zip
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2

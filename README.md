@@ -225,13 +225,15 @@ merge; it never deletes them.
 
 ```
 .claude-plugin/plugin.json   manifest
-CHANGELOG.md                 what changed, and whether you need to do anything about it
-hooks/                       SessionStart check: prompts setup when a project is empty
+hooks/                       SessionStart check that orients a session on a wiki folder
 skills/wiki/                 the engine: query, ingest, prune, lint, status, import
-skills/wiki-setup/           the wizard
-  templates/                 Schema, Hub, Dashboard, Access-Log, CLAUDE.md, llm-wiki.yml
-  references/                source catalog, backfill protocol, the three task templates
+skills/wiki-setup/           the setup wizard
+  templates/                 Schema, Hub, Dashboard, Access-Log, CLAUDE.md, config, report shell
+  references/                source catalog, backfill protocol, scheduled-task templates, updates
 ```
+
+In the [repository](https://github.com/mauricio-morales/llm-wiki) this lives under `plugins/llm-wiki/`;
+everything beside it there is development tooling and is not part of what you install.
 
 ## Credits and license
 

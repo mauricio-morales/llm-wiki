@@ -12,6 +12,19 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.8.1 — 2026-09-12
+
+**Changed — the plugin moved into `plugins/llm-wiki/` in the repository.**
+- The repo root was the plugin root, so Spec Kit tooling added for developing the plugin (`.specify/`,
+  `.claude/skills/speckit-*`) sat inside the plugin's boundary. The release zip was never affected — it
+  copies an explicit file list — but a marketplace install clones the repo, and whether that tooling
+  stayed dormant depended on skill-discovery rules rather than on structure. Nesting the plugin makes the
+  separation structural: its root now contains only plugin files.
+- The release workflow fails the build if anything matching dev tooling appears in the zip, so the
+  guarantee is enforced rather than assumed.
+- No change to the plugin's behavior, contents or install command. `/plugin marketplace add
+  mauricio-morales/llm-wiki` is unchanged.
+
 ## 1.8.0 — 2026-09-12
 
 **Added — the folder's copy of the skills keeps itself current.**
