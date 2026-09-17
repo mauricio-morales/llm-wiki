@@ -12,6 +12,36 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.16.0 — 2026-09-17
+
+**Added — a wiki asks to be upgraded on its own.**
+
+1.13.0 made updates propagate in two hops, but the first hop needs a human opening a session on the
+folder. If that never happens, the jobs run old instructions indefinitely and never mention it — and
+somebody has to go and tell each person by hand. The scheduled tasks are the only thing guaranteed to
+run, so they are what must ask.
+
+- **New `references/update-nudge.md`**, embedded in the **brief** (primary — the artifact the owner
+  actually reads) and the **ingest** (fallback, only where no brief exists).
+- **Three staleness signals, strongest first**: the plugin manifest readable on disk, this task's stamp
+  being behind the folder, or `lastUpdateCheck` older than 14 days. **Never claim an update exists on the
+  third alone** — it proves only that nobody looked. Crying wolf is how a nudge gets ignored permanently.
+- **One line, at the bottom, at most once a week across all tasks.** A line that appears every morning
+  stops being read in three days and takes the brief's credibility with it. Ignored repeatedly, it
+  escalates **specificity, not frequency**.
+- **Says what they gain, not what version they are on** — read from the CHANGELOG between the versions.
+  "Your wiki is a few versions behind — the newer one drains paged sources properly, which affects your
+  email ingest" beats "1.9.0 is available".
+- **One action, spelled out**: *"open a session on this folder and say 'update the wiki'."* That phrase
+  now triggers the setup skill directly.
+- **New update mode** — "update the wiki" runs the folder-skills update, regenerates and re-stamps every
+  task immediately (rather than waiting for each to notice on its next run), clears the nudge, and reports
+  what the jobs will do differently. It asks no setup questions, and says so in one line when nothing is
+  stale.
+- The one-time migration for pre-stamping wikis now explains that it is also what gives those tasks the
+  nudge — a wiki set up before nudging existed cannot ask to be upgraded, so it stays silently behind
+  until someone thinks to check.
+
 ## 1.15.0 — 2026-09-17
 
 **Added — the owner's own KPIs and OKRs drive the reporting.**

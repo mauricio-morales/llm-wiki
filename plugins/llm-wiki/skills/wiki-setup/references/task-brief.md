@@ -189,6 +189,17 @@ minutes with capacity or classifier errors. Retry with backoff (20s, then 90s, t
 giving up after one failure. Do not burn retries in a tight loop with no wait between them. If it still
 fails, report it and leave the state file untouched so tomorrow's brief covers both days.
 
+## Step 6: Is this wiki behind?
+
+{{UPDATE_NUDGE}}
+
+<!-- Setup fills this from references/update-nudge.md, with this task's state key for
+     `lastUpdateNudge`. Embed it in full — a scheduled run cannot read the reference file. -->
+
+One line, at the **bottom** of the brief, at most once a week. It is housekeeping, not news, and a line
+that shows up every morning stops being read in three days — taking the rest of the brief's credibility
+with it.
+
 ## Filter the noise
 
 Do not deep-read or report recurring automated traffic: system emails, ticket SLA digests, HR

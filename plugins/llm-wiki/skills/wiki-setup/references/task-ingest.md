@@ -282,6 +282,15 @@ protocol: mark each `in_progress` before starting, checkpoint after each one, st
 heavy. Forward ingest always comes first — never let the backfill starve today's data. Report progress as
 `unitsDone / unitsTotal` with the date reached.
 
+## Is this wiki behind?
+
+{{UPDATE_NUDGE}}
+
+<!-- Setup fills this from references/update-nudge.md. Embed it in full. -->
+
+**Only nudge from here when no brief is configured.** Where there is a brief, it owns the nudge — it is
+the artifact the owner actually reads, and two jobs nudging in the same week is how a nudge becomes noise.
+
 ## Report
 
 Open the summary with a **Focus Areas** section when any are configured — new decisions and who made

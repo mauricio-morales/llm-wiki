@@ -1,6 +1,6 @@
 ---
 name: wiki-setup
-description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the three scheduled jobs (daily ingest, daily brief, monthly lint). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "reconfigure the wiki", "add a source", "change my brief", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
+description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the three scheduled jobs (daily ingest, daily brief, monthly lint). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "update the wiki", "upgrade the wiki", "reconfigure the wiki", "add a source", "change my brief", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
 ---
 
 # LLM Wiki — setup
@@ -27,8 +27,25 @@ Before saying anything, check the working folder:
   regenerate and stamp them from the current templates plus the existing config. This is the one-time
   migration that puts an older wiki onto the self-updating path; say plainly what will change, since the
   jobs will start behaving differently the next morning.
+  **This is also what gives those tasks the update nudge.** A wiki set up before nudging existed cannot
+  ask to be upgraded — it has no instruction telling it to — so it stays silently behind until someone
+  thinks to check. Running this migration once is what makes it self-managing from then on. Say that,
+  because it is the reason to do it now rather than later.
 - **A backfill is in progress and the user asked to continue it** → skip straight to `references/backfill.md`
   and drain units. This is not a setup run.
+- **The user said "update the wiki" / "upgrade the wiki"**, or arrived because a brief told them to →
+  **update mode**, not a reconfiguration. Do not re-ask a single setup question. Run, in order:
+  1. Update the folder's `.claude/skills/` from the current plugin, per `references/updates.md` — replace
+     unmodified files, three-way merge modified ones, refresh the baseline, bump `skills_version` and
+     `wiki_version`, and set `lastUpdateCheck` to today.
+  2. **Regenerate and re-stamp every scheduled task** from the current templates plus `llm-wiki.yml`, per
+     `references/task-self-update.md`. Tasks normally do this themselves on their next run; doing it here
+     means the owner sees the benefit tomorrow morning rather than the day after.
+  3. **Clear `lastUpdateNudge`** so the brief stops asking.
+  4. Report what changed, in plain terms — what the jobs will now do differently, not a version number.
+
+  If everything is already current, say so in one line and stop. An update run that finds nothing should
+  cost the user five seconds.
 
 **Check the folder is actually usable before asking a single question.** Write a temp file and delete
 it. If the folder is read-only, this setup cannot proceed and nothing later will work — say so
@@ -389,7 +406,7 @@ All paths relative to the wiki folder.
 7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
-8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null}`, only if the brief is enabled.
+8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null}`, only if the brief is enabled.
 9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
 10. `CLAUDE.md` — from `templates/CLAUDE.md`. **This is the piece that makes the wiki automatic**: it is
     what routes every future question to `query` and every "save this" to `ingest` without anyone typing
@@ -499,6 +516,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{WIKI_SLUG}}` | The short name. Every task id and title carries it |
 | `{{PLUGIN_VERSION}}` | The running plugin's version, from its `plugin.json`. `unknown` if it cannot be read — never a guess |
 | `{{INGEST_OWNER}} {{SHARED_FOLDER}} {{SHARED_BLOCK}}` | Who owns the scheduled ingest, and the shared-folder rules in `CLAUDE.md`. On a solo wiki, `SHARED_BLOCK` says plainly that this wiki is not shared — do not leave it empty |
+| `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
 | `{{FOCUS_AREA}} {{FOCUS_STATEMENT}}` | Per Focus Area. The statement is the routing key — specific, not a label |
@@ -568,6 +586,7 @@ requests and what each touches:
 | Change the privacy rules | The Schema's exclusions section and `CLAUDE.md`'s privacy block |
 | Backfill further back | Extend `wiki-backfill-state.json` with new units and re-plan |
 | Stop a job | Disable the task; keep the config so it can be turned back on |
+| "Update the wiki" | Update mode — see Phase 0. Folder skills, then regenerate and re-stamp every task, then clear the nudge |
 | Tasks are behind the current plugin | Regenerate each task's prompt from the current templates plus `llm-wiki.yml`, and re-stamp it. Tasks normally do this themselves at Step 0 of their next run — do it here when the user wants it now, or when a task reported that it could not |
 
 Two rules that hold in every reconfigure:
