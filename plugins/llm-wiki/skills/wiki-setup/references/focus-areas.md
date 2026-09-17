@@ -89,6 +89,11 @@ from the pages themselves, and they are what makes a trend visible even before a
 - Age of the oldest open thread — the single best early warning that a Focus Area is stalling
 - Periods since the last decision — a long gap means momentum has gone, whatever the activity count says
 
+**Metrics are the point of the report, not an appendix to it.** The report leads with them, every one
+carries its direction and a trend across all runs, and the prose exists to read the numbers rather than
+to recount the period. A Focus Area report that is mostly paragraphs has failed, however well written —
+the owner already lived the period; what they cannot see without this is the shape of it over time.
+
 State plainly that a user-defined metric only trends if something actually feeds it. If they name a
 number no connected source reports, say so at setup and either find the source or record it as
 manually-updated, rather than producing a report with a permanently empty chart.

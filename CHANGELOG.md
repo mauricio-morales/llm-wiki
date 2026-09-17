@@ -12,6 +12,34 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.14.0 — 2026-09-17
+
+**Changed — Focus Area reports are KPI-led, not narrated.**
+
+From the first real report produced: too much prose, too much recounting of what happened, too many
+itemized pending actions, not enough aggregation. The owner lived the period — what they cannot see
+without the report is the *shape* of it over time.
+
+- **Hard budgets, stated as limits:** 600 words per run page excluding tables, 2 sentences per insight,
+  5 items per section then "+N more" with a link, and **zero paragraphs recounting events.**
+- **An insight is not an event**, with a worked ❌/✅ pair. "On the 14th Dana raised pricing again, and
+  Ana followed up on the 15th…" is three narrated events; "Pricing is the bottleneck: it's blocked three
+  of the last four decisions and is now the oldest open thread at 23 days" is the same material read.
+- **The Overview pane is entirely aggregate** — KPI tiles with sparklines first, then 4-5 sentences on
+  where things stand, then **trajectory** (what the trends say across the whole history, which only the
+  cumulative view can show), then counts rather than lists. No itemized anything. If it cannot be read in
+  under a minute it is too long.
+- **Run pages lead with the KPI table**, then 3-5 insights each anchored to a metric that moved, and
+  prefer the uncomfortable observation — a stalling trend is worth more than a flattering one.
+- **Actions listed are owner-scoped only**, consistent with 1.13.1: what the owner owes or is owed, led
+  by `[id]`, ranked by stake, capped at 5.
+- **Sparklines on every KPI** — inline SVG, no libraries, normalized per metric, omitted below 3 runs
+  rather than drawing a line through two points, and always carrying an `aria-label`.
+- **The summary message leads with the numbers that moved** and one insight, not a description of the
+  period. Six lines.
+- Fixed duplicate `Step 0` headings introduced in 1.13.0 when the self-update block was added to the
+  brief and report templates.
+
 ## 1.13.1 — 2026-09-17
 
 **Fixed — the commitment ledger was not scoped to the owner.**

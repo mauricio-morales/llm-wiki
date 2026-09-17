@@ -45,6 +45,16 @@
   .m .val{font-size:25px;font-weight:600;letter-spacing:-.02em;margin-top:3px}
   .m .delta{font-size:12.5px;margin-top:1px}
   .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--flat)}
+  /* sparkline — inline SVG, one per KPI, normalized to its own 0-24 box */
+  .spark{display:block;margin-top:8px;height:24px}
+  .spark svg{width:100%;height:24px;display:block;overflow:visible}
+  .spark polyline{fill:none;stroke:var(--accent);stroke-width:1.75;vector-effect:non-scaling-stroke;
+    stroke-linecap:round;stroke-linejoin:round}
+  .spark.is-down polyline{stroke:var(--down)}
+  .spark .last{fill:var(--accent);r:2.5}
+  .spark.is-down .last{fill:var(--down)}
+  .trend{margin:0 0 6px;padding-left:18px}
+  .trend li{margin:5px 0}
   /* items */
   ul.items{list-style:none;padding:0;margin:0}
   ul.items li{padding:11px 0;border-bottom:1px solid var(--line)}

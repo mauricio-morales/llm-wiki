@@ -30,7 +30,7 @@ what lands in the next 7 days that they own or need to prepare for.
 The wiki is at `{{WIKI_PATH}}`. Read `llm-wiki.yml` first. Make the brief **assertive, short and
 readable** — this is a morning message, not a report.
 
-## Step 0: Should this brief be sent at all?
+## Step 0.1: Should this brief be sent at all?
 
 Do this **first**, before any wiki read.
 
