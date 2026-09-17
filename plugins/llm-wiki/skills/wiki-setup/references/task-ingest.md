@@ -10,6 +10,15 @@ and an unqualified "me" in a task prompt resolves to nobody.
 
 ---
 
+<!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
+
+## Step 0 — Adopt any pending update to this prompt
+
+{{TASK_SELF_UPDATE}}
+
+<!-- Setup fills this from references/task-self-update.md. Embed it in full — a scheduled run cannot
+     read the reference file. -->
+
 Ingest new content into the LLM Wiki at `{{WIKI_PATH}}`.
 
 Read `llm-wiki.yml` and `Wiki/Schema.md` first — do not assume the schema, read it fresh each run in

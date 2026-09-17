@@ -24,6 +24,20 @@ to this wiki.
 Say this out loud when someone proposes editing a skill file directly. It is the difference between a
 wiki that updates cleanly for years and one that is stranded on whatever version it was personalized on.
 
+## Two things get updated, not one
+
+This file covers the folder's copy of the **skills**. The **scheduled tasks** are separate: their prompts
+were generated once from the templates and live outside the folder, so updating the skills does not touch
+them.
+
+They close that gap themselves. Every task carries a stamped template version and, at Step 0 of each run,
+regenerates its own prompt when it notices the folder's skills have moved ahead — see
+`task-self-update.md`. So the full chain is: plugin updated → folder skills updated here → each task
+rebuilds itself on its next run.
+
+**Updating the folder skills is therefore what unblocks everything.** A wiki whose skills are left stale
+has stale jobs too, and neither will say so unless asked.
+
 ## The baseline
 
 Setup writes the skills twice:

@@ -67,13 +67,21 @@ focus_areas:
 #    report: { enabled: true, task_id: "acme-focus-tech-vertical", schedule: "0 8 * * 1", delivery: slack, destination: "..." }
 
 jobs:
+  # `preferences` on each job holds what the owner asked for by replying to a brief or report —
+  # "shorter", "put what I owe first", "stop showing the age" — in their own words. They live here,
+  # not in the task prompt, because a task rebuilds its prompt when the plugin updates and anything
+  # only in that text would be lost. Each task's stamped template version is recorded alongside.
   ingest:
     enabled: {{INGEST_ENABLED}}
+    template_version: "{{PLUGIN_VERSION}}"
+    preferences: []
     task_id: "{{INGEST_TASK_ID}}"
     schedule: "{{INGEST_CRON}}"
     state_file: "wiki-ingest-state.json"
   brief:
     enabled: {{BRIEF_ENABLED}}
+    template_version: "{{PLUGIN_VERSION}}"
+    preferences: []
     task_id: "{{BRIEF_TASK_ID}}"
     schedule: "{{BRIEF_CRON}}"
     state_file: "wiki-brief-state.json"
@@ -85,6 +93,8 @@ jobs:
     skip_pattern_observed: "{{SKIP_PATTERN}}"
   lint:
     enabled: {{LINT_ENABLED}}
+    template_version: "{{PLUGIN_VERSION}}"
+    preferences: []
     task_id: "{{LINT_TASK_ID}}"
     schedule: "{{LINT_CRON}}"
     prune_months: {{PRUNE_MONTHS}}

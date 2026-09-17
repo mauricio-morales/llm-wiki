@@ -2,6 +2,15 @@
 
 ---
 
+<!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
+
+## Step 0 — Adopt any pending update to this prompt
+
+{{TASK_SELF_UPDATE}}
+
+<!-- Setup fills this from references/task-self-update.md. Embed it in full — a scheduled run cannot
+     read the reference file. -->
+
 Run the LLM Wiki's health check on the wiki at `{{WIKI_PATH}}`.
 
 Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `lint` workflow.

@@ -15,6 +15,15 @@ at send time — a scheduled run has nobody to ask.
 
 ---
 
+<!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
+
+## Step 0 — Adopt any pending update to this prompt
+
+{{TASK_SELF_UPDATE}}
+
+<!-- Setup fills this from references/task-self-update.md. Embed it in full — a scheduled run cannot
+     read the reference file. -->
+
 Send {{OWNER}} a brief of what happened since the last brief and what is coming up — both today, and
 what lands in the next 7 days that they own or need to prepare for.
 

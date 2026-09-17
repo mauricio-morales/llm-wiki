@@ -12,6 +12,36 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.13.0 — 2026-09-17
+
+**Fixed — updates never reached deployed wikis' scheduled tasks.**
+
+The 1.8.0 update mechanism covered only the folder's copy of the skills. Task prompts are generated once
+at setup and live outside the folder, so **nothing had ever updated them.** Everything shipped since
+1.8.0 — draining paged sources, two-directional commitments, item ids, async replies — was reaching new
+wikis only. An existing wiki would have kept running its original instructions indefinitely, with no sign
+anything was stale.
+
+- **Every task now carries a stamped template version** in its first line, mirrored under that job in
+  `llm-wiki.yml`. Without it there is no way to tell which template a running task came from.
+- **New `references/task-self-update.md`**, embedded as Step 0 of every task: compare the stamp against
+  the folder's `skills_version`, and if behind, regenerate the prompt from the current templates plus
+  `llm-wiki.yml`.
+- **The current run finishes on the prompt it started with**; the new one takes effect next run. This
+  keeps 1.8.0's rule that a job must not rewrite the instructions it is midway through executing —
+  otherwise nobody can say afterwards which version produced which output. One run's delay buys every run
+  being attributable.
+- **Regeneration is safe because configuration lives in `llm-wiki.yml`, never only in the prompt.**
+  Accordingly, reply-learned format preferences (1.12.0) now go to a `preferences` block in the config
+  rather than into the task text, where a rebuild would have destroyed them.
+- **Failure is non-destructive**: if regeneration cannot complete, the existing prompt is kept, the run
+  proceeds, and it is reported. A working old prompt beats a broken new one.
+- **Regeneration is always reported** — version moved from and to, plus what changed. Nobody should
+  discover their jobs changed behavior by noticing different output.
+- **It never changes schedules, destinations or enabled sources.** It updates instructions, not choices.
+- Setup gained a one-time migration for wikis predating stamping: offer to regenerate and stamp their
+  tasks from current templates and existing config.
+
 ## 1.12.1 — 2026-09-17
 
 **Fixed — Focus Area items had no id until a report rendered one.**

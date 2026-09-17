@@ -48,8 +48,13 @@ the wiki page or the state entry — not just in the next message. A correction 
 artifact reappears wrong the following day.
 
 **A presentation or format preference** — *"stop showing the age"*, *"shorter"*, *"put what I owe last"*,
-*"group these by client"*. **Update the task's own prompt** so it persists. A preference honored once and
-forgotten is worse than ignoring it, because the owner stops bothering to ask.
+*"group these by client"*. **Write it into `llm-wiki.yml` under this job's `preferences`**, in the owner's
+own words, and apply it from the next artifact on.
+
+Not into the task prompt: a task regenerates its own prompt when the plugin updates, and anything living
+only in that text is destroyed when it does. `llm-wiki.yml` survives, and the regenerated prompt is
+rebuilt from it. A preference honored once and then silently lost is worse than ignoring it outright,
+because the owner stops bothering to ask.
 
 **A request for information** — *"what happened with the Acme renewal?"*. Answer it in the next artifact,
 or immediately if the channel supports a direct reply and it is time-sensitive.
@@ -73,8 +78,8 @@ see landing is a reply they will stop sending.
 
 - **Never ignore a reply.** If it cannot be acted on, say why.
 - **Never treat a reply as an aside.** "FYI Ana is out this week" is context that changes what to chase.
-- **Act at the source, not in the presentation.** Corrections go to the wiki, state changes to the state
-  file, preferences to the task prompt. Only answers go in the next message.
+- **Act at the source, not in the presentation.** Corrections go to the wiki page, state changes to the
+  state file, preferences to `llm-wiki.yml`. Only answers go in the next message.
 - **Do not re-read replies already acted on.** Record the last reply timestamp handled, per artifact.
 - A reply arriving after a skipped send (an out-of-office day, say) still counts — process the backlog on
   the next run rather than only the most recent.

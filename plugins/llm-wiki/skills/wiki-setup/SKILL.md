@@ -22,6 +22,11 @@ Before saying anything, check the working folder:
   what they want to change. Only re-ask the questions for the parts they are changing. Jump to Phase 9.
 - **`llm-wiki.yml` exists but `Wiki/` does not**, or the hub pages are missing → repair. Rebuild the
   missing structure from the existing config without re-asking anything, then report what was rebuilt.
+- **`llm-wiki.yml` exists and the wiki predates task stamping** (no `template_version` under its jobs) →
+  the tasks are running whatever template they were generated from and cannot update themselves. Offer to
+  regenerate and stamp them from the current templates plus the existing config. This is the one-time
+  migration that puts an older wiki onto the self-updating path; say plainly what will change, since the
+  jobs will start behaving differently the next morning.
 - **A backfill is in progress and the user asked to continue it** → skip straight to `references/backfill.md`
   and drain units. This is not a setup run.
 
@@ -415,6 +420,13 @@ error — it is a second wiki silently overwriting the first one's job.
 
 Defaults: ingest `0 6 * * *`, brief `30 7 * * 1-5`, lint `0 9 1 * *`. Cron is evaluated in local time.
 
+**Stamp every task.** Each generated prompt opens with
+`<!-- llm-wiki task: <kind> | template version: X.Y.Z | generated: YYYY-MM-DD -->`, and its
+`template_version` is recorded under that job in `llm-wiki.yml`. Embed `references/task-self-update.md` as
+each task's Step 0, so a task generated today can adopt a later version of its own template without
+anyone regenerating it by hand. Without the stamp there is no way to tell which template version a
+running task came from, and it would silently run the original instructions forever.
+
 After creating them, **verify all three appear in the task list** with the right prefix, and record their
 real ids in `llm-wiki.yml`. Tell the user the tasks run while the Claude app is open, and that a task due
 while it was closed runs on next launch.
@@ -467,6 +479,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{WIKI_SLUG}}` | The short name. Every task id and title carries it |
 | `{{PLUGIN_VERSION}}` | The running plugin's version, from its `plugin.json`. `unknown` if it cannot be read — never a guess |
 | `{{INGEST_OWNER}} {{SHARED_FOLDER}} {{SHARED_BLOCK}}` | Who owns the scheduled ingest, and the shared-folder rules in `CLAUDE.md`. On a solo wiki, `SHARED_BLOCK` says plainly that this wiki is not shared — do not leave it empty |
+| `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
 | `{{FOCUS_AREA}} {{FOCUS_STATEMENT}}` | Per Focus Area. The statement is the routing key — specific, not a label |
 | source `notes` | The user's verbatim customization for each source, pasted into the task prompt as written — never paraphrased |
@@ -535,6 +548,7 @@ requests and what each touches:
 | Change the privacy rules | The Schema's exclusions section and `CLAUDE.md`'s privacy block |
 | Backfill further back | Extend `wiki-backfill-state.json` with new units and re-plan |
 | Stop a job | Disable the task; keep the config so it can be turned back on |
+| Tasks are behind the current plugin | Regenerate each task's prompt from the current templates plus `llm-wiki.yml`, and re-stamp it. Tasks normally do this themselves at Step 0 of their next run — do it here when the user wants it now, or when a task reported that it could not |
 
 Two rules that hold in every reconfigure:
 
