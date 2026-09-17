@@ -11,9 +11,12 @@ Plain markdown files, nothing to install beyond the plugin. You share it by shar
 
 ## Quick start
 
-**What you need first:** the **Claude desktop app**. This plugin works on a folder on your computer and
-creates scheduled jobs, so it needs the desktop app — not Claude in a web browser. If you're reading this
-on claude.ai in a browser tab, install the desktop app before going further.
+**What you need first:** the **Claude desktop app**, and you'll be using it in **Cowork** — the mode
+where Claude works on a folder on your computer and can create and edit files in it.
+
+This won't work in Claude in a web browser, and it won't work in an ordinary chat or a Project. Your wiki
+is a real folder of files, and something has to be able to write to it. If you're reading this in a
+browser tab, install the desktop app first.
 
 ---
 
@@ -41,21 +44,33 @@ This works fine, but it's a one-time copy — it can't update itself, so you'd r
 
 ### 2. Make a folder for the wiki
 
-Anywhere on your computer. Give it a real name — `Acme Wiki`, `My Work Brain`.
+A normal, empty folder on your computer — made in Finder or File Explorer, the same as any other folder.
+Give it a real name: `Acme Wiki`, `My Work Brain`.
 
-To share it with your team, **put it somewhere already synced**: your OneDrive, Dropbox or Google Drive
-folder. That's how other people get it.
+**If you want to share it with your team, create it inside a folder that already syncs** — your OneDrive,
+Dropbox or Google Drive. That sync is how everyone else gets it later. If it's just for you, anywhere is
+fine.
 
-### 3. Open a session on that folder
+### 3. Start a **Cowork session** on that folder
 
-In the Claude app, start a new session and **point it at the folder you just made**. The folder itself,
-not a project — the wiki has to be able to write files, and projects are read-only.
+This part matters, and it's the step people get wrong.
 
-### 4. Type `/wiki-setup`
+**It has to be a Cowork session** — the kind of Claude session that works on a folder on your computer
+and can read and write the files in it. In the Claude app, start a new Cowork session and **choose the
+folder you just made** when it asks which folder to work in.
 
-Type it into the chat like a message. It asks a handful of multiple-choice questions: what to call the
-wiki, who can read it, which of your connected tools it should read, when it should run, how far back to
-reach. A few minutes.
+An ordinary chat won't do. Neither will a Project. Both can *read* things you give them, but neither can
+create and update files in a folder on your machine, and that is the entire job here — your wiki *is*
+that folder.
+
+You'll know you got it right because the session shows the folder it's working in.
+
+### 4. Type `/wiki-setup` and press enter
+
+Type it into the message box like you'd type anything else — the leading `/` is part of it.
+
+It then asks you a handful of multiple-choice questions: what to call the wiki, who can read it, which of
+your connected tools it should read, when it should run, how far back to reach. A few minutes.
 
 *"Just do whatever's normal"* is a complete answer to any of them.
 
@@ -64,9 +79,16 @@ and it searches the wiki, say "save this" and it files it, say "reconfigure the 
 
 ### Joining a wiki someone else set up
 
-Do step 1, then skip to here. **Make sure the shared folder is synced to your computer, open a session on
-it in the Claude app, and just start asking.** It already knows what to do — the instructions live inside
-the folder, so they arrive with it.
+Do step 1, then skip to here.
+
+1. **Make sure the shared folder has synced to your computer** — you should be able to open it in Finder
+   or File Explorer and see a `Wiki` folder inside.
+2. **Start a Cowork session on it** (same as step 3 above — a Cowork session, not an ordinary chat, and
+   choose that folder).
+3. **Just start asking.**
+
+It already knows what to do: the instructions live inside the folder, so they arrive with it. Nothing to
+install, nothing to set up.
 
 **Don't run `/wiki-setup` there.** Only one person runs the scheduled ingest. A second one means two jobs
 appending to the same pages every morning, each pulling from a different person's email and chat — and
@@ -200,9 +222,9 @@ rather than quietly picking one — and never attributes the error to whoever wa
 
 ## Sharing it with your team
 
-One person sets the wiki up in a folder on a synced drive. Everyone else syncs that folder and opens a
-session on it in the Claude app. The `CLAUDE.md` and a copy of the skills live in the folder, so their session knows
-what to do immediately — nothing to install.
+One person sets the wiki up in a folder on a synced drive. Everyone else syncs that folder and starts a
+Cowork session on it. The instructions and a copy of the skills live inside the folder, so their session
+knows what to do immediately — nothing to install.
 
 Two rules make the difference between that working and it quietly going wrong:
 

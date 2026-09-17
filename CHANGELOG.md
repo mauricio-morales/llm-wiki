@@ -12,6 +12,22 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.9.1 — 2026-09-17
+
+**Fixed — the README never said the session has to be a Cowork session.**
+- Step 3 said "open a session on that folder", which only makes sense to someone who already knows what
+  kind of session that is. Earlier wording had said "Cowork" and it was removed as jargon — the wrong
+  call: the fix for a term people don't know is to name it *and* explain it, not to replace it with
+  something vaguer. It is now named, defined in one line ("the mode where Claude works on a folder on
+  your computer and can create and edit files in it"), and stated in the prerequisites.
+- Says plainly what will not work and why: an ordinary chat and a Project can both read what you give
+  them, but neither can create and update files in a folder, which is the whole job — the wiki *is* the
+  folder.
+- Added a way to tell you got it right (the session shows the folder it's working in), and the same
+  instruction in the "joining someone else's wiki" path, which had the same gap.
+- Steps 2 and 4 spell out the parts assumed as obvious: make the folder in Finder or File Explorer, the
+  leading `/` is part of the command.
+
 ## 1.9.0 — 2026-09-17
 
 **Fixed — paged sources were being read one page deep and reported as quiet.**
