@@ -157,6 +157,20 @@ Where a commitment was partially met, say what is actually left rather than list
 
 If both sections are empty, skip them silently.
 
+## Step 3.5: Objectives — lightly
+
+If `Wiki/{{PRIMARY_NS}}/Objectives.md` exists, read it. **The brief is not an OKR dashboard** — a daily
+progress bar on a quarterly goal is noise and will be skimmed past within a week. Three things only:
+
+- **Something in today's material moved an objective** — say which and in which direction. That is an
+  event, not a routine metric.
+- **A commitment the owner owes blocks an objective** — say so on that item. It changes the priority, and
+  it is exactly the connection that otherwise gets missed.
+- **An objective is behind pace and the period is more than half gone** — one line, only for the ones
+  actually at risk. Not every objective, not every day.
+
+If none of those apply, skip the section silently.
+
 ## Step 4: What's coming up
 
 Today plus the next 7 calendar days, from `Timeline.md`: what they own, what needs preparation, what has

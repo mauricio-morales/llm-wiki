@@ -97,16 +97,25 @@ recounted detail is what made the first report unreadable.
 
 1. **Where it stands** — 3-4 sentences of synthesis. Not a summary of events; a judgement about the state
    of the area. What is moving, what is stuck, what changed about the *shape* of it.
-2. **KPIs** — the table from Step 2. Every metric with its value, its direction versus last period, and
-   its trend across all runs. This is the centre of the report.
-3. **Insights** — 3-5 bullets, two sentences each, each one reading the numbers rather than restating
-   them. Anchor each to a metric that moved. Prefer the uncomfortable observation: a stalling trend is
+2. **Objective progress**, where `Wiki/{{PRIMARY_NS}}/Objectives.md` has an objective mapped to this
+   Focus Area. Current versus target, percentage attained, **pace** (percentage of the period elapsed
+   against percentage attained — the number the owner cannot compute in their head), a projection where
+   there are at least three data points, and a sparkline. This goes **above** the structural metrics: it
+   is what the owner is actually measured on. Skip the section entirely if there are no objectives.
+3. **KPIs** — the table from Step 2. Every metric with its value, its direction versus last period, and
+   its trend across all runs. These stay because they are the early warning that an area is stalling,
+   but they are no longer the headline when objective data exists.
+4. **Insights** — 3-5 bullets, two sentences each, each one reading the numbers rather than restating
+   them. Anchor each to a metric that moved — and **where objectives exist, frame them against the
+   objective, not against activity.** "Decisions are up" is an observation about the wiki; "decisions are
+   up but none moved the pipeline objective, which is now behind pace" is an observation about the
+   owner's quarter. Prefer the uncomfortable observation: a stalling trend is
    worth more than a flattering one.
-4. **Decisions** — one line each, who decided and on what authority. Cap at 5; link the rest.
-5. **Needs the owner** — **only commitments the owner owes or is owed** (see the commitment ledger; other
+5. **Decisions** — one line each, who decided and on what authority. Cap at 5; link the rest.
+6. **Needs the owner** — **only commitments the owner owes or is owed** (see the commitment ledger; other
    people's obligations are not tracked and are not listed here). Led by `[id]`, ranked by stake, capped
    at 5. Everything else stays in the wiki.
-6. **Looking ahead** — what lands before the next report: dated commitments, scheduled decisions, known
+7. **Looking ahead** — what lands before the next report: dated commitments, scheduled decisions, known
    risks. Bullets, not prose.
 
 **What does not go in:** a chronological account of the period, every open thread, every item captured,
@@ -127,8 +136,9 @@ and contains **no** itemized lists.
 
 It holds, in this order:
 
-- **KPI tiles** — current value, direction versus last period, and a sparkline across **every** run.
-  These sit at the top and carry the report.
+- **Objective tiles first**, where objectives map to this area: attained versus target, pace, and a
+  sparkline. Then **KPI tiles** — current value, direction versus last period, sparkline across every run.
+  Objectives outrank structural metrics for the top of the page; if there are none, the KPIs lead.
 - **Where it stands** — 4-5 sentences, the state of the area as of now.
 - **Trajectory** — 2-3 bullets on what the trends say over the whole history, not this period. Whether
   decision velocity is rising or falling, whether open threads are accumulating faster than they close,

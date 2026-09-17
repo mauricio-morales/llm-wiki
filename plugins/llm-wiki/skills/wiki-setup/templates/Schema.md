@@ -142,6 +142,27 @@ the wrong thing or to nothing.
 `decision` without a named decider and authority is incomplete. Where authority is unclear, write
 `authority unclear` — never imply it.
 
+### Objectives (the owner's own KPIs / OKRs)
+
+```yaml
+type: objectives
+updated: YYYY-MM-DD
+```
+
+One page, the canonical copy of what the owner is measured on. Each objective records: the statement in
+the owner's own words, the measure, baseline and target, the period's start and end, the current value
+with the date and **where it came from**, the source (connector, page, person, or `manual`), and which
+Focus Areas it maps to.
+
+**Never infer a target.** An objective with no stated number is qualitative and reports as a judgement,
+not a percentage. **An objective with no feeding source reports as "not tracked", never as zero** — and
+that gap is worth reporting, since an objective nobody can measure is one that gets argued about at
+review time.
+
+**At period end, close objectives out with their final attainment and keep them.** Start the new period
+below. That history is the most useful thing on the page at the next planning round, and the first thing
+anyone is tempted to delete.
+
 ### Hub (namespace index)
 ```yaml
 type: hub

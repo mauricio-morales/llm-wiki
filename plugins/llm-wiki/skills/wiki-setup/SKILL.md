@@ -208,6 +208,24 @@ Then tell them what changes, in one sentence, because it is the whole point: **a
 Focus Area now gets captured in full and written to its pages as well as wherever it normally lands, so
 the report can reconstruct the thread later.**
 
+## Phase 2c — Objectives (optional)
+
+Read `references/objectives.md`. Ask once, right after Focus Areas:
+
+*"Are you measured on anything specific — OKRs this quarter, a scorecard, team targets? If so I'll report
+against them rather than just against activity."*
+
+**No is a complete answer**, and common — plenty of people have nothing written down. Accept it and move
+on without raising it again.
+
+If yes, capture what they can give you now: the statement in their words, the measure, the target and
+baseline, the period, and where the number comes from. **Never invent a target.** "Grow the pipeline"
+with no number is a qualitative objective, recorded as such — a fabricated target produces fabricated
+progress, and it will be quoted at a review.
+
+Ask which Focus Areas each maps to, if any. That mapping is what puts objective progress at the top of
+the right report.
+
 ## Phase 3 — Sources
 
 Read `references/sources.md` and follow it. The short version:
@@ -362,6 +380,8 @@ All paths relative to the wiki folder.
    Logseq: `pages/Wiki___<NS>.md`. Give each a one-line description of what belongs in it; a hub whose
    purpose is written down gets routed to correctly.
 5. `Wiki/Reference/Access-Log.md` — from `templates/Access-Log.md`.
+5a. `Wiki/<PRIMARY_NS>/Objectives.md` if any objectives were given — the canonical page. Skip entirely
+    if there are none.
 5b. For each Focus Area: its namespace hub (with the statement from Phase 2b as the hub description),
     `Log.md`, `Decisions.md`, `Goals.md` (carrying the metrics they named), and an empty `Reports/`
     folder. Skip entirely if there are none.

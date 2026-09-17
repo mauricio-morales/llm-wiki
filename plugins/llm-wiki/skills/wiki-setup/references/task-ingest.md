@@ -216,6 +216,19 @@ Mirror the open list into `Wiki/{{PRIMARY_NS}}/Timeline.md` under **"Waiting on 
 `commitments` with `direction: theirs`, `asked` from the original date, and `due` derived by the rule
 above. Do it once, then use `commitments` only.
 
+## Objectives
+
+If `Wiki/{{PRIMARY_NS}}/Objectives.md` exists, keep it alive — a goals page nobody updates is worse than
+none, because it reports stale progress with confidence.
+
+- **A new objective appearing** in a planning deck, a quarterly review, a goals document or a manager's
+  message: add it to the page and say so in the run report.
+- **A number against an existing objective**: update the current value, record the date and **where the
+  number came from**.
+- **Never infer a target.** "Grow the pipeline" with no number stays qualitative. A fabricated target
+  produces fabricated progress, and it will be quoted back at a review.
+- Flag anything that materially threatens an objective, so the brief can surface it.
+
 ## Follow shared links once
 
 If a message shares a link or carries an attachment, open it once and record what it was about — one hop

@@ -60,6 +60,16 @@ presentation preferences into the sending task's own prompt** so they persist. A
 and forgotten teaches the owner to stop asking. Never guess at an ambiguous instruction, especially a
 close — say what you could not interpret and ask.
 
+## Objectives
+
+If `Wiki/<primary>/Objectives.md` exists, it holds what the owner is actually measured on, and it
+outranks activity metrics when reporting. Keep it current: a number against an objective, seen anywhere,
+updates the page along with its date and where it came from. A new objective in a planning doc or a
+manager's message gets added.
+
+**Never infer a target.** "Grow the pipeline" with no number is qualitative, recorded as such — an
+invented target produces invented progress, and it will be quoted at a review.
+
 ## Commitments, both directions
 
 This wiki tracks every ask in flight so none is dropped — what people owe the owner, and what the owner

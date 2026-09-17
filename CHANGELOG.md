@@ -12,6 +12,34 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.15.0 — 2026-09-17
+
+**Added — the owner's own KPIs and OKRs drive the reporting.**
+
+Structural metrics say whether the *wiki* is working. Objectives say whether the *owner* is. Where the
+owner is measured on something, that is what the reports should measure against.
+
+- **New `references/objectives.md`** and an `Objectives` page type: statement in the owner's own words,
+  measure, baseline, target, period, current value with its date and provenance, source, and which Focus
+  Areas it maps to. Optional — setup asks once, right after Focus Areas, and **no is a complete answer.**
+- **Focus Area reports lead with objective progress** where one maps to the area, above the structural
+  metrics: attained versus target, **pace** (period elapsed against attainment — the number the owner
+  cannot compute in their head), a projection once there are three data points, and a sparkline.
+- **Insights are framed against objectives, not activity.** "Decisions are up" is an observation about the
+  wiki; "decisions are up but none moved the pipeline objective, which is behind pace" is an observation
+  about the owner's quarter.
+- **The brief stays light** — deliberately not an OKR dashboard, since a daily progress bar on a quarterly
+  goal gets skimmed past within a week. Three cases only: something moved an objective, a commitment the
+  owner owes is blocking one, or one is behind pace with the period more than half gone.
+- **Ingest keeps the page alive** — a new objective in a planning deck or a manager's message gets added;
+  a number against an existing one updates it with its provenance. A goals page nobody updates is worse
+  than none, because it reports stale progress confidently.
+- **Never infer a target.** "Grow the pipeline" with no number stays qualitative; a fabricated target
+  produces fabricated progress and will be quoted at a review. An objective with no feeding source reports
+  as "not tracked", never zero — and that gap is itself worth reporting.
+- **Periods roll over by closing objectives out and keeping them**, not deleting. That history is the most
+  useful thing on the page at the next planning round.
+
 ## 1.14.0 — 2026-09-17
 
 **Changed — Focus Area reports are KPI-led, not narrated.**
