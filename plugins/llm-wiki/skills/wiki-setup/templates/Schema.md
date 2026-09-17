@@ -200,6 +200,11 @@ An ask that goes out and never comes back, or one accepted and never delivered, 
 thing a wiki can lose. Both directions are tracked in the ingest state file until closed, and rendered in
 the daily brief.
 
+**The owner is always one of the two parties.** Commitments between other people are not tracked — the
+owner can neither chase nor close them, and a ledger padded with other people's obligations stops being
+read. Delegation is the exception that proves it: work handed to someone else is still the owner's
+commitment, because the owner still answers for it.
+
 **Two directions, never merged:**
 
 - `theirs` — someone owes the owner something

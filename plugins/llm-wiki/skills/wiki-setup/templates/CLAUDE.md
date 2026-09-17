@@ -71,6 +71,11 @@ owes people.
 
 **`mine` is only for things the owner actually agreed to.** A request nobody accepted is not a commitment.
 
+**The owner is always one of the two parties.** A commitment between two other people — "Ana will send
+Dana the deck" — is context, not a tracked item. The owner cannot chase or close it, and a ledger full of
+other people's obligations stops being read. Work the owner delegated still counts as theirs: they
+answer for it.
+
 **`due` is never empty.** A stated date wins, resolved to an absolute date against the message's own date.
 With no date stated, `due` = `asked` + 7 days, flagged `dueIsExplicit: false` — a nudge, not a promise,
 and it must never be quoted back to anyone as a deadline.

@@ -124,6 +124,25 @@ Cuts across every message-carrying source. **The purpose is that no ball gets dr
 direction**: things the owner is waiting on from other people, and things other people are waiting on
 from the owner. Both live in `commitments` in the state file.
 
+### Only commitments the owner is party to
+
+**Every entry has the owner on one side of it.** Either someone owes the owner something, or the owner
+owes someone something. Nothing else goes in the ledger.
+
+Meetings, chats and threads are full of commitments between other people — "Ana will send Dana the deck",
+"the platform team owes finance a number". **Do not track those.** They are not the owner's to chase or
+deliver, the owner cannot close them, and a list padded with other people's obligations is a list that
+stops being read. If it matters to the owner, it will surface as context in the log or a Focus Area;
+it does not belong in the ledger.
+
+Two clarifications that decide the edge cases:
+
+- **Delegation does not remove a commitment.** If the owner agreed to deliver something and handed the
+  work to someone else, it stays `mine` — the owner is still the one who answers for it. What changed is
+  who is doing it, not who owes it.
+- **A commitment to the owner's team that the owner will chase counts as `theirs`.** The test is whether
+  the owner is the one who follows up or answers for it, not whose name is literally in the message.
+
 ### What to capture
 
 **Outbound — they owe the owner.** Scan what the owner **sent** (sent mail, their own chat messages,

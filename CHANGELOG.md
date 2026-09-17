@@ -12,6 +12,22 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.13.1 — 2026-09-17
+
+**Fixed — the commitment ledger was not scoped to the owner.**
+
+The two directions were defined as "they owe the owner" and "the owner owes them", but nothing said that
+third-party commitments are out of scope. Meetings and chats are full of them — *"Ana will send Dana the
+deck"* — and an ingest reading a transcript would have captured those as readily as the owner's own. The
+result is a list the owner can neither chase nor close, which is how a list stops being read.
+
+- **Every entry has the owner on one side.** Commitments between other people are context, not tracked
+  items; they surface in the log or a Focus Area if they matter.
+- **Delegation does not remove a commitment.** Work the owner agreed to and handed on is still `mine` —
+  what changed is who is doing it, not who answers for it.
+- **A commitment to the owner's team that the owner will chase counts as `theirs`.** The test is who
+  follows up or answers for it, not whose name is in the message.
+
 ## 1.13.0 — 2026-09-17
 
 **Fixed — updates never reached deployed wikis' scheduled tasks.**
