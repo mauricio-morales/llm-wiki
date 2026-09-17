@@ -103,12 +103,18 @@ transcript) is **re-ingested and its existing wiki entry updated in place**, not
 
 **Both of these require local execution and a granted directory.** See below.
 
-## Local folders
+## Local sources (13 and 14)
 
-**14 and 13 are just paths.** The session already runs on this machine, so there is no special access
-model — get the absolute path, list it to prove it is readable, and record it. **Never record a path you
-have not successfully read**: an unverified path becomes a job that fails silently every night and looks
-exactly like a quiet week.
+**A local path is not automatically readable.** A Cowork session is sandboxed: it has the wiki folder, and
+not the rest of the machine. Being on the same computer is not access — a perfectly reasonable-looking
+path will simply fail to read, every night, and look exactly like a quiet week.
+
+Reaching one means exposing it through an **MCP server** configured in the desktop app. **Do not walk the
+user through that during setup** — it is a detour most people do not need. Record the source as pending
+with the reason, finish the setup, and hand them `references/local-sources.md` afterwards.
+
+**Never record a local source you have not actually read from** within the session that will run it.
+Listing the directory or the tables, and pulling one real record, is the bar — not "it should work".
 
 ## Customization notes — ask for these on every enabled source
 

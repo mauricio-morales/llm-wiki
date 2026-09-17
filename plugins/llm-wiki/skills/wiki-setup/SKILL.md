@@ -233,10 +233,13 @@ Read `references/sources.md` and follow it. The short version:
 
    Also capture the **noise list** here — the bot channels, automated digests and system senders worth
    skipping. Getting it now saves the first month of runs from drowning in notification traffic.
-5. **Local folders** (a notes directory, an exports folder, a local transcription app's data): get the
-   absolute path, and **verify by listing it before recording it**. An unverified path becomes a job that
-   fails silently every night. If it cannot be read, record the source as pending with the reason — never
-   drop it quietly.
+5. **Local sources** (a notes directory, an exports folder, a local app's database): get the absolute
+   path and **try to read it**. A Cowork session is sandboxed, so a local path is often *not* reachable
+   even though it is on the same machine — that is normal, not a misconfiguration.
+   If it reads, record it. If it does not, **record it as pending with the reason and move on** — reaching
+   it needs an MCP server configured in the desktop app, which is a detour that does not belong in the
+   middle of setup. Mention that it can be wired up afterwards and that `references/local-sources.md` has
+   the steps. **Never record a path you could not read**: it becomes a job that fails silently every night.
 
 ## Phase 4 — Where the jobs run
 
@@ -516,6 +519,7 @@ requests and what each touches:
 | Request | Update |
 |---|---|
 | Add or remove a source | `llm-wiki.yml` sources, the ingest task prompt, possibly the execution location |
+| Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A Cowork session is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am |
 | Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
 | Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
 | Change the schedules | The task crons, and the ingest/brief ordering gap |

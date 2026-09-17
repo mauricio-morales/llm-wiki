@@ -12,6 +12,32 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.11.0 — 2026-09-17
+
+**Added — reference material for local filesystem and database sources.**
+
+Found in the field: a request to index a local app's SQLite store failed because a Cowork session is
+sandboxed and cannot read arbitrary paths. The docs actively said the opposite — *"the session already
+runs on this machine, so there is no special access model"* — which would have led to recording a path
+that the nightly job could never read, reporting quiet weeks forever.
+
+- **Corrected that claim** in the source catalog and the setup wizard. A local path is not access.
+- **New `references/local-sources.md`**: how to expose a local resource through an MCP server, the
+  `claude_desktop_config.json` locations, the restart requirement, and verified SQLite and filesystem
+  configs. **Not part of the setup conversation** — consulted only when a local source is requested.
+- **Match the server to the datastore.** The two examples are SQLite and filesystem; MySQL, MariaDB,
+  Postgres and document stores each need their own. Search the MCP registry rather than reciting a
+  package name from memory, since a stale one fails confusingly.
+- **Capture the schema once and write it into the ingest task.** Tables, the columns actually used and
+  their types, the stable dedup key, and the change-detection timestamp — so a record edited after
+  ingest is updated in place rather than skipped, and so a scheduled job never rediscovers structure at
+  6am. Explicitly includes checking whether an app keeps *more than one* list of records, since a job
+  told about one will silently ignore the rest.
+- **Credentials go in `claude_desktop_config.json` only** — never `llm-wiki.yml`, a task prompt, or a
+  wiki page. Read-only accounts where the datastore supports them; narrowest possible filesystem grants.
+- Ad-hoc "index my X" requests now route to reconfigure rather than being done once by hand, which leaves
+  the user believing a source is wired up when it is not.
+
 ## 1.10.0 — 2026-09-17
 
 **Changed — commitment tracking now covers both directions and fires on deadlines.**

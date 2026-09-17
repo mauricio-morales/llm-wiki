@@ -171,6 +171,26 @@ applies updates on a shared wiki.
 conventions in `Wiki/Schema.md` — both are never overwritten by an update. When a user asks to change how
 their wiki behaves, change `CLAUDE.md`; a rule written into a skill file is a future merge conflict.
 
+## Adding a source on the fly
+
+When the user asks for something to be ingested **regularly** — "make sure my X gets indexed", "add my Y
+as a source" — that is a configuration change, not a one-off ingest. Doing it once by hand leaves them
+believing it is wired up when it is not.
+
+Route it to the `wiki-setup` skill's reconfigure mode, which updates `llm-wiki.yml` and the ingest task
+together.
+
+**If the source is on their machine** — a folder, a SQLite file, an application's own database — read
+`references/local-sources.md` in the `wiki-setup` skill before promising anything. A Cowork session is
+sandboxed: a local path is frequently *not* readable even though it sits on the same computer, and the
+fix is an MCP server configured in the desktop app. Two things follow from that:
+
+- **Verify access by actually reading it**, never by assuming. A path recorded but unreadable produces a
+  job that fails silently every night and reports quiet weeks.
+- **Capture the schema or folder structure once and write it into the ingest task.** A scheduled job that
+  rediscovers table names and date formats every morning burns tokens, runs slower, and will eventually
+  interpret them differently than it did last week.
+
 ## Capturing discovered facts
 
 **The most common way this wiki fails is not a bad answer — it is a good answer that never gets written
