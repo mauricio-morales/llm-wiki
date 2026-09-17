@@ -63,7 +63,8 @@ these pages and is disposable; the pages are not. Sections, in this order:
 2. **Decisions** — each with who decided and on what authority. Superseded ones marked against what
    replaced them.
 3. **Ideas & proposals** — raised, not yet decided, with who raised each.
-4. **Open threads** — `follow-up` and `question`, each led by **its ID in square brackets** (`[52]`),
+4. **Open threads** — `follow-up` and `question`, each led by **the ID already on the item in the wiki**
+   (`[52]`) — read, never generated here;
    with owner, age, and what is blocked while it sits. Ranked by what is at stake, not by age. The IDs are
    what let the owner reply *"close 52"* against the report instead of opening the wiki.
 5. **Signals** — external facts that moved the picture.

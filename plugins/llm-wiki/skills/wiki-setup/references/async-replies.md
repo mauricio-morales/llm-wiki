@@ -15,8 +15,13 @@ line: `[41] Ana Ruiz — the Q4 rollout timeline...`
 - **One counter per wiki**, `nextItemId` in `wiki-ingest-state.json`, monotonically increasing. IDs are
   unique across everything the wiki ever lists — commitments, report items, flagged findings — so
   "regarding 41" is never ambiguous, even with a brief and a report in flight the same morning.
-- **Assigned at capture time**, stored on the item, and **never changed.** An ID that means one thing
-  today and another tomorrow is worse than none: the owner will reply about yesterday's number.
+- **Assigned at ingest, when the item is first written**, stored on the item in the wiki page or state
+  file, and **never changed.** An ID that means one thing today and another tomorrow is worse than none:
+  the owner will reply about yesterday's number.
+- **Never minted at send time.** A brief or report *reads* ids; it never invents them. An id generated
+  while rendering is a position in that message, not an identity — it shifts as items are added, closed
+  or reordered, so a reply naming it silently resolves to the wrong item. If an item reaches a report
+  without an id, that is an ingest bug: assign one, **write it back to the source**, and say so.
 - **Never reused**, not even after an item closes. A recycled ID silently reassigns an old reply to a new
   item.
 - Keep them short. `[41]` is typed one-handed on a phone; `[CMT-2026-0041]` is not, and the whole point

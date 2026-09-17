@@ -127,12 +127,17 @@ updated: YYYY-MM-DD
 Not a page type — a line format. Every item captured for a Focus Area is typed:
 
 ```
-- 2026-09-12 -- decision -- <what was settled> -- decided by <who>, <authority> -- [[source]]
-- 2026-09-12 -- idea -- <the proposal> -- raised by <who> -- [[source]]
-- 2026-09-12 -- follow-up -- <what is owed> -- owner <who>, due <date|none> -- [[source]]
-- 2026-09-12 -- question -- <what is open> -- blocks <what> -- [[source]]
-- 2026-09-12 -- signal -- <the external fact> -- [[source]]
+- [52] 2026-09-12 -- decision -- <what was settled> -- decided by <who>, <authority> -- [[source]]
+- [53] 2026-09-12 -- idea -- <the proposal> -- raised by <who> -- [[source]]
+- [54] 2026-09-12 -- follow-up -- <what is owed> -- owner <who>, due <date|none> -- [[source]]
+- [55] 2026-09-12 -- question -- <what is open> -- blocks <what> -- [[source]]
+- [56] 2026-09-12 -- signal -- <the external fact> -- [[source]]
 ```
+
+**The `[id]` is written here, at ingest, from the same wiki-wide `nextItemId` counter the commitments
+use.** It lives on the line in the wiki page — it is not a rendering detail. Reports read it; they never
+invent it. An id minted while rendering would differ on every run, so a reply naming it would resolve to
+the wrong thing or to nothing.
 
 `decision` without a named decider and authority is incomplete. Where authority is unclear, write
 `authority unclear` — never imply it.

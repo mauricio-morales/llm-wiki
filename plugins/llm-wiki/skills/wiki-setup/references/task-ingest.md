@@ -91,6 +91,11 @@ Where Focus Areas are configured, this rule outranks everything else in this job
   already knows when it happened.
 - **Never light-touch.** Other material can be a line. A Focus Area item is captured in full: what
   happened, who was involved, what was decided or proposed, what it changes.
+- **Give every item an `[id]` as you write it**, taken from the same wiki-wide `nextItemId` counter the
+  commitments use, and written onto the line in the wiki page. Assigned once, never changed, never
+  reused. This is what lets the owner reply *"close 52"* to a report. **Ids are never minted at report
+  time** — one invented while rendering changes on the next run, so a reply naming it lands on the wrong
+  item or nothing at all.
 - **Type and attribute every item**: `decision` (with **who decided and on what authority**), `idea`
   (who raised it), `follow-up` (owner, and date if stated), `question`, `signal`. Untyped items produce a
   report that is a list of things that happened, which is not a report. Where authority for a decision is

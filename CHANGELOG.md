@@ -12,6 +12,21 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.12.1 — 2026-09-17
+
+**Fixed — Focus Area items had no id until a report rendered one.**
+
+1.12.0 assigned ids at capture for commitments, but not for Focus Area items — while the report template
+still showed `[52]` on open threads. The report would therefore have had to mint them, which defeats the
+whole mechanism: an id generated while rendering is a position in that message, not an identity. It
+shifts as items are added, closed or reordered, so *"close 52"* would land on a different item next week.
+
+- Focus Area items now get their `[id]` **at ingest**, written onto the line in the wiki page, from the
+  same wiki-wide `nextItemId` counter the commitments use. The schema's line format shows it.
+- Stated explicitly in the protocol and both report templates: **a brief or report reads ids, it never
+  invents them.** An item reaching a report without one is an ingest bug — assign it, write it back to
+  the source, and say so.
+
 ## 1.12.0 — 2026-09-17
 
 **Added — everything sent out is two-way, and every listed item is addressable.**
