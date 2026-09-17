@@ -12,6 +12,32 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.12.0 — 2026-09-17
+
+**Added — everything sent out is two-way, and every listed item is addressable.**
+
+Reply handling existed only on the daily brief, was written around one chat connector, and Focus Area
+reports had none at all. And nothing listed carried an identifier, so a reply had to quote text back —
+which is why nobody would have bothered.
+
+- **New `references/async-replies.md`**, embedded into every delivering task's prompt (the brief and each
+  Focus Area report), filled in per channel — Slack thread, Teams chat or email reply. One copy to
+  correct rather than a rule duplicated per template and left to drift.
+- **Replies are read and acted on *before* the next artifact is composed.** One that contradicts what the
+  owner said last night proves the channel does not work, and they stop replying.
+- **Act at the source, not in the presentation**: state changes to the state file, corrections to the wiki
+  page, **format and presentation preferences into the task's own prompt** so they persist. A preference
+  honored once and forgotten is worse than ignoring it outright.
+- **Short `[41]`-style IDs** lead every listed item, so a reply can be *"close 41"* or *"regarding 41,
+  that's not true"*. One monotonic counter per wiki (`nextItemId`), assigned at capture, **never changed
+  and never reused** — a recycled id silently routes an old instruction to a new item. Kept short enough
+  to type one-handed on a phone, which is the whole point.
+- **Ambiguity is never guessed at, especially a close** — closing the wrong item is the unrecoverable
+  case, because the owner stops seeing it and assumes it was handled. Say what could not be interpreted.
+- **Each artifact opens by confirming what it actioned** ("Closed [41] and [17] per your notes"). Not
+  politeness — a reply the owner cannot see landing is a reply they stop sending.
+- Setup now tells the user the channel is two-way. One nobody knows about gets used as a broadcast.
+
 ## 1.11.0 — 2026-09-17
 
 **Added — reference material for local filesystem and database sources.**

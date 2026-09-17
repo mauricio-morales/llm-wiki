@@ -321,6 +321,11 @@ Do not start the backfill during setup. Write the plan, then offer to run the fi
    Their timezone you already resolved in Phase 1; working hours the brief infers from the calendar's own
    pattern at run time. Both are better read from real data than from an answer given cold on day one.
 5. **Tone.** Default: assertive, short, readable. Offer "more detailed" if they want it.
+6. **Tell them it is two-way.** Replying to a brief is how they steer it: *"close 41"*, *"regarding 41,
+   that's not true"*, *"stop showing the age"*, *"shorter"*. Every listed item carries a short `[ID]` for
+   exactly this, replies are read and acted on before the next brief is composed, and format preferences
+   are written into the job so they stick. Say this once at setup — a channel nobody knows is two-way
+   gets used as a broadcast.
 
 ## Phase 7 — The monthly lint
 
@@ -356,8 +361,10 @@ All paths relative to the wiki folder.
     `Log.md`, `Decisions.md`, `Goals.md` (carrying the metrics they named), and an empty `Reports/`
     folder. Skip entirely if there are none.
 6. `Archives/` — create the folder (with a `.keep` file so it survives sync).
-7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
-8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null}`, only if the brief is enabled.
+7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
+    `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
+    ever increases, and an id is never reused once assigned.
+8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null}`, only if the brief is enabled.
 9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
 10. `CLAUDE.md` — from `templates/CLAUDE.md`. **This is the piece that makes the wiki automatic**: it is
     what routes every future question to `query` and every "save this" to `ingest` without anyone typing
@@ -460,6 +467,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{WIKI_SLUG}}` | The short name. Every task id and title carries it |
 | `{{PLUGIN_VERSION}}` | The running plugin's version, from its `plugin.json`. `unknown` if it cannot be read — never a guess |
 | `{{INGEST_OWNER}} {{SHARED_FOLDER}} {{SHARED_BLOCK}}` | Who owns the scheduled ingest, and the shared-folder rules in `CLAUDE.md`. On a solo wiki, `SHARED_BLOCK` says plainly that this wiki is not shared — do not leave it empty |
+| `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
 | `{{FOCUS_AREA}} {{FOCUS_STATEMENT}}` | Per Focus Area. The statement is the routing key — specific, not a label |
 | source `notes` | The user's verbatim customization for each source, pasted into the task prompt as written — never paraphrased |
 

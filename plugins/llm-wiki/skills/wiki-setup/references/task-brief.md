@@ -45,22 +45,16 @@ If today is a skip day: stop. Send nothing, and do **not** touch `wiki-brief-sta
 accumulates on purpose — the next brief picks up from the unchanged `lastBriefSentThroughDate` and covers
 the whole stretch.
 
-## Step 0.5: Check for replies to the last brief
+## Step 0.5: Read and act on replies to the last brief
 
-**Any reply left on a previous brief is a message to you** — a correction, a missing detail, a gap being
-flagged — not an FYI aside. Treat it exactly as if it had been said in chat, and act on it **before**
-compiling today's brief.
+{{ASYNC_REPLY_PROTOCOL}}
 
-1. Read `lastBriefMessageId` from `wiki-brief-state.json`. If missing, skip this step today, but capture
-   the id after today's send so tomorrow's run can check.
-2. Fetch replies to that message ({{REPLY_FETCH}}).
-3. For each reply, work out what it actually asks for, and **take the action it implies rather than just
-   noting it**: a correction → fix it at the source, on the wiki page, not only in this task's state; a
-   flagged ingest gap → run a targeted ingest for the missing period or source, then re-derive from the
-   corrected wiki; a standing instruction about how the brief should work → update this task's prompt.
-4. If a reply needs judgment rather than a mechanical fix, do your best and **say in today's brief what
-   you did or could not resolve**, so it is visibly handled rather than silently dropped.
-5. No replies → proceed silently. Don't announce "no replies".
+<!-- Setup fills this from references/async-replies.md, with this task's channel, the state keys
+     (`lastSentMessageId`, `lastReplyHandledAt` in `wiki-brief-state.json`) and its fetch method
+     filled in. Embed it in full — a scheduled run cannot go and read the reference. -->
+
+**Do this before composing today's brief**, not after. A brief that contradicts what the owner told you
+last night is worse than no brief: it proves the channel does not work, and they stop replying.
 
 ## Step 1: Coverage window
 
@@ -116,6 +110,9 @@ change.
 
 Four things, in this order:
 
+0. **The item's ID in square brackets**, first on the line: `[41]`. This is what lets the owner reply
+   *"close 41"* or *"regarding 41, that's not true"* without quoting anything back. IDs are assigned at
+   capture, never change, and are never reused — see the async-reply protocol above.
 1. **The ask** — what was asked or agreed, specific enough to act on without opening the link.
 2. **The stake** — what is blocked, at risk or undecided, with a date when there is one.
 3. **Whose move and when** — name the other party, and say whether the date was their words or a default:
@@ -131,11 +128,12 @@ three weeks late that nobody is chasing.
 Worked examples:
 
 - ❌ `*Ana Ruiz* _(21d)_ — thread 1 · thread 2` — a name, a number and a URL. Says nothing about what was
-  asked, who owes whom, or what breaks. Every link still has to be opened to triage.
-- ✅ **You owe:** `*Ana Ruiz* — the Q4 rollout timeline you agreed to on Aug 27. **Due today**, her words.
-  She's presenting it Thursday, so slipping costs her the slot. — [Teams DM](<url>)`
-- ✅ **You're waiting on:** `*Dana Okafor* — the revised cost model you asked for. No date was given, so
-  this is the 7-day nudge. It blocks the proposal you promised Karim by the 20th. — [email](<url>)`
+  asked, who owes whom, or what breaks. Every link still has to be opened to triage, and there is nothing
+  to reply about.
+- ✅ **You owe:** `**[41]** *Ana Ruiz* — the Q4 rollout timeline you agreed to on Aug 27. **Due today**,
+  her words. She's presenting it Thursday, so slipping costs her the slot. — [Teams DM](<url>)`
+- ✅ **You're waiting on:** `**[38]** *Dana Okafor* — the revised cost model you asked for. No date was
+  given, so this is the 7-day nudge. It blocks the proposal you promised Karim by the 20th. — [email](<url>)`
 
 **All of this is already in the state file** — `subject`, `stake`, `withWhom`, `due`, `dueIsExplicit`,
 `link`. Read them and render them. **Do not re-derive them from the logs, and do not drop them for

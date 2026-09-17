@@ -46,6 +46,20 @@ authority is worse than one recorded as provisional.
 Match against the Focus Area's **statement** on its hub, not just its name — the statement is deliberately
 broader, and it is the routing key.
 
+## Briefs and reports are two-way
+
+Anything this wiki sends out — the daily brief, any Focus Area report — is a conversation. A reply to one
+is an instruction: read it, understand it, and act on it **before** the next one goes out.
+
+Every listed item carries a short `[41]`-style ID so a reply can name it. IDs come from `nextItemId` in
+the state file, are assigned once, and are **never reused** — a recycled ID sends an old instruction to a
+new item.
+
+Act at the source: state changes to the state file, corrections to the wiki page, **format and
+presentation preferences into the sending task's own prompt** so they persist. A preference honored once
+and forgotten teaches the owner to stop asking. Never guess at an ambiguous instruction, especially a
+close — say what you could not interpret and ask.
+
 ## Commitments, both directions
 
 This wiki tracks every ask in flight so none is dropped — what people owe the owner, and what the owner

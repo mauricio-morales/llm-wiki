@@ -9,6 +9,16 @@ Produce this period's report for the Focus Area **{{FOCUS_AREA}}**, in the wiki 
 
 Read `llm-wiki.yml`, `Wiki/Schema.md` and `Wiki/{{FOCUS_AREA}}/_index.md` first.
 
+## Step 0 — Read and act on replies to the last report
+
+{{ASYNC_REPLY_PROTOCOL}}
+
+<!-- Setup fills this from references/async-replies.md, with this task's channel and the state keys
+     for this Focus Area's report. Embed it in full — a scheduled run cannot read the reference. -->
+
+Do this **before** assembling the period, so this run's report already reflects whatever the owner said
+about the last one.
+
 ## Step 1 — Assemble the period
 
 The period runs from the last report's date (see `Wiki/{{FOCUS_AREA}}/Reports/`, newest page) to today.
@@ -53,8 +63,9 @@ these pages and is disposable; the pages are not. Sections, in this order:
 2. **Decisions** — each with who decided and on what authority. Superseded ones marked against what
    replaced them.
 3. **Ideas & proposals** — raised, not yet decided, with who raised each.
-4. **Open threads** — `follow-up` and `question`, with owner, age, and what is blocked while it sits.
-   Ranked by what is at stake, not by age.
+4. **Open threads** — `follow-up` and `question`, each led by **its ID in square brackets** (`[52]`),
+   with owner, age, and what is blocked while it sits. Ranked by what is at stake, not by age. The IDs are
+   what let the owner reply *"close 52"* against the report instead of opening the wiki.
 5. **Signals** — external facts that moved the picture.
 6. **Looking ahead** — what lands before the next report: dated commitments, scheduled decisions, known
    risks. This section is why anyone reads a report on time rather than in arrears.
@@ -86,7 +97,8 @@ overview. The wiki still holds every run.
 
 {{DELIVERY_BLOCK}}
 
-Short, and **written to be read on a phone**: what changed, the two or three numbers that moved and which
+Short, and **written to be read on a phone**. Lead with one line confirming anything you actioned from
+replies to the last report. Carry the `[IDs]` through, so every item named can be replied to: what changed, the two or three numbers that moved and which
 way, anything that needs a decision or is now overdue, and what lands before the next report. Then a
 pointer to the HTML file by path.
 

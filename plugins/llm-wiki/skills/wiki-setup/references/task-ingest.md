@@ -126,6 +126,10 @@ made, not a task.
 
 ### Fields — all of them, every entry
 
+- `id` — a short integer from `nextItemId` in the state file, incremented on use. **Assigned once, never
+  changed, never reused** — this is what the owner types when replying to a brief (*"close 41"*), so an ID
+  that shifts or gets recycled sends their instruction to the wrong item. Reuse after an item closes is
+  the dangerous case; keep the counter monotonic and never reclaim.
 - `direction` — `theirs` (they owe the owner) or `mine` (the owner owes them)
 - `withWhom` — the other party, by name
 - `subject` — what was asked or agreed, specific enough to act on without opening the link
