@@ -12,6 +12,35 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.10.0 — 2026-09-17
+
+**Changed — commitment tracking now covers both directions and fires on deadlines.**
+
+The previous version tracked only asks the owner **sent**, and aged them by time elapsed (7 days, then
+14). Two things were therefore missed: anything the owner **agreed to produce** for someone else was
+never tracked at all, and a stated deadline did nothing — a thing due Friday surfaced on day 7 regardless.
+
+- **Two directions.** `theirs` (someone owes the owner) and `mine` (the owner owes someone). `mine` is
+  captured **only when the owner accepted** the request — an unanswered ask from someone else is not a
+  commitment, though it is flagged once so it does not vanish.
+- **`due` is never empty, and drives everything.** A stated date wins, resolved to an absolute date
+  against the *message's own* date at capture time ("by Friday" in a message sent Sept 2 is Sept 4). With
+  no date stated, `due` = `asked` + 7 days, marked `dueIsExplicit: false`.
+- **A defaulted nudge date is never presented as a promised deadline.** The brief says which it is,
+  because the owner will quote it back to someone.
+- **Surfaces on the due date and every day after until closed** — not once. An overdue item that stops
+  being mentioned is an item that got dropped. Anything the owner owes with a real stated deadline also
+  gets one heads-up the previous working day: being told on the morning it is due is often too late to
+  produce a document.
+- **Nothing surfaces before its due date.** A list of everything open every morning becomes wallpaper.
+- **The brief renders two separate sections**, "You owe" first. They are opposite instructions — do work
+  versus chase someone — and merging them makes the reader sort them by hand every day.
+- **Closed only on evidence, never on age.** `theirs` closes when the answer or artifact arrives; `mine`
+  closes when the owner produced it, actively looked for in their own sent messages and activity. An
+  entry left open after the work was done trains the owner to ignore the list.
+- Existing wikis: entries under `pendingOutboundRequests` are migrated into `commitments` with
+  `direction: theirs` on the next run.
+
 ## 1.9.1 — 2026-09-17
 
 **Fixed — the README never said the session has to be a Cowork session.**

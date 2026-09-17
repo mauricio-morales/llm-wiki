@@ -20,7 +20,8 @@ case it changed. Then follow the `wiki` skill's `ingest` workflow.
 Job state lives at the storage root, next to `llm-wiki.yml`: `wiki-ingest-state.json`. It holds
 `lastSuccessfulRun` (ISO timestamp), per-source dedup cursors, `frequentContacts` (rolling interaction
 scores), `channelActivity` (per-channel post/reaction counts, used to tell conversation channels from
-announcement channels) and `pendingOutboundRequests`. It holds cursors and tracking data — never
+announcement channels) and `commitments` (open asks in both directions). It holds cursors and
+tracking data — never
 credentials.
 
 Compute the window for **every** source below:
@@ -103,29 +104,80 @@ Where Focus Areas are configured, this rule outranks everything else in this job
 If the window held nothing for a Focus Area, **say so explicitly in the report** rather than omitting the
 section. Silence and "nothing happened" must never look the same.
 
-## Outbound request tracking
+## Commitment tracking — both directions
 
-Cuts across every message-carrying source. Scan what the wiki owner **sent** — sent mail, their own chat
-messages, their ticket comments — for asks that need an answer back. For each new one, add an entry to
-`pendingOutboundRequests` in the state file with all four fields:
+Cuts across every message-carrying source. **The purpose is that no ball gets dropped in either
+direction**: things the owner is waiting on from other people, and things other people are waiting on
+from the owner. Both live in `commitments` in the state file.
 
-- `subject` — what was actually asked, specific enough to act on without opening the link
-- `stake` — what is blocked, at risk or undecided while it sits, with a date when one exists
-- `link` — a deep link to the source message itself, never to a wiki page summarizing it
-- `whoseMove` — `them` or `us`
+### What to capture
 
-Capture the link **at ingest time**, when you already have the message in hand. Hunting for it later, in
-the brief, costs far more. Techniques: Slack search returns a permalink on every hit; email search on the
+**Outbound — they owe the owner.** Scan what the owner **sent** (sent mail, their own chat messages,
+their ticket comments) for asks that need something back: a decision, an answer, a document, an action.
+
+**Inbound — the owner owes them.** Scan what the owner **received**, and capture a commitment **only
+when the owner accepted it.** An unanswered request from someone else is not yet a commitment. Acceptance
+looks like: "I'll send that", "yes, will do", "on it", "by Friday", taking assignment of a ticket, or
+saying they'll bring something to a meeting. The agreement is the trigger, not the request.
+
+If a request was made of the owner and they **never responded at all**, that is not a commitment — but
+flag it once in the run report so it does not simply vanish. An unacknowledged ask is a decision not yet
+made, not a task.
+
+### Fields — all of them, every entry
+
+- `direction` — `theirs` (they owe the owner) or `mine` (the owner owes them)
+- `withWhom` — the other party, by name
+- `subject` — what was asked or agreed, specific enough to act on without opening the link
+- `stake` — what is blocked, at risk or undecided while it sits
+- `link` — a deep link to the source message, never to a wiki page summarizing it
+- `asked` — ISO date the ask was made or the commitment accepted
+- `due` — ISO date. **See below; this is never left empty.**
+- `dueIsExplicit` — `true` if a date was actually stated, `false` if defaulted
+- `status` — `open` · `fulfilled` · `withdrawn` · `superseded`
+
+### Setting `due` — the rule that makes this work
+
+**If a date was stated, that is the due date.** Resolve relative wording against the **message's own
+date**, not today's: "by Friday" in a message sent on 2026-09-02 is 2026-09-04. "End of the month",
+"before the board meeting on the 12th", "next Tuesday" all resolve to an absolute ISO date at capture
+time. Set `dueIsExplicit: true`.
+
+**If no date was stated, `due` = `asked` + 7 days**, and `dueIsExplicit: false`. This is a nudge date,
+not a real deadline, and the brief says so — but it guarantees that every open commitment surfaces
+eventually instead of quietly ageing forever.
+
+Resolve the date **at capture time, while the message is in hand.** Deriving it later from a summary is
+how "by Friday" becomes the wrong Friday.
+
+### Closing them out
+
+Each run, check every `open` commitment for fulfilment. **Never close on age** — only on evidence.
+
+**`theirs`** is fulfilled when: a reply lands in the thread answering it, the document or decision
+arrives, a ticket transitions, or someone states it is done. Record `fulfilled` with the date and how it
+was detected.
+
+**`mine`** is fulfilled when **the owner produced the thing**: they sent the document, replied to the
+original thread with the answer, moved or closed the ticket, created the deliverable, or the other party
+acknowledged receipt. Look for this actively in the owner's sent messages and their own activity — an
+entry that stays open after the work was done trains the owner to ignore the list, which is worse than
+not having one.
+
+Also close on `withdrawn` (the other party dropped it, or the owner was released from it) and
+`superseded` (replaced by a newer ask). Record which, never silently delete.
+
+**Capture the link at ingest time.** Slack search returns a permalink on every hit; email search on the
 Sent folder returns a web link; **Teams chat search returns a null `webUrl` whenever a date filter is
 set** — the date filter forces a per-chat scan path that omits the field, so run it with **no date
 filter** and narrow with distinctive keywords from the message text instead.
 
-Each run, check whether any pending ask has since been answered — a reply in the thread, a ticket
-transition, the thing simply arriving. Close those out. Age the rest: `#waiting` at 7-13 days,
-`#waiting-overdue` at 14+. Mirror the open list into `Wiki/{{PRIMARY_NS}}/Timeline.md`'s
-"Waiting on a reply" section.
+Mirror the open list into `Wiki/{{PRIMARY_NS}}/Timeline.md` under **"Waiting on others"** (`theirs`) and
+**"I owe"** (`mine`).
 
-**An ask is not closed because it is old.** It is closed because it was answered or withdrawn.
+**Migration:** a wiki whose state file still has `pendingOutboundRequests` — carry those entries into
+`commitments` with `direction: theirs`, `asked` from the original date, and `due` derived by the rule
+above. Do it once, then use `commitments` only.
 
 ## Follow shared links once
 

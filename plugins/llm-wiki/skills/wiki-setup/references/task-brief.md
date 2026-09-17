@@ -83,44 +83,72 @@ as-is rather than treating it as a fault.
 Also worth a cheap glance each run — read the hub `### Index`, open a child page only if something is
 actively in flight: {{WATCH_HUBS}}
 
-## Step 3: The waiting list — the section that has to be right
+## Step 3: Commitments — the section that has to be right
 
-Pull the open asks from `wiki-ingest-state.json`'s `pendingOutboundRequests` and
-`Wiki/{{PRIMARY_NS}}/Timeline.md`'s "Waiting on a reply".
+Read `commitments` from `wiki-ingest-state.json` and `Wiki/{{PRIMARY_NS}}/Timeline.md`'s "Waiting on
+others" and "I owe" sections. **This is why the brief exists: nothing the owner is owed, and nothing the
+owner owes, should ever be forgotten.**
 
-**Every item renders four things, in this order:**
+### What surfaces today
 
-1. **The ask** — what was actually asked, specific enough to act on without opening the link.
-2. **The stake** — what is blocked, at risk or undecided while it sits, with a date when there is one.
-3. **Whose move it is** — say it explicitly. *"He owes you the estimate"* and *"you owe him an answer"*
-   are opposite instructions and the brief must never blur them.
-4. **The link** — a markdown link on the item, to the source message. Never a bare URL, and never a
-   pointer to the wiki page instead of the message.
+An `open` commitment appears when **`due` is today or earlier**, and then **every day after that until it
+is closed.** Not once — every day. An overdue item that stops being mentioned is an item that got dropped.
 
-The age stays, but it is the least useful of the five. **Rank within a tier by stake, not by age** — an
-11-day ask blocking a dated client call outranks a 21-day courtesy chase. Lead with `#waiting-overdue`.
+Two additions to that rule, both deliberate:
 
-The failure mode to avoid, concretely:
+- **`mine` with `dueIsExplicit: true` also gets one heads-up on the previous working day.** "You owe this
+  today" at 7:30am is often too late to produce a document. One day's warning is the difference between a
+  reminder and a post-mortem. Say it is due tomorrow, clearly.
+- **Nothing surfaces before that.** A brief that lists every open commitment every morning becomes
+  wallpaper, and wallpaper is not read. The point of the due date is that the list stays short enough to
+  act on.
 
-- ❌ `*Ana Ruiz* _(21d)_ — thread 1 · thread 2` — a name, a number and a URL. It says nothing about what
-  was asked, who owes whom, or what breaks. Every link still has to be opened to triage.
-- ✅ `*Ana Ruiz* _(12d)_ — you asked for a rollout timeline on the training programme. She owes you a
-  date. It's now also blocking the Q4 proposal you promised Dana on Monday. — [Teams DM, Aug 27](<url>)`
+Below `due`, commitments stay silently tracked. They are not gone; they are simply not today's problem.
 
-All of this is already in the state file — `subject`, `stake`, `whoseMove`, `link`. **Read them and
-render them. Do not re-derive them from the logs, and do not drop them for brevity** — this is the one
-section where length buys action. If an older entry is missing `stake` or `link`, derive or resolve it
-now, **write it back into the state file**, and render it. Capture once, not every morning.
+### Two sections, never merged
+
+**"You're waiting on"** (`theirs`) and **"You owe"** (`mine`) are separate headings. They are opposite
+instructions — one means chase someone, the other means do work — and a merged list makes the reader
+sort them by hand every morning. Lead with **"You owe"**: it is the one where the owner's own day has to
+change.
+
+### How each line renders
+
+Four things, in this order:
+
+1. **The ask** — what was asked or agreed, specific enough to act on without opening the link.
+2. **The stake** — what is blocked, at risk or undecided, with a date when there is one.
+3. **Whose move and when** — name the other party, and say whether the date was their words or a default:
+   *"due today (they said Friday)"* versus *"7 days since you asked, no date was given"*. **Do not present
+   a defaulted nudge date as though it were a promised deadline** — the owner will quote it back to
+   someone, and being wrong about that costs credibility.
+4. **The link** — a markdown link to the source message. Never a bare URL, never a pointer to the wiki
+   page instead of the message.
+
+Rank by **stake, then by how overdue.** A commitment two days late that blocks a client call outranks one
+three weeks late that nobody is chasing.
+
+Worked examples:
+
+- ❌ `*Ana Ruiz* _(21d)_ — thread 1 · thread 2` — a name, a number and a URL. Says nothing about what was
+  asked, who owes whom, or what breaks. Every link still has to be opened to triage.
+- ✅ **You owe:** `*Ana Ruiz* — the Q4 rollout timeline you agreed to on Aug 27. **Due today**, her words.
+  She's presenting it Thursday, so slipping costs her the slot. — [Teams DM](<url>)`
+- ✅ **You're waiting on:** `*Dana Okafor* — the revised cost model you asked for. No date was given, so
+  this is the 7-day nudge. It blocks the proposal you promised Karim by the 20th. — [email](<url>)`
+
+**All of this is already in the state file** — `subject`, `stake`, `withWhom`, `due`, `dueIsExplicit`,
+`link`. Read them and render them. **Do not re-derive them from the logs, and do not drop them for
+brevity** — this is the one section where length buys action. If an older entry is missing a field,
+resolve it now, **write it back into the state file**, and render it. Capture once, not every morning.
 
 **Open the linked message before quoting what it says.** Doing exactly this has caught real errors — a
-log claiming an escalated ask "was never actually sent" when the linked message shows it was sent in full
-and simply never answered. Trusting the log's summary would have had the owner re-send something they
-had already sent.
+log claiming an escalated ask "was never sent" when the linked message shows it was sent in full and
+simply never answered. Trusting the summary would have had the owner re-send something they already sent.
 
-Where an ask was partially addressed, say what is actually left rather than leaving it in the list as if
-untouched.
+Where a commitment was partially met, say what is actually left rather than listing it as untouched.
 
-If the list is empty, skip the section silently.
+If both sections are empty, skip them silently.
 
 ## Step 4: What's coming up
 

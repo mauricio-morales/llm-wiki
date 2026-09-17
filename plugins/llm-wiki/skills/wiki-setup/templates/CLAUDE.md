@@ -46,6 +46,24 @@ authority is worse than one recorded as provisional.
 Match against the Focus Area's **statement** on its hub, not just its name — the statement is deliberately
 broader, and it is the routing key.
 
+## Commitments, both directions
+
+This wiki tracks every ask in flight so none is dropped — what people owe the owner, and what the owner
+owes people.
+
+**When a conversation produces either, record it** in `commitments` in `wiki-ingest-state.json`:
+`direction` (`theirs` / `mine`), `withWhom`, `subject`, `stake`, `link` to the source message, `asked`,
+`due`, `dueIsExplicit`, `status`.
+
+**`mine` is only for things the owner actually agreed to.** A request nobody accepted is not a commitment.
+
+**`due` is never empty.** A stated date wins, resolved to an absolute date against the message's own date.
+With no date stated, `due` = `asked` + 7 days, flagged `dueIsExplicit: false` — a nudge, not a promise,
+and it must never be quoted back to anyone as a deadline.
+
+**Close only on evidence.** Something arriving, the owner delivering it, an explicit release. Never on
+age: an old ask is not a finished one.
+
 ## If you had to look it up, write it down
 
 **When answering a question required going outside the wiki, file what you found.** Do not ask first.

@@ -353,7 +353,7 @@ All paths relative to the wiki folder.
     `Log.md`, `Decisions.md`, `Goals.md` (carrying the metrics they named), and an empty `Reports/`
     folder. Skip entirely if there are none.
 6. `Archives/` — create the folder (with a `.keep` file so it survives sync).
-7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "pendingOutboundRequests": [], "frequentContacts": {}, "channelActivity": {}}`.
+7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
 8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null}`, only if the brief is enabled.
 9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
 10. `CLAUDE.md` — from `templates/CLAUDE.md`. **This is the piece that makes the wiki automatic**: it is

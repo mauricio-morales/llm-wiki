@@ -118,8 +118,9 @@ updated: YYYY-MM-DD
 - `## Commitments` — concrete future date-bound commitments surfaced in meetings/email/chat that are
   **not** on anyone's calendar (a stated deadline, a "follow up next week" promise, a target date
   mentioned in passing), each linking back to the log entry it came from. Pruned once the date passes.
-- `## Waiting on a reply` — asks that have gone out and not come back. **Not pruned by date.** Each
-  line carries the ask, the stake, the age and a deep link. See "Outbound request tracking".
+- `## Waiting on others` and `## I owe` — open commitments in both directions. **Not pruned by date.**
+  Each line carries the ask, the stake, the due date (and whether it was stated or defaulted), and a deep
+  link. See "Commitment tracking".
 
 ### Focus-Area item (inside Log.md / Decisions.md)
 
@@ -188,22 +189,37 @@ report, and flag any contradiction rather than overwriting it.
 
 _(none yet — add people here deliberately; ingest runs never add or remove them on their own)_
 
-## Outbound request tracking
+## Commitment tracking
 
-An ask that goes out and never comes back is the most expensive thing a wiki can lose. Every ask the
-wiki owner sends — in email, chat or a ticket — is tracked in the ingest state file until it is answered,
-and rendered in the daily brief.
+An ask that goes out and never comes back, or one accepted and never delivered, is the most expensive
+thing a wiki can lose. Both directions are tracked in the ingest state file until closed, and rendered in
+the daily brief.
 
-Each tracked ask carries four fields, and **all four are mandatory**:
+**Two directions, never merged:**
 
-1. **`subject`** — what was actually asked, specific enough to act on without opening the link
-2. **`stake`** — what is blocked, at risk or undecided while it sits, with a date when one exists
-3. **`link`** — a deep link to the source message itself, never to the wiki page summarizing it
-4. **`whoseMove`** — `them` or `us`. "He owes you the estimate" and "you owe him an answer" are
-   opposite instructions and must never be blurred
+- `theirs` — someone owes the owner something
+- `mine` — the owner owes someone something, **and agreed to it**. A request nobody accepted is not a
+  commitment; the agreement is the trigger.
 
-Ageing: `#waiting` at 7-13 days, `#waiting-overdue` at 14+. **Rank by stake, not by age** — an 11-day
-ask blocking a dated client call outranks a 21-day courtesy chase.
+**Every entry carries:** `direction`, `withWhom`, `subject` (what was asked or agreed), `stake` (what is
+blocked while it sits), `link` (to the source message, never to a summary), `asked`, `due`,
+`dueIsExplicit`, `status`.
+
+**`due` is never empty.** If a date was stated, that is it — resolved to an absolute date against the
+*message's* date, at capture time. If none was stated, `due` = `asked` + 7 days and `dueIsExplicit` is
+`false`: a nudge date, not a promise, and the brief must say which it is.
+
+**Surfacing:** an open commitment appears in the brief when `due` is today or earlier, and **every day
+after until it closes.** Anything the owner owes with a real stated deadline also gets one heads-up the
+previous working day — being told on the morning it is due is often too late to produce it.
+
+**Closing:** only on evidence, never on age. `theirs` closes when the answer or artifact arrives; `mine`
+closes when the owner produced it. Also `withdrawn` or `superseded`, recorded as such rather than deleted.
+
+## Timeline sections
+
+`Timeline.md` carries **"Waiting on others"** and **"I owe"**, mirroring the two directions. Neither is
+pruned by date — unlike the calendar and commitment lines, an open commitment stays until it is closed.
 
 ## L1/L2 Architecture
 
