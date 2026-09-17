@@ -12,6 +12,35 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.9.0 — 2026-09-17
+
+**Fixed — paged sources were being read one page deep and reported as quiet.**
+
+Found in the field: an unscoped mail sweep returned its first 100 records, more existed, and the run
+reported the window as quiet. Nothing errored. A capped sweep and an empty one are written to the wiki
+identically, so the gap was invisible and would have stayed that way.
+
+The existing "never silently truncate" rule only ever covered a **single item too large for one
+response** — a long transcript. It said nothing about **paged result sets**, which fail in the opposite
+direction: no error, a plausible-looking result, and a hole.
+
+- **Drain to depletion.** Follow the cursor (`nextLink`, `next_cursor`, `has_more`, `offset`) until the
+  source says there are no more pages. Added to the ingest job, the backfill protocol, the engine skill
+  and the generated `CLAUDE.md`, so it applies whether or not a skill was explicitly invoked.
+- **A result count at exactly the page size is a cap, not an answer.** 100, 50, 25, 200, 1000 — a real
+  count is ragged. Treat an exact-page-size result as truncated until proven otherwise.
+- **When it can't be drained, narrow and re-query** — split the window in half and recurse until each
+  part returns under the cap — rather than accepting the partial.
+- **New backfill unit status `truncated`.** A capped unit is never `done` and never `empty`; it is split
+  into half-window units and the original marked `truncated`. Marking a capped unit `done` was the worst
+  case available: the checkpoint would claim the window was covered, nothing would revisit it, and the
+  gap would be permanent. A backfill is no longer "complete" while any unit is `truncated`.
+- **Reports now carry per-source retrieved counts and windows**, which is the only place a cap shows.
+- **`lastSuccessfulRun` is never advanced after a run with an undrained source** — leaving it widens the
+  next window and retries the gap.
+- **The monthly lint hunts for the signature**: per-source counts sitting at a round page size, and any
+  backfill unit still marked `truncated`.
+
 ## 1.8.1 — 2026-09-12
 
 **Changed — the plugin moved into `plugins/llm-wiki/` in the repository.**

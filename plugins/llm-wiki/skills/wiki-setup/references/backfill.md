@@ -77,10 +77,16 @@ mistaken for wiki content. Written by setup, updated after every unit.
 }
 ```
 
-`status` per unit: `pending` · `in_progress` · `done` · `failed` · `empty` · `skipped`.
+`status` per unit: `pending` · `in_progress` · `done` · `failed` · `empty` · `truncated` · `skipped`.
 
 `empty` is a real, successful outcome — that source had nothing in that week. Record it as `empty`, not
 `done`, so a later reader can tell "we looked and there was nothing" from "we looked and found things".
+
+**`truncated` is the one that protects the backfill's integrity.** A unit whose query hit a page cap and
+could not be drained is **never** `done` and **never** `empty`. Mark it `truncated`, record how many
+records came back and what the cap was, and split it (below). Marking a capped unit `done` is the single
+worst thing this protocol can do: the checkpoint says that window is covered, nothing ever revisits it,
+and the gap is permanent and silent. The whole value of checkpointing rests on `done` meaning done.
 
 ## Planning the units
 
@@ -89,6 +95,8 @@ mistaken for wiki content. Written by setup, updated after every unit.
 2. Chunk size by expected volume: **week** for email, chat and meetings; **month** for tickets,
    documents, calendar and anything low-traffic. If a week's unit repeatedly overruns, split it to days
    and rewrite the remaining units for that source — record the change in the plan file.
+   Backfill windows are wide and historical, which is exactly where page caps bite. Size chunks so a
+   normal one returns **comfortably under** the source's page size, not near it.
 3. Order units **oldest first**, and within a chunk, source by source in a fixed order. Chronological
    order matters: the log pages append, so out-of-order execution produces a log that reads backwards and
    a Timeline that resurrects dead deadlines.
@@ -106,6 +114,13 @@ For each unit:
    finished. Re-running a unit is safe; the ingest workflow appends and de-duplicates against what is
    already on the page.
 2. Pull that source for that window only. Do not widen it because the window looked thin.
+   **Drain every page.** Follow the cursor (`nextLink`, `next_cursor`, `has_more`, `offset`) until the
+   source says there are no more. A result count at exactly the page size — 100, 50, 25 — is a cap, not
+   an answer; assume more exists and prove otherwise.
+   **If it cannot be drained, split the unit rather than accepting the partial.** Replace it in the plan
+   with two half-window units (a week becomes two half-weeks, a day becomes two half-days), mark the
+   original `truncated` with a note, and process the new units. Recurse until each returns under the cap.
+   Record every split in the plan file so `unitsTotal` stays honest.
 3. Ingest per the normal workflow — extract, route, cross-link, update hub `### Index` lines.
 4. Write the unit's result to the plan file: `done` / `empty` / `failed`, with counts and any note.
 5. **Stop and report progress if the context is getting heavy.** Do not try to squeeze in one more unit.
@@ -135,10 +150,14 @@ Three ways, all reading the same plan file:
   it in one line, without derailing whatever the user actually asked for.
 
 Always report backfill progress as `unitsDone / unitsTotal`, with the date the backfill has reached, and
-the count of `failed` and `empty` units. "17 of 84 units, backfilled through 2026-06-24, 1 failed" tells
+the count of `failed`, `empty` and `truncated` units. **A non-zero `truncated` count is the most important
+number in the report** — it is the only visible sign that part of the history was seen but not captured. "17 of 84 units, backfilled through 2026-06-24, 1 failed" tells
 the user everything. "Backfill in progress" tells them nothing.
 
 ## When it finishes
+
+**A backfill is not complete while any unit is `truncated` or `in_progress`.** Those are unfinished work,
+not results. Only `done`, `empty`, `failed` (after its retries) and `skipped` are terminal.
 
 Set `status: complete`, report the totals — units done, empty, permanently failed; pages created; the
 real date range actually covered versus the one requested (they differ whenever a connector's retention

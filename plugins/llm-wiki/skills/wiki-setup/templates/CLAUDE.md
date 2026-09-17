@@ -105,6 +105,12 @@ Filing means filing **properly** — right page, routing line in the nearest enc
 8. **Never silently skip or truncate.** A source that was unavailable, a file too large to read in one
    pass, a link that couldn't be opened — say so. Silence reads as "there was nothing there", which is
    the one thing it must never mean.
+9. **Drain paged sources to the last page.** Anything returning a list — mail, chat, tickets, files —
+   pages its results. Follow the cursor (`nextLink`, `next_cursor`, `has_more`) until there are no more.
+   **A result count at exactly the page size (100, 50, 25) is a cap, not an answer** — a real count is a
+   ragged number. If it can't be drained, narrow the window and re-query rather than accepting a partial
+   result, and if it still can't be, say which window is incomplete. A capped sweep and an empty one look
+   identical once written down, and only one of them is true.
 
 {{PRIVACY_BLOCK}}
 

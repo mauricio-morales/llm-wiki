@@ -513,8 +513,15 @@ Rules:
 - Wiki pages are written in the wiki's configured language (`language` in `llm-wiki.yml`), regardless of
   the language of the request or the source. Reply to the user in their language; write files in the
   wiki's
-- Never silently truncate: if a source is too large, process it in chunks and say so. If a source is
-  unavailable, report it rather than skipping it quietly
+- Never silently truncate. Two distinct cases, and the second is the one that hides:
+  - A single item too large for one response — read it in chunks, never cut it short
+  - **A paged result set** — drain every page before concluding anything. A query that stops at the page
+    cap returns no error and looks complete, so a capped sweep reads exactly like a quiet window. Follow
+    the cursor to depletion; treat a result count at exactly the page size as a cap, not an answer; and
+    if it cannot be drained, narrow the window and re-query rather than accepting the partial
+- If a source is unavailable, or was only partially read, report it rather than skipping it quietly.
+  "Nothing found" and "the first 100 of an unknown number" are different findings and must never be
+  written the same way
 </constraints>
 ---
 

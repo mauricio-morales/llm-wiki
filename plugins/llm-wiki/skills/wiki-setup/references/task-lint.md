@@ -65,8 +65,18 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    reported because on a synced folder there is otherwise **no signal at all** that a teammate has been
    running last month's logic.
 
-7. **Backfill status** — if `wiki-backfill-state.json` exists and is in progress, report
-   `unitsDone / unitsTotal`, the date reached, and any permanently failed units.
+7. **Suspected capped sweeps** — scan `wiki-ingest-state.json` and recent run reports for per-source
+   retrieved counts sitting at a round page size (100, 50, 25, 200, 1000), and especially the same number
+   recurring. That is the signature of a sweep that stops at its page cap and reports the remainder as a
+   quiet window. Flag the source and the affected windows, and state the fix: narrow the window and
+   re-ingest that period.
+
+   This check exists because the failure is otherwise undetectable — once written to the wiki, a
+   truncated window and a genuinely empty one are indistinguishable.
+
+8. **Backfill status** — if `wiki-backfill-state.json` exists and is in progress, report
+   `unitsDone / unitsTotal`, the date reached, any permanently failed units, and **any unit still marked
+   `truncated`** — windows that were seen but not captured, and the likeliest source of a silent hole.
 
 ## Rules
 

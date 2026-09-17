@@ -35,12 +35,48 @@ Compute the window for **every** source below:
   sources processed or explicitly reported unavailable). A partial or failed run must leave it untouched
   so the next run's window widens to retry the gap.
 
+## Paged sources: drain every page, and never call a cap "quiet"
+
+Most connectors return results a page at a time. **A paged query is not finished when the first page
+comes back — it is finished when the source says there are no more pages.** Stopping early does not
+raise an error; it returns a plausible-looking result set, and the run reports a quiet window over data
+it never looked at. This has already happened once: an unscoped mail sweep returned its first 100
+records, more existed, and the run called the window quiet.
+
+**Follow the cursor to depletion.** Whatever the source calls it — `nextLink`, `@odata.nextLink`,
+`next_cursor`, `cursor`, `has_more`, `offset`, `page` — keep requesting until it is absent or false.
+Count what you actually retrieved and carry that number into the report.
+
+**Treat a round-numbered result count as truncated until proven otherwise.** Exactly 100, 50, 25, 20,
+200, 1000 records is almost never the real answer; it is the cap. A genuine count is a ragged number. If
+a sweep returns exactly the page size, assume there is more and prove otherwise before moving on.
+
+**When a source will not give you the rest** — no cursor, a hard cap, rate limiting — do not accept the
+partial result. **Narrow and re-query**: split the window in half and run both halves, recursing until
+each returns comfortably under the cap. A month that caps at 100 becomes four weeks that return 30 each.
+Tighten scope the same way, per mailbox, folder or channel, when the window cannot usefully shrink.
+
+**If it still cannot be drained, say so explicitly and precisely.** "Email: reached the 100-record cap
+for 2026-09-01..09-07 and could not page further; this window is incomplete" is a usable finding. "Email:
+nothing notable" for the same window is a false statement that no one will ever catch, because an empty
+result and a truncated one look identical in a wiki.
+
+**Report retrieved counts per source, every run**, even when the run went fine. A source reporting
+exactly its page size week after week is a capped sweep that nobody noticed, and the count is the only
+place that shows.
+
+**Never write `lastSuccessfulRun` after a run with an undrained source.** Leaving it unchanged widens the
+next window and retries the gap; advancing it past data that was never read makes the gap permanent and
+invisible.
+
 ## Sources
 
 {{SOURCE_BLOCKS}}
 
 A source that is configured but has no connector authorized in this environment: **report it clearly as
 pending, do not silently skip it, and do not substitute another source for it.**
+
+Every source below that returns lists is a paged source. The drain rule above applies to all of them.
 
 ## Focus Areas — first-class, every source
 
@@ -147,7 +183,13 @@ heavy. Forward ingest always comes first — never let the backfill starve today
 ## Report
 
 Open the summary with a **Focus Areas** section when any are configured — new decisions and who made
-them, new ideas, threads opened and closed, signals — before anything else. Then: pages created and
-updated, notable decisions and action items, newly opened
-and newly closed outbound asks, any source that was unavailable, backfill progress if a backfill is
-running, and the window actually used if it was wider than 24h because of a missed run.
+them, new ideas, threads opened and closed, signals — before anything else.
+
+Then a **per-source line giving the window and how many records were actually retrieved.** This is what
+makes a capped sweep visible: a source reporting exactly its page size, especially the same number week
+after week, is a silent gap nobody would otherwise catch. Say explicitly where a source could not be
+drained and which window is therefore incomplete.
+
+Then: pages created and updated, notable decisions and action items, newly opened and newly closed
+outbound asks, any source that was unavailable, backfill progress if a backfill is running, and the
+window actually used if it was wider than 24h because of a missed run.
