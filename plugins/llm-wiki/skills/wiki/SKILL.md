@@ -577,4 +577,8 @@ is a derivative work: same architecture, rebuilt to configure itself conversatio
 rather than through a shell script, with scheduled ingest/brief/lint jobs, resumable backfill and Focus
 Areas added on top.
 
-Not affiliated with or endorsed by the original author.
+The pattern itself — a persistent, LLM-maintained wiki with ingest / query / lint as its core operations
+— was proposed by **Andrej Karpathy**
+([gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)).
+
+Not affiliated with or endorsed by either.

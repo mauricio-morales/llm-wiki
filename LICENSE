@@ -29,6 +29,11 @@ cache architecture with hub-index routing and LRU-demote that they implement —
 llm-wiki by Mehmet Gökçe (https://github.com/MehmetGoekce/llm-wiki), used and redistributed under
 the MIT License. Its notice is reproduced in full below, as that license requires.
 
+The underlying idea — a persistent, LLM-maintained wiki compiled from source material, with ingest,
+query and lint as its core operations — was proposed by Andrej Karpathy:
+https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+This acknowledgement is offered because the debt is real, not because a license compels it.
+
 MIT License
 
 Copyright (c) 2026 Mehmet Gökçe

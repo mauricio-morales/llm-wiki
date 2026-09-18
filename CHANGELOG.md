@@ -12,6 +12,16 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.18.1 — 2026-09-18
+
+- Credited **Andrej Karpathy**, whose gist proposed the LLM wiki pattern this implements — a persistent,
+  LLM-maintained wiki compiled from sources, with ingest / query / lint as its core operations and the
+  schema living in a `CLAUDE.md`. The attribution chain now reads idea → implementation → this plugin, in
+  the README intro, a new "how it works" explanation, Credits, LICENSE, both skills, and the `Schema.md`
+  written into every wiki.
+- The README now explains the *problem* the pattern solves — that ordinary retrieval re-reads sources on
+  every question so nothing accumulates — which is the thing that makes the rest of the design make sense.
+
 ## 1.18.0 — 2026-09-18
 
 **Added — `Artifacts/`, and a closed list of what may sit at the wiki root.**

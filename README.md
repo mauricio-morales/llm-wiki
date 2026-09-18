@@ -7,6 +7,10 @@ meetings, chats, email and tickets on its own, and sends you a brief on what hap
 
 Plain markdown files, nothing to install beyond the plugin. You share it by sharing the folder.
 
+An implementation of **Andrej Karpathy's LLM wiki idea** — that instead of re-reading your documents on
+every question, an LLM should incrementally build and maintain a wiki of what it has learned, and answer
+from that. ([the original gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f))
+
 ---
 
 ## Quick start
@@ -170,6 +174,17 @@ Plus three scheduled jobs:
 
 ## How it works, briefly
 
+**The idea.** Ordinary retrieval re-reads your sources on every question, so nothing accumulates — the
+same synthesis gets done again and again, and it never gets better. Karpathy's proposal is to put a
+compiled layer in between: the LLM reads new material once, writes what it learned into a wiki of linked
+markdown pages, and answers from the wiki instead. Three operations keep it alive — **ingest** (read
+sources, update pages and cross-references), **query** (answer from the compiled wiki), and **lint**
+(find contradictions, stale claims and orphans). The human curates sources and asks questions; the LLM
+does the bookkeeping.
+
+This plugin implements that, and adds what it takes to run unattended: the ingest is scheduled and pulls
+from your connectors rather than a folder of files, and it reports to you every morning.
+
 The wiki is an **L1/L2 cache**. L1 is Claude's memory — the handful of things it must know every session.
 L2 is this wiki — everything else, read on demand.
 
@@ -265,11 +280,20 @@ everything beside it there is development tooling and is not part of what you in
 
 ## Credits and license
 
-Built on the L1/L2 wiki architecture from **[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by
-Mehmet Gökçe — the hub-index routing and LRU-demote model, and the schema, hub, dashboard and access-log
-templates, are derived from that project and used under the MIT License. This plugin rebuilds it to set
-itself up conversationally in a Claude session instead of through a shell script, and adds the scheduled
-ingest/brief/lint jobs, resumable backfill, Focus Areas and their reports.
+Three layers of other people's work sit under this:
+
+**The idea** — [**Andrej Karpathy**](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f),
+who proposed the LLM wiki pattern: a persistent, LLM-maintained wiki compiled from your sources, with
+ingest / query / lint as its core operations and the schema living in a `CLAUDE.md`. That shape is his,
+and this plugin follows it closely.
+
+**The implementation** — [**llm-wiki**](https://github.com/MehmetGoekce/llm-wiki) by **Mehmet Gökçe**,
+MIT licensed. The L1/L2 cache architecture, hub-index routing, LRU-demote, and the schema, hub, dashboard
+and access-log templates are derived from that project.
+
+**This plugin** rebuilds it to set itself up conversationally instead of through a shell script, and adds
+what running unattended needs: scheduled ingest, brief and lint jobs, connector sources rather than a
+folder of files, resumable backfill, commitment tracking, and Focus Areas with their reports.
 
 MIT licensed — the same license as the original, which MIT permits and which keeps the terms simple for
 anyone building on this in turn. See [LICENSE](LICENSE), which reproduces the upstream notice in full.

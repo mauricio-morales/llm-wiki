@@ -294,4 +294,7 @@ This wiki is plain files in a folder. There is no git and no history, so:
 This schema — its page types, hub-index routing lines and access-log format — derives from
 [llm-wiki](https://github.com/MehmetGoekce/llm-wiki) by Mehmet Gökçe, MIT licensed, via the
 [llm-wiki plugin](https://github.com/mauricio-morales/llm-wiki) that generated this wiki.
+The pattern it implements — a persistent, LLM-maintained wiki with ingest, query and lint as its core
+operations — was proposed by [Andrej Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+
 Edit this page freely; it is yours now.
