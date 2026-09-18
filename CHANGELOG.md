@@ -12,6 +12,34 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.19.0 — 2026-09-18
+
+**Changed — the brief is a triage, not an inventory.**
+
+From the field: briefs had grown into two messages plus a thread. The cause was an instruction of mine in
+the commitments section — *"do not drop them for brevity, this is the one section where length buys
+action"* — which told the brief to be exhaustive. It was wrong: past a certain length nobody reads to the
+end, so the lower-ranked items were not being read anyway, and the top ones were buried.
+
+- **Hard budget: readable in five minutes.** ~450 words, 700 ceiling, **one message**. Never split into
+  parts, never continue in a thread — not fitting means too many items were selected, and the fix is to
+  cut, not to route around the limit.
+- **Triage on two axes, scored before selection.** **Impact** (client/external commitment, revenue, a
+  person's pay or standing, dated deliverable, objective at risk → high; internal dated work or a decision
+  blocking others → medium; courtesy chase → low) and **urgency** (overdue / due today / this week / far).
+- **Rank by impact first, urgency second.** A high-impact item due Thursday outranks a low-impact one a
+  month overdue — age alone measures how long something has been *ignorable*.
+- **Five per section**, extending to eight only for items both high-impact and overdue-or-due-today.
+- **Cutting means dropping whole items, never thinning shown ones.** A shown item keeps its ask, stake,
+  whose-move and link — five complete items beat fifteen truncated ones, which just send the owner off to
+  investigate. What was cut is reported as a count.
+- **`impact` is now captured on each commitment at ingest**, so ranking is consistent day to day rather
+  than re-judged each morning, and re-assessed only when the stake changes.
+- "What happened" is explicitly a synthesis rather than a log; "What's coming up" caps at five and skips
+  routine recurring meetings.
+- Setup states the five-minute standard, and either choice is recorded in the job's `preferences` — so
+  replying "shorter" or "show me more" to any brief changes it permanently.
+
 ## 1.18.1 — 2026-09-18
 
 - Credited **Andrej Karpathy**, whose gist proposed the LLM wiki pattern this implements — a persistent,

@@ -88,12 +88,65 @@ the whole stretch.
 **Do this before composing today's brief**, not after. A brief that contradicts what the owner told you
 last night is worse than no brief: it proves the channel does not work, and they stop replying.
 
+## The budget, and how to choose what fits
+
+**The brief must be readable in five minutes. Ten is the failure point, not the target.**
+
+Hard limits:
+
+| | |
+|---|---|
+| Whole brief | **~450 words**, 700 absolute ceiling |
+| Items in any one section | **5** |
+| Extension beyond 5 | only for items that are **both high-impact and overdue-or-due-today**, hard ceiling **8** |
+| Messages | **one** |
+
+**Never split into parts, and never continue in a thread.** If it does not fit, that is not a formatting
+problem to route around — it means too many items were selected, and the answer is to cut lower-ranked
+ones. A brief delivered in two parts with a thread hanging off it has already failed: nobody reads to the
+end of it, which means the top-ranked items get read and the rest may as well not have been sent.
+
+### Triage: impact first, then urgency
+
+Score every candidate item on both axes before selecting anything.
+
+**Impact** — what it costs if it slips:
+
+- **High** — a client or external commitment; revenue; anything about a person's pay, role or standing;
+  a dated external deliverable; an objective at risk
+- **Medium** — an internal deliverable with a date; a decision that is blocking someone else's work
+- **Low** — a courtesy chase, an FYI, something nobody is waiting on
+
+**Urgency** — the clock: *overdue* · *due today or tomorrow* · *due this week* · *no date or far off*.
+
+**Rank by impact first, urgency second.** A high-impact item due Thursday outranks a low-impact one that
+has been overdue for a month. Age alone is the weakest signal there is — it measures how long something
+has been ignorable, and things that stay ignorable usually deserve to be.
+
+**Only high-impact *and* overdue-or-due-today items justify going past five.** Everything else waits for
+tomorrow, when it will rank higher or turn out not to have mattered.
+
+### What "cut" means
+
+Cutting is **dropping whole low-ranked items, never thinning the ones shown.** A shown item keeps its
+full detail — the ask, the stake, whose move, the link — because that detail is what makes it actionable
+without opening anything. Five complete items beat fifteen truncated ones; the truncated fifteen force
+the owner to go and look, which is the work the brief exists to remove.
+
+Say what was cut, in one line at the end of the section: *"+9 more open, all lower-impact — in the wiki."*
+A number is enough. The owner can ask, and can reply *"show me the rest"* — which the async-reply protocol
+will honor as a standing preference.
+
 ## Step 1: Coverage window
 
 The "what happened" section covers **from the day after `lastBriefSentThroughDate` through today**,
 inclusive — not simply "yesterday". On a normal run that is one day. After a weekend or a stretch away it
 is wider; synthesize it as one flowing recap rather than forcing a rigid per-day breakdown, but **don't
 drop real items just because they are a few days old**.
+
+**This section is a synthesis, not a log** — at most a short paragraph plus three or four bullets for
+anything genuinely notable. The wiki holds the full account. If little happened, one honest sentence beats
+a padded recap.
 
 ## Step 2: What to read
 
@@ -133,6 +186,9 @@ Below `due`, commitments stay silently tracked. They are not gone; they are simp
 
 ### Two sections, never merged
 
+**Five per heading**, ranked by impact then urgency, extending to eight only for items that are both
+high-impact and overdue-or-due-today. Anything beyond that is a count and a pointer.
+
 **"You're waiting on"** (`theirs`) and **"You owe"** (`mine`) are separate headings. They are opposite
 instructions — one means chase someone, the other means do work — and a merged list makes the reader
 sort them by hand every morning. Lead with **"You owe"**: it is the one where the owner's own day has to
@@ -168,8 +224,11 @@ Worked examples:
   given, so this is the 7-day nudge. It blocks the proposal you promised Karim by the 20th. — [email](<url>)`
 
 **All of this is already in the state file** — `subject`, `stake`, `withWhom`, `due`, `dueIsExplicit`,
-`link`. Read them and render them. **Do not re-derive them from the logs, and do not drop them for
-brevity** — this is the one section where length buys action. If an older entry is missing a field,
+`link`. Read them and render them rather than re-deriving them from the logs.
+
+**Never thin a shown item to save space** — an item without its stake and its link is one the owner has to
+go and investigate, which is the work this is supposed to remove. Save space by **showing fewer items**,
+per the budget above: full detail on the five that matter, a count for the rest. If an older entry is missing a field,
 resolve it now, **write it back into the state file**, and render it. Capture once, not every morning.
 
 **Open the linked message before quoting what it says.** Doing exactly this has caught real errors — a
@@ -200,9 +259,16 @@ Today plus the next 7 calendar days, from `Timeline.md`: what they own, what nee
 a hard date. Include commitments surfaced from conversations that aren't on the calendar — those are the
 ones that get missed.
 
+**Five items, ranked by impact then date.** A routine recurring meeting is not news and does not earn a
+line; something needing preparation does. If the week is genuinely full, say so in a sentence rather than
+listing it — the calendar already exists and the owner can open it.
+
 ## Step 5: Deliver
 
 {{DELIVERY_BLOCK}}
+
+**One message. Check it against the budget before sending** — if it is over, cut the lowest-ranked items
+until it fits, rather than splitting it or moving detail into a thread.
 
 After a successful send, write to `wiki-brief-state.json`: `lastBriefSentThroughDate` (today, ISO) and
 the sent message's id and channel, so tomorrow's Step 0.5 can pull replies on it.

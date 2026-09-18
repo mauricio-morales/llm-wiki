@@ -243,9 +243,13 @@ commitment, because the owner still answers for it.
 - `mine` — the owner owes someone something, **and agreed to it**. A request nobody accepted is not a
   commitment; the agreement is the trigger.
 
-**Every entry carries:** `direction`, `withWhom`, `subject` (what was asked or agreed), `stake` (what is
-blocked while it sits), `link` (to the source message, never to a summary), `asked`, `due`,
-`dueIsExplicit`, `status`.
+**Every entry carries:** `id`, `direction`, `withWhom`, `subject` (what was asked or agreed), `stake`
+(what is blocked while it sits), `impact` (`high`/`medium`/`low`, judged at capture), `link` (to the
+source message, never to a summary), `asked`, `due`, `dueIsExplicit`, `status`.
+
+**The brief ranks by impact first, then urgency**, and shows at most five per section — a high-impact item
+due Thursday outranks a low-impact one a month overdue. Age alone measures how long something has been
+ignorable.
 
 **`due` is never empty.** If a date was stated, that is it — resolved to an absolute date against the
 *message's* date, at capture time. If none was stated, `due` = `asked` + 7 days and `dueIsExplicit` is

@@ -167,6 +167,14 @@ made, not a task.
 - `withWhom` — the other party, by name
 - `subject` — what was asked or agreed, specific enough to act on without opening the link
 - `stake` — what is blocked, at risk or undecided while it sits
+- `impact` — `high` · `medium` · `low`, judged from the stake **at capture**, so the brief ranks
+  consistently instead of re-deciding every morning:
+  - **high** — a client or external commitment, revenue, anything touching a person's pay, role or
+    standing, a dated external deliverable, or an objective at risk
+  - **medium** — an internal deliverable with a date, or a decision blocking someone else's work
+  - **low** — a courtesy chase, an FYI, something nobody is waiting on
+  Re-assess it when the stake changes; otherwise leave it. An item whose impact drifts upward every day it
+  stays open is just age wearing a different label.
 - `link` — a deep link to the source message, never to a wiki page summarizing it
 - `asked` — ISO date the ask was made or the commitment accepted
 - `due` — ISO date. **See below; this is never left empty.**

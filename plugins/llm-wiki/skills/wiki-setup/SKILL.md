@@ -364,7 +364,14 @@ Do not start the backfill during setup. Write the plan, then offer to run the fi
 
    Their timezone you already resolved in Phase 1; working hours the brief infers from the calendar's own
    pattern at run time. Both are better read from real data than from an answer given cold on day one.
-5. **Tone.** Default: assertive, short, readable. Offer "more detailed" if they want it.
+5. **Tone and length.** Default: assertive, short, readable — and **built to be read in five minutes**.
+   The brief shows at most five items per section, ranked by business impact first and urgency second,
+   extending to eight only for things both high-impact and due now. Everything else is a count and a
+   pointer into the wiki.
+   Say this at setup, because it sets the expectation correctly: **the brief is a triage, not an
+   inventory.** Offer "more detailed" if they want it, and record either choice in the job's
+   `preferences` — they can also change it any day by replying to a brief with "shorter" or "show me
+   more".
 6. **Tell them it is two-way.** Replying to a brief is how they steer it: *"close 41"*, *"regarding 41,
    that's not true"*, *"stop showing the age"*, *"shorter"*. Every listed item carries a short `[ID]` for
    exactly this, replies are read and acted on before the next brief is composed, and format preferences
