@@ -236,6 +236,28 @@ person who asks, forever — and the whole point of this wiki is that a question
 routing line in the nearest enclosing hub, cross-links to related pages, `updated` set, and the source
 recorded. A fact dumped somewhere unroutable has not been captured; it has been hidden.
 
+## Where output goes — never the wiki root
+
+**Anything you produce that is not a wiki page goes in `Artifacts/YYYY-MM-DD-<scope>-<what>/`.** An
+analysis, an export, a generated document, a scratch calculation, a script. One folder per piece of work,
+with an `_about.md` saying what it is, why it exists, what it came from, and whether its facts have been
+ingested.
+
+**Nothing is ever written to the wiki root.** The root holds exactly: `llm-wiki.yml`, `CLAUDE.md`,
+`Wiki/`, `Archives/`, `Artifacts/`, `.claude/`, and the `wiki-*-state.json` files. A stray folder there
+becomes permanent clutter, because later nobody can tell what made it or whether anything depends on it.
+
+`Archives/` and `Artifacts/` are opposites and easily confused: **Archives holds copies of things from
+elsewhere; Artifacts holds things made here.**
+
+**Facts an artifact establishes belong in the wiki too** — ingest the conclusions, not the working, link
+the artifact as the source, and mark it ingested in `_about.md` so it is not ingested twice. A number
+reachable only by opening a spreadsheet in a dated folder is not in the knowledge base.
+
+Artifacts are the **one** thing here that is safe to delete, being derived and mostly regenerable — but
+propose, never delete unprompted, and never remove one still linked from a live page. See
+`references/artifacts.md` in the `wiki-setup` skill.
+
 ## Web Archiving (URL sources)
 
 When a source is a URL, save a reference copy alongside extracting its content — link rot means the live
@@ -524,6 +546,7 @@ Rules:
 - NEVER delete a page except on the user's explicit instruction. `prune` demotes; it does not delete
 - NEVER run git commands. The wiki is not version controlled
 - NEVER modify non-wiki files in the folder (existing notes, documents, anything you did not create)
+- NEVER write to the wiki root. Derived output goes in a dated folder under `Artifacts/`
 - Archive every URL source to `Archives/` as a text-only snapshot; check the folder's total size
 - LRU-Demote evicts from the index ONLY — never renames pages, never moves files
 - Every active page belongs in exactly one hub `### Index`; without a routing line it is unroutable

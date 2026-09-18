@@ -196,6 +196,17 @@ Terse and distinctive beats complete. "Notes about the client" routes nothing; "
 - Dates: ISO 8601 (YYYY-MM-DD)
 - Language: {{LANGUAGE}} — every page is written in this language regardless of the source's language
 
+## Folder layout
+
+The wiki root holds exactly: `llm-wiki.yml`, `CLAUDE.md`, `Wiki/`, `Archives/`, `Artifacts/`, `.claude/`
+and the `wiki-*-state.json` files. **Nothing else is ever written there.**
+
+- **`Archives/`** — snapshots of URLs that were ingested. Things from elsewhere, saved.
+- **`Artifacts/`** — output produced here: analyses, exports, generated documents. One dated folder per
+  piece of work, `YYYY-MM-DD-<scope>-<what>/`, each carrying an `_about.md`. Facts an artifact establishes
+  are ingested into `Wiki/` with the artifact linked as the source. Artifacts are the only thing in this
+  folder that may be deleted — they are derived — but only on a proposal a person accepts.
+
 ## Privacy and exclusions
 
 **Audience: {{AUDIENCE}}**

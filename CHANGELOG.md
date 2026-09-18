@@ -12,6 +12,33 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.18.0 — 2026-09-18
+
+**Added — `Artifacts/`, and a closed list of what may sit at the wiki root.**
+
+Found in the field: a run produced files and dropped a folder at the wiki root. Nothing said where derived
+output should go, so it went where it landed — and root clutter is permanent in practice, because later
+nobody can tell what created it or whether anything depends on it.
+
+- **Everything produced that is not a wiki page goes in `Artifacts/YYYY-MM-DD-<scope>-<what>/`** — one
+  folder per piece of work, dated first so it sorts, named well enough to be judged in six months.
+- **The root is a closed list**: `llm-wiki.yml`, `CLAUDE.md`, `Wiki/`, `Archives/`, `Artifacts/`,
+  `.claude/`, `wiki-*-state.json`. Nothing else, ever. The lint flags anything else that appears.
+- **`Archives/` and `Artifacts/` are opposites**, and named as such because they are easy to confuse:
+  Archives holds copies of things from elsewhere, Artifacts holds things made here.
+- **Each artifact folder carries `_about.md`** — what it is, why it exists, what it was derived from,
+  whether its facts have been ingested, and when it is safe to delete. Written at the time, not promised
+  for later; without it an artifact is an orphan nobody can evaluate.
+- **Facts an artifact establishes are ingested into the wiki**, conclusions rather than working, with the
+  artifact linked as the source and marked ingested so it is not done twice. A number reachable only by
+  opening a spreadsheet in a dated folder is not in the knowledge base.
+- **Artifacts are the one thing here that may be deleted** — derived, mostly regenerable, and the folder
+  that actually grows. The lint proposes candidates past their stated date or six months old and already
+  ingested; **it never deletes**, since an artifact in mid-use looks identical to a stale one, and one
+  still linked from a live page must never go silently.
+- Focus Area report HTML stays under its area rather than moving to `Artifacts/` — it is a stable path
+  people bookmark. Deliberate exception, not an oversight.
+
 ## 1.17.0 — 2026-09-18
 
 **Changed — OOO detection is a daytime-overlap threshold, not "all-day".**

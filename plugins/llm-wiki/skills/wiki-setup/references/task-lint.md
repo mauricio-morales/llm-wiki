@@ -39,6 +39,16 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    snapshots and propose which to drop; re-archive an oversized page as a text-only snapshot rather than
    deleting the record outright.
 
+   Report `Artifacts/` separately from `Archives/` — it is the folder that actually grows. List artifact
+   folders past the `Safe to delete after` date in their `_about.md`, or older than six months and marked
+   `Ingested: yes`. **Propose; never delete.** An artifact someone is midway through using looks exactly
+   like a stale one, and one still linked from a live wiki page must never go without saying so — a dead
+   link to evidence that used to exist is worse than a large folder.
+
+   Flag any artifact folder **missing `_about.md`**, and anything sitting at the **wiki root** that is not
+   `llm-wiki.yml`, `CLAUDE.md`, `Wiki/`, `Archives/`, `Artifacts/`, `.claude/` or a `wiki-*-state.json`.
+   Root clutter is how a wiki folder becomes unusable, and it accumulates one stray file at a time.
+
    Also report any **sync conflict copies** in the folder (`... (X's conflicted copy).md`, `*.sync-conflict-*`).
    **Never delete one** — surface it and offer to merge the divergent sections back into the canonical
    page. A conflict copy usually means more than one machine is running the ingest, which is worth saying

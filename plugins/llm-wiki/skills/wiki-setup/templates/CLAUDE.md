@@ -125,7 +125,14 @@ Filing means filing **properly** — right page, routing line in the nearest enc
   writing anything.
 - `Wiki/<Namespace>/_index.md` — the hub pages. Their `### Index` is the routing table.
 - `Wiki/Reference/Access-Log.md` — append-only log of which pages were read and why.
-- `Archives/` — text-only snapshots of ingested URLs.
+- `Archives/` — text-only snapshots of ingested URLs. Things that came from elsewhere.
+- `Artifacts/` — things produced here: analyses, exports, generated documents. One dated folder per piece
+  of work, `Artifacts/YYYY-MM-DD-<scope>-<what>/`, each with an `_about.md` recording what it is, why,
+  what it came from, and whether its facts were ingested.
+
+**Never write anything to the folder root.** The root holds only what is listed here. Derived output goes
+under `Artifacts/`; facts it establishes are ingested into `Wiki/` with the artifact linked as the source,
+because a number reachable only inside a spreadsheet is not in the knowledge base.
 - `wiki-ingest-state.json`, `wiki-brief-state.json` — job cursors at the folder root, outside `Wiki/` so
   they are never mistaken for wiki content. They hold cursors and tracking data, never credentials.
 - `.claude/skills/` — a copy of the wiki skills, so this folder works on its own for anyone who syncs it.

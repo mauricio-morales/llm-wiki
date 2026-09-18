@@ -406,7 +406,9 @@ All paths relative to the wiki folder.
 5b. For each Focus Area: its namespace hub (with the statement from Phase 2b as the hub description),
     `Log.md`, `Decisions.md`, `Goals.md` (carrying the metrics they named), and an empty `Reports/`
     folder. Skip entirely if there are none.
-6. `Archives/` — create the folder (with a `.keep` file so it survives sync).
+6. `Archives/` and `Artifacts/` — create both (each with a `.keep` file so they survive sync).
+    `Archives/` holds snapshots of ingested URLs; `Artifacts/` holds derived output, one dated folder per
+    piece of work. They are opposites and worth naming as such on the Dashboard.
 7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
