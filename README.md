@@ -65,6 +65,12 @@ that folder.
 
 You'll know you got it right because the session shows the folder it's working in.
 
+**Star it while you're there.** In the folder picker there's a star next to each folder — clicking it
+makes that folder the default for new sessions. Worth doing: everything below assumes you're in the wiki
+folder when you ask it something, and starring it means every new session starts there instead of you
+picking it each time. If you're setting up a wiki you'll use daily, this is the difference between asking
+a question and remembering to set up a session first.
+
 ### 4. Type `/wiki-setup` and press enter
 
 Type it into the message box like you'd type anything else — the leading `/` is part of it.
@@ -84,7 +90,7 @@ Do step 1, then skip to here.
 1. **Make sure the shared folder has synced to your computer** — you should be able to open it in Finder
    or File Explorer and see a `Wiki` folder inside.
 2. **Start a Cowork session on it** (same as step 3 above — a Cowork session, not an ordinary chat, and
-   choose that folder).
+   choose that folder). Star it in the picker to make it your default, so new sessions start here.
 3. **Just start asking.**
 
 It already knows what to do: the instructions live inside the folder, so they arrive with it. Nothing to

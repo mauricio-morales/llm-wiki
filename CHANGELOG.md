@@ -12,6 +12,13 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.16.1 — 2026-09-17
+
+- README quick start now recommends starring the wiki folder in the picker to make it the default for new
+  sessions. Everything after setup assumes you are in the wiki folder when you ask something, so without
+  this you have to remember to select it every time — which is the difference between asking a question
+  and setting up a session first. Also noted for people joining someone else's wiki.
+
 ## 1.16.0 — 2026-09-17
 
 **Added — a wiki asks to be upgraded on its own.**
