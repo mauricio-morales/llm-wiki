@@ -332,10 +332,14 @@ Do not start the backfill during setup. Write the plan, then offer to run the fi
 4. **Skip days.** *"Should it skip days you're out of office?"* Default yes — and that is the only
    question here.
 
-   **The rule is structural, and it is the same for everyone: an entry silences the brief only if it
-   covers the whole working day.** All-day, or continuous start-to-finish coverage. Anything less — a
-   block in the middle, a recurring evening or early-morning entry, a couple of hours — is a normal
-   working day, no matter what it is called and no matter that it is flagged out-of-office.
+   **The rule is structural and the same for everyone: an entry silences the brief when it is all-day, or
+   when it overlaps the daytime by 9 hours or more.** Take daytime as roughly 07:00–19:00 local — it does
+   not need to be exact.
+
+   **Measure overlap with daytime, not raw duration.** A recurring 18:00–07:00 protection block runs 13
+   hours but consumes no daytime, so it is not absence; 09:00–18:00 runs 9 hours of daytime and is. A
+   duration test would silence the brief every night of the week. Where several entries cover a day
+   between them, add up their daytime overlap.
 
    Lead with that rule, because it needs no knowledge of anyone's habits. Calendar naming is personal:
    people mark absence in ways that make sense only to them, and a rule that depends on recognizing names

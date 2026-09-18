@@ -34,13 +34,36 @@ readable** — this is a morning message, not a report.
 
 Do this **first**, before any wiki read.
 
-**The invariant, regardless of what the derived pattern below says:** an entry silences the brief only
-if it covers the **whole working day** — all-day, or continuous start-to-finish coverage. A partial
-block is a working day, whatever it is called and whether or not it is flagged out-of-office. Recurring
-sub-day entries (evening or early-morning protection blocks, lunch, focus time) are **never** absence.
-When coverage is ambiguous, send the brief. A brief that arrives on a quiet day costs nothing; one that
-stays silent for a week because a lunch block was read as absence is the failure that gets this turned
-off.
+**The invariant, regardless of what the derived pattern below says.**
+
+An entry silences the brief when it is **all-day**, or when it **overlaps the daytime by 9 hours or
+more**. Take daytime as roughly 07:00–19:00 local; it does not need to be exact, and it should not be
+tuned to this person's precise hours — the test is how much of the day is consumed, not which clock
+boundaries are hit.
+
+**Measure the overlap with daytime, not the raw duration.** These are different numbers and the
+difference is the whole rule:
+
+| Entry | Duration | Daytime overlap | Verdict |
+|---|---|---|---|
+| All-day | 24h | full | **OOO** |
+| 07:00–19:00 | 12h | 12h | **OOO** |
+| 09:00–18:00 | 9h | 9h | **OOO** |
+| 18:00–07:00 (evening protection block) | 13h | ~0h | working day |
+| 12:00–13:00 (lunch) | 1h | 1h | working day |
+| 09:00–12:00 (half morning) | 3h | 3h | working day |
+
+A raw-duration test would call that fourth row an absence and go silent every single day — many calendars
+carry a standing evening or overnight block precisely to stop out-of-hours bookings, and it is long.
+Overlap handles it without special-casing anything: an overnight block consumes no daytime.
+
+Where several entries cover the day between them, **add up their daytime overlap** — two four-hour
+blocks with a gap are not absence, but 08:00–13:00 plus 13:00–18:00 is.
+
+Anything below the threshold is a working day, whatever it is called and whether or not it is flagged
+out-of-office. **When coverage is ambiguous, send the brief.** One that arrives on a quiet day costs
+nothing; one that stays silent for a week because a lunch block read as absence is the failure that gets
+this switched off.
 
 The pattern observed on this calendar at setup:
 

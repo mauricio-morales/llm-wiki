@@ -12,6 +12,27 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.17.0 — 2026-09-18
+
+**Changed — OOO detection is a daytime-overlap threshold, not "all-day".**
+
+Requiring a literal all-day entry missed the common case: a 07:00–19:00 or 09:00–18:00 block is a day off
+by any reasonable reading, and the brief would have kept arriving.
+
+- **An entry silences the brief when it is all-day, or overlaps the daytime by 9 hours or more.** Daytime
+  is roughly 07:00–19:00 local and deliberately approximate — the test is how much of the day is consumed,
+  not which clock boundaries are hit.
+- **Overlap, not raw duration.** These differ, and the difference is the rule: a recurring 18:00–07:00
+  protection block runs 13 hours but consumes no daytime. A duration threshold would have read it as
+  absence and silenced the brief every single night — the exact failure this logic exists to avoid. Many
+  calendars carry such a block precisely to stop out-of-hours bookings, and overlap handles it without
+  special-casing anything.
+- **Multiple entries covering a day are summed** — 08:00–13:00 plus 13:00–18:00 is absence; two four-hour
+  blocks with a gap are not.
+- A worked table of cases is in the template, since this is judgement the rule has to survive.
+- Unchanged: below the threshold it is a working day whatever it is called, and **when coverage is
+  ambiguous the brief is sent.**
+
 ## 1.16.1 — 2026-09-17
 
 - README quick start now recommends starring the wiki folder in the picker to make it the default for new

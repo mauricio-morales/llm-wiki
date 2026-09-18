@@ -10,7 +10,7 @@
       "name": "llm-wiki",
       "source": "./plugins/llm-wiki",
       "description": "Self-maintaining knowledge base for a folder. One guided setup builds the wiki structure, wires your connectors, writes the folder's CLAUDE.md so questions and ingests route automatically, and creates three scheduled jobs: daily ingest, daily brief, monthly lint. No CLI, no repository, no install for teammates \u2014 sharing the folder shares the wiki.",
-      "version": "1.16.1",
+      "version": "1.17.0",
       "author": {
         "name": "Mauricio Morales",
         "url": "https://github.com/mauricio-morales"
