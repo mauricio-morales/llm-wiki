@@ -87,8 +87,11 @@ other people's obligations stops being read. Work the owner delegated still coun
 answer for it.
 
 **`due` is never empty.** A stated date wins, resolved to an absolute date against the message's own date.
-With no date stated, `due` = `asked` + 7 days, flagged `dueIsExplicit: false` — a nudge, not a promise,
-and it must never be quoted back to anyone as a deadline.
+With no date stated, `due` = `asked` + `commitment_grace_days` (default 14), flagged
+`dueIsExplicit: false` — a nudge, not a promise, and it must never be quoted back to anyone as a deadline.
+
+**Nothing surfaces before its due date**, in either direction. An ask sent yesterday is not a reminder;
+people need time to answer, and so does the owner.
 
 **Close only on evidence.** Something arriving, the owner delivering it, an explicit release. Never on
 age: an old ask is not a finished one.

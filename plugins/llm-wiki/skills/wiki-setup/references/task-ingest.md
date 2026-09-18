@@ -188,9 +188,19 @@ date**, not today's: "by Friday" in a message sent on 2026-09-02 is 2026-09-04. 
 "before the board meeting on the 12th", "next Tuesday" all resolve to an absolute ISO date at capture
 time. Set `dueIsExplicit: true`.
 
-**If no date was stated, `due` = `asked` + 7 days**, and `dueIsExplicit: false`. This is a nudge date,
-not a real deadline, and the brief says so — but it guarantees that every open commitment surfaces
-eventually instead of quietly ageing forever.
+**If no date was stated, `due` = `asked` + the grace period**, and `dueIsExplicit: false`. The grace
+period is `commitment_grace_days` in `llm-wiki.yml`, **default 14**.
+
+**Give people a chance to respond.** A nudge date is not a deadline — it is the point at which a
+reasonable person would start wondering. Set it too short and the brief reminds the owner of an email
+they sent yesterday, which is worse than useless: it trains them to skim the section that is supposed to
+be the most actionable thing in the brief. Two weeks is long enough that silence has become information.
+
+**This applies in both directions.** It is equally true of things the owner owes: a commitment accepted
+with no date does not need chasing three days later, and being nagged about your own untimed work is how
+a list gets ignored.
+
+A stated deadline overrides the grace period entirely, in either direction — that date is the date.
 
 Resolve the date **at capture time, while the message is in hand.** Deriving it later from a summary is
 how "by Friday" becomes the wrong Friday.

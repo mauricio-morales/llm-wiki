@@ -173,14 +173,18 @@ owner owes, should ever be forgotten.**
 An `open` commitment appears when **`due` is today or earlier**, and then **every day after that until it
 is closed.** Not once — every day. An overdue item that stops being mentioned is an item that got dropped.
 
-Two additions to that rule, both deliberate:
+**Nothing surfaces before its due date. Nothing.**
 
-- **`mine` with `dueIsExplicit: true` also gets one heads-up on the previous working day.** "You owe this
-  today" at 7:30am is often too late to produce a document. One day's warning is the difference between a
-  reminder and a post-mortem. Say it is due tomorrow, clearly.
-- **Nothing surfaces before that.** A brief that lists every open commitment every morning becomes
-  wallpaper, and wallpaper is not read. The point of the due date is that the list stays short enough to
-  act on.
+This is the rule that keeps the section worth reading, and the temptation is always to break it "just for
+this one". Do not:
+
+- An ask sent yesterday with no stated deadline is **not** brief material. People need time to answer, and
+  reminding the owner about it makes the section noise. The grace period (`commitment_grace_days`,
+  default 14) exists precisely so silence has had time to become information.
+- A commitment with a deadline next Thursday is not brief material until Thursday. The owner set that
+  date, or accepted it; second-guessing it daily is not help.
+- The same holds for things the owner owes. Being chased about your own untimed work three days in is how
+  a list stops getting read.
 
 Below `due`, commitments stay silently tracked. They are not gone; they are simply not today's problem.
 

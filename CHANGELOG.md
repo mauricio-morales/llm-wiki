@@ -12,6 +12,27 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.20.0 — 2026-09-18
+
+**Changed — commitments get a grace period. 7 days was too soon, and it was an arbitrary default.**
+
+From the field: the brief reminded the owner about a request mailed the previous day. That is worse than
+useless — it teaches them to skim the section that should be the most actionable thing in the brief.
+
+- **Default grace period is now 14 days, not 7**, configurable as `commitment_grace_days` in
+  `llm-wiki.yml`. It applies to commitments with **no stated deadline**, in **both directions** — being
+  chased about your own untimed work three days in is equally how a list stops getting read.
+- **A stated deadline always overrides it.** That date is the date, in either direction.
+- **Named the principle**, so it survives future edits: a nudge date is the point at which a reasonable
+  person starts wondering, not the day the ask was sent. Two weeks is long enough that silence has become
+  information.
+- **Nothing surfaces before its due date. Nothing.** Stated as a rule that must not be broken "just for
+  this one", with the three cases that tempt it: an ask sent yesterday, a deadline still days away, and
+  the owner's own untimed work.
+- **Removed the day-before heads-up** for things the owner owes with an explicit deadline, added in
+  1.10.0. It contradicts the rule above, and the instruction here was to be reminded when a deadline is
+  *due or past*, not before.
+
 ## 1.19.0 — 2026-09-18
 
 **Changed — the brief is a triage, not an inventory.**

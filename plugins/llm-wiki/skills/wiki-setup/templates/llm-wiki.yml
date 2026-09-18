@@ -47,6 +47,13 @@ namespaces:
 # three ingest jobs means three runs appending to the same pages, each pulling from a different
 # person's connectors. Everyone else queries, ingests manually, and runs their own brief if they want.
 ingest_owner: "{{INGEST_OWNER}}"
+
+# How long to wait before a commitment with no stated deadline shows up in the brief, in days.
+# A nudge date is the point where a reasonable person starts wondering — not the day the ask was sent.
+# Too short and the brief reminds you about an email from yesterday, which teaches you to skim the one
+# section that should be the most actionable thing in it. Applies to what you are owed and what you owe.
+# A stated deadline always overrides this.
+commitment_grace_days: 14
 shared_folder: {{SHARED_FOLDER}}   # true if this folder is on a synced drive
 
 # Sources the ingest job checks. status: enabled | no_connector | declined

@@ -252,12 +252,18 @@ due Thursday outranks a low-impact one a month overdue. Age alone measures how l
 ignorable.
 
 **`due` is never empty.** If a date was stated, that is it — resolved to an absolute date against the
-*message's* date, at capture time. If none was stated, `due` = `asked` + 7 days and `dueIsExplicit` is
-`false`: a nudge date, not a promise, and the brief must say which it is.
+*message's* date, at capture time. If none was stated, `due` = `asked` + the grace period
+(`commitment_grace_days` in `llm-wiki.yml`, **default 14 days**) and `dueIsExplicit` is `false`: a nudge
+date, not a promise, and the brief must say which it is.
+
+**The grace period exists to give people a chance to respond.** A nudge date is the point at which a
+reasonable person starts wondering, not the point at which an ask was sent. Too short and the brief
+reminds the owner of an email from yesterday, which trains them to skim the one section that should be
+the most actionable thing in it. The same applies to what the owner owes.
 
 **Surfacing:** an open commitment appears in the brief when `due` is today or earlier, and **every day
-after until it closes.** Anything the owner owes with a real stated deadline also gets one heads-up the
-previous working day — being told on the morning it is due is often too late to produce it.
+after until it closes. Never before** — not for something sent yesterday, not for a deadline next week,
+in either direction.
 
 **Closing:** only on evidence, never on age. `theirs` closes when the answer or artifact arrives; `mine`
 closes when the owner produced it. Also `withdrawn` or `superseded`, recorded as such rather than deleted.
