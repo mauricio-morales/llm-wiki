@@ -118,6 +118,17 @@ Where Focus Areas are configured, this rule outranks everything else in this job
 If the window held nothing for a Focus Area, **say so explicitly in the report** rather than omitting the
 section. Silence and "nothing happened" must never look the same.
 
+## News topics
+
+{{NEWS_BLOCK}}
+
+<!-- Setup fills this from references/news-sources.md when news topics are configured, with this wiki's
+     topics and their `why`. Omit the section entirely when none are. -->
+
+The rule that keeps this from becoming a feed: **capture a story because it touches something this wiki
+already knows — a client, a person, the employer, a Focus Area, an objective — not because it matched the
+topic.** A story matching the topic and touching nothing here is not captured. That is most of them.
+
 ## Commitment tracking — both directions
 
 Cuts across every message-carrying source. **The purpose is that no ball gets dropped in either

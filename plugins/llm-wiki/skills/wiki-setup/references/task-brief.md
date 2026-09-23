@@ -257,6 +257,20 @@ progress bar on a quarterly goal is noise and will be skimmed past within a week
 
 If none of those apply, skip the section silently.
 
+## Step 3.7: News — at most two lines
+
+If news topics are configured, read the newest section of `Wiki/{{PRIMARY_NS}}/News-Log.md`.
+
+News is **low-impact by default** under the triage above: it is context, not something the owner owes or
+is owed, and it must never displace a commitment. Surface it only when it is **direct and consequential**
+— a client acquired, an employer announcement, a regulatory change hitting a Focus Area, a named
+competitor doing something material.
+
+**At most two items, one line each, below the commitments.** Everything else waits in the wiki.
+
+**A story that changes the stake on an existing commitment is not a news line** — say it *on that
+commitment*, where it changes a priority. That is the version the owner can act on.
+
 ## Step 4: What's coming up
 
 Today plus the next 7 calendar days, from `Timeline.md`: what they own, what needs preparation, what has

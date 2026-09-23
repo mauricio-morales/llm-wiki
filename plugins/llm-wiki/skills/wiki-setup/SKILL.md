@@ -273,6 +273,13 @@ Read `references/sources.md` and follow it. The short version:
 
    Also capture the **noise list** here — the bot channels, automated digests and system senders worth
    skipping. Getting it now saves the first month of runs from drowning in notification traffic.
+4b. **News topics.** Offer it: *"Want me to scan the news? Up to ten topics — your employer, competitors,
+   your industry, a regulator, a market you sell into. I only keep stories that touch something this wiki
+   already knows about, so it stays useful rather than becoming a feed."*
+   **Zero is fine.** If yes, get each topic **and why it matters in their words** — that is what tells
+   "Mercury" the client from the planet, and it is the only thing making an ambiguous topic usable.
+   Push back gently on vague topics: "AI" or "technology" match everything and clear no bar. Three sharp
+   topics beat ten broad ones. Read `references/news-sources.md`.
 5. **Local sources** (a notes directory, an exports folder, a local app's database): get the absolute
    path and **try to read it**. A Cowork session is sandboxed, so a local path is often *not* reachable
    even though it is on the same machine — that is normal, not a misconfiguration.
@@ -529,6 +536,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{WIKI_SLUG}}` | The short name. Every task id and title carries it |
 | `{{PLUGIN_VERSION}}` | The running plugin's version, from its `plugin.json`. `unknown` if it cannot be read — never a guess |
 | `{{INGEST_OWNER}} {{SHARED_FOLDER}} {{SHARED_BLOCK}}` | Who owns the scheduled ingest, and the shared-folder rules in `CLAUDE.md`. On a solo wiki, `SHARED_BLOCK` says plainly that this wiki is not shared — do not leave it empty |
+| `{{NEWS_BLOCK}} {{NEWS_TOPICS_YAML}} {{NEWS_ENABLED}}` | The news procedure from `references/news-sources.md` with this wiki's topics and their `why`. Omit the whole section when no topics were given — do not ship an empty scanner |
 | `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |

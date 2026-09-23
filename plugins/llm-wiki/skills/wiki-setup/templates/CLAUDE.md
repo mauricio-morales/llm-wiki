@@ -60,6 +60,17 @@ presentation preferences into the sending task's own prompt** so they persist. A
 and forgotten teaches the owner to stop asking. Never guess at an ambiguous instruction, especially a
 close — say what you could not interpret and ask.
 
+## News
+
+If news topics are configured in `llm-wiki.yml`, stories are captured **only when they touch something
+this wiki already knows** — a client, a person, the employer, a Focus Area, an objective. A story that
+merely matches the topic is not captured, and that is most of them. Never capture on a keyword match
+alone: company names collide, and a wiki filling with same-name coincidences loses trust faster than one
+that misses a story.
+
+Every captured item states which entity it touches and whether the link is direct or indirect, and is
+routed both to the news log and to that entity's own page.
+
 ## Objectives
 
 If `Wiki/<primary>/Objectives.md` exists, it holds what the owner is actually measured on, and it

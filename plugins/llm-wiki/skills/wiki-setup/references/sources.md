@@ -85,16 +85,23 @@ noise for a purely technical one. → routed by namespace, typically `Business` 
 Merged PRs, releases and architecture-relevant discussion in named repos. Decisions and rationale, not
 diffs. → `Tech`
 
-**12. Anything else with a connector**
+**12. Web news on named topics**
+Up to 10 topics scanned round-robin — an employer, competitors, an industry, a regulator, a market they
+sell into. **The wiki is the filter**: a story is captured because it touches a client, person, employer
+or objective this wiki already knows, not because it matched a keyword. Needs web access rather than a
+connector. Ask for each topic *and why it matters*, since that is what distinguishes the company from the
+same-named bakery. See `references/news-sources.md`. → `News-Log` plus the entity's own page
+
+**13. Anything else with a connector**
 The catalog is not a closed list. If a connector is present that isn't listed here, offer it — same three
 answers, same scope-and-noise questions, and route it to a namespace the user names.
 
 ## Local sources (force local execution)
 
-**13. A folder on this machine**
+**14. A folder on this machine**
 A synced drive folder, a notes directory, a Downloads folder, an exports directory — anything on disk.
 
-**14. A local application's database or export directory**
+**15. A local application's database or export directory**
 Local transcription apps (MacWhisper and similar), local note apps, anything that writes files locally.
 Prefer reading the app's own database over its export files when it has one: exports are usually a subset
 and are easy to forget to produce. Dedup on the app's own stable record ID mapped to a
@@ -103,7 +110,7 @@ transcript) is **re-ingested and its existing wiki entry updated in place**, not
 
 **Both of these require local execution and a granted directory.** See below.
 
-## Local sources (13 and 14)
+## Local sources (14 and 15)
 
 **A local path is not automatically readable.** A Cowork session is sandboxed: it has the wiki folder, and
 not the rest of the machine. Being on the same computer is not access — a perfectly reasonable-looking

@@ -73,6 +73,17 @@ focus_areas:
 #    metrics: ["pipeline in the vertical", "clients with a growth plan", "AI-services deals in flight"]
 #    report: { enabled: true, task_id: "acme-focus-tech-vertical", schedule: "0 8 * * 1", delivery: slack, destination: "..." }
 
+# Web news scanning. Up to 10 topics, rotated so a daily job stays bounded. A story is captured only
+# when it touches something this wiki already knows — the wiki is the filter, which is the whole
+# difference between this and a news alert. `why` disambiguates the topic and is required.
+news:
+  enabled: {{NEWS_ENABLED}}
+  topics_per_run: 3
+  max_captured_per_run: 5
+  cursor: 0
+  topics:
+{{NEWS_TOPICS_YAML}}
+
 jobs:
   # `preferences` on each job holds what the owner asked for by replying to a brief or report —
   # "shorter", "put what I owe first", "stop showing the age" — in their own words. They live here,

@@ -12,6 +12,34 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.21.0 — 2026-09-23
+
+**Added — web news as a source, filtered by what the wiki already knows.**
+
+Up to 10 topics — employer, competitors, industry, a regulator, a market sold into — scanned round-robin
+so a daily job stays bounded.
+
+- **The wiki is the filter, and that is the whole feature.** A story is captured because it touches a
+  client, person, employer, Focus Area or objective this wiki already tracks. One that merely matches the
+  topic is **not** captured, and that is most of what any search returns. Without that rule this is a news
+  feed, and a news feed makes a wiki unreadable within a month.
+- **Direct / indirect / topical-only** grading, with the connection stated on every captured item. An
+  indirect story with its connection unstated reads as a random headline and gets ignored.
+- **Never capture on a keyword match alone** — company names collide, and a wiki filling with same-name
+  coincidences loses trust faster than one that misses a story. Each topic carries a `why` in the owner's
+  words for exactly this.
+- **Round-robin with two exceptions**: a topic that produced a high-relevance capture is re-scanned once
+  next run, since those stories develop; a newly added topic goes first.
+- **Bounded**: `topics_per_run` (3), `max_captured_per_run` (5), archives only for captured items, and
+  deduplication across outlets and days with follow-ups updating in place.
+- **Scans are reported even when quiet**, so "nothing found" and "we did not look" stay distinguishable.
+  Web access unavailable is reported, not silently skipped, and the cursor holds so nothing is skipped.
+- **In the brief: two lines maximum, below the commitments**, and only for direct and consequential
+  stories. News is context, not something owed. A story that changes the stake on a commitment is said
+  *on that commitment* instead, where it changes a priority.
+- Setup pushes back on vague topics — "AI" or "technology" match everything and clear no bar; three sharp
+  topics beat ten broad ones.
+
 ## 1.20.0 — 2026-09-18
 
 **Changed — commitments get a grace period. 7 days was too soon, and it was an arbitrary default.**

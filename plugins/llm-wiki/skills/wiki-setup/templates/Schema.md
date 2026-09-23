@@ -163,6 +163,26 @@ review time.
 below. That history is the most useful thing on the page at the next planning round, and the first thing
 anyone is tempted to delete.
 
+### News item (inside News-Log.md and on entity pages)
+
+```
+- [id] YYYY-MM-DD -- <headline> -- <outlet> -- touches [[Wiki/Clients/Acme]] (direct)
+  -- <one or two sentences on what it says and why it matters here>
+  -- [source](url) ([archived](../../Archives/...))
+```
+
+**The connection is mandatory**: which entity in this wiki the story touches, and whether that link is
+`direct` (it names them) or `indirect` (it plainly bears on them — a regulator in their industry, an
+acquisition in their market). An indirect item with the connection unstated reads as a random headline
+and gets ignored.
+
+A story that touches nothing this wiki knows is **not captured**, however interesting. That filter is
+what separates this from a news feed.
+
+Captured stories are double-routed: the log, **and** the entity's own page under a "Market and news"
+section — a story about a client that lives only in a chronological log is findable only by someone who
+already knows when it happened.
+
 ### Hub (namespace index)
 ```yaml
 type: hub
