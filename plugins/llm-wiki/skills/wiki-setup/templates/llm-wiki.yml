@@ -58,6 +58,10 @@ shared_folder: {{SHARED_FOLDER}}   # true if this folder is on a synced drive
 
 # Sources the ingest job checks. status: enabled | no_connector | declined
 #
+# `backfilled_through` records the oldest date actually covered for each source — not the date requested,
+# which differs whenever a connector's retention cut it short. null means the source only has history
+# from the day it was enabled. Uneven coverage across sources is how a wiki answers confidently and wrong.
+#
 # `notes` is the user's own customization, VERBATIM — e.g. "only the sales distribution list, not my
 # inbox", "just #incidents and #releases". It is copied into the task prompt as written. Never
 # paraphrase it into a category; a paraphrase reverts to the wrong behavior on the first loose reading.

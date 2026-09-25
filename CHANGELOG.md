@@ -12,6 +12,30 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.22.0 — 2026-09-25
+
+**Added — every newly added source gets a backfill question.**
+
+Backfill was a setup-time concept only. A source added later — at reconfigure, or because someone asked
+mid-conversation for something to be indexed — was enabled from that day forward with no question asked.
+
+- **Always ask whether to backfill a new source, and how far back**, wherever it is added.
+- **Why it cannot be optional**: a source enabled without history answers questions exactly as
+  confidently as a fully-covered one. Ask what was agreed with a client on a wiki with six months of email
+  and three days of Slack, and the answer arrives with no hint that half the record is missing. **Uneven
+  history is worse than short history** — short history is obvious; uneven history is not.
+- **Depth defaults to the wiki's existing coverage** — "your other sources go back to June; match that?"
+  Keeping coverage even is what makes the wiki's answers trustworthy.
+- **Same chunked, checkpointed protocol as the first run.** A year of one source is still hundreds of
+  units, and running out of tokens midway must stay ordinary and resumable.
+- **Appended to an in-progress plan, never a second one** — two competing plans race for the same token
+  budget and produce progress nobody can read. Units are ordered by date across the whole queue so the
+  wiki fills chronologically rather than in per-source blocks.
+- **`backfilled_through` recorded per source** — the oldest date actually covered, not the one requested,
+  since connector retention often cuts those apart.
+- **The monthly lint flags uneven coverage** and offers to backfill to match, without starting one
+  unprompted — it spends tokens the owner did not choose to spend.
+
 ## 1.21.0 — 2026-09-23
 
 **Added — web news as a source, filtered by what the wiki already knows.**

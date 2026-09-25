@@ -154,6 +154,54 @@ the count of `failed`, `empty` and `truncated` units. **A non-zero `truncated` c
 number in the report** — it is the only visible sign that part of the history was seen but not captured. "17 of 84 units, backfilled through 2026-06-24, 1 failed" tells
 the user everything. "Backfill in progress" tells them nothing.
 
+## Backfilling a source added later
+
+**Every time a source is added — at setup, at reconfigure, or because someone asked mid-conversation for
+something to be indexed — ask whether to backfill it, and how far back.** Never enable a source silently
+from today forward; that leaves a hole nobody can see.
+
+### Why it is not optional to ask
+
+A source enabled without backfill answers questions as confidently as a fully-covered one. Ask "what did
+we agree with Acme?" on a wiki with six months of email and three days of Slack, and the answer arrives
+with no hint that half the record is missing. **Uneven history is worse than short history**, because
+short history is obvious and uneven history is not.
+
+### Default the depth to the wiki's existing coverage
+
+Read `backfilled_through` on the other sources in `llm-wiki.yml` and **offer to match it**: *"Your other
+sources go back to June. Match that for Slack, or pick a different depth?"* Matching is the right default
+— it keeps coverage even, which is the thing that makes the wiki's answers trustworthy.
+
+The usual options stand: none / 2 weeks / 3 months / 6 months / 12 months / a date. And the usual warning
+— most connectors do not hold a year, so a deep request returns partial data for reasons that have
+nothing to do with this wiki.
+
+### Planning it
+
+**Exactly the same protocol as the first run**, and for the same reason: one source × one time chunk per
+unit, oldest first, checkpointed after each, drained a few units per ingest run. A source added later is
+not a smaller problem — a year of one source is still hundreds of units, and running out of tokens
+halfway through must stay an ordinary, resumable event.
+
+**If a backfill is already in progress, append to it. Never start a second plan.**
+`wiki-backfill-state.json` holds one plan. Add the new source's units to it, update `unitsTotal`, and let
+the existing drain loop pick them up. Two competing plans mean two drains racing for the same budget,
+and progress reporting that makes sense to nobody.
+
+Where the new source's units interleave with existing pending ones, **order by date across the whole
+queue** so the wiki fills chronologically rather than one source at a time. The logs append; a queue
+processed source-by-source produces a log that reads in blocks.
+
+### Record the coverage
+
+When a source's units complete, write **`backfilled_through`** on that source in `llm-wiki.yml` — the
+oldest date actually covered, not the date requested. They differ whenever a connector's retention cut
+things short, and that difference is exactly what a later reader needs to know.
+
+A source with `backfilled_through: null` has history only from the day it was enabled. Say so when it is
+relevant to an answer.
+
 ## When it finishes
 
 **A backfill is not complete while any unit is `truncated` or `in_progress`.** Those are unfinished work,

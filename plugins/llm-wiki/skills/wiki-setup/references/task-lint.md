@@ -93,7 +93,13 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    This check exists because the failure is otherwise undetectable — once written to the wiki, a
    truncated window and a genuinely empty one are indistinguishable.
 
-8. **Backfill status** — if `wiki-backfill-state.json` exists and is in progress, report
+8. **Uneven coverage** — compare `backfilled_through` across enabled sources in `llm-wiki.yml`. Flag any
+   source with `null`, or whose history starts materially later than the others. That is a wiki that will
+   answer across a gap without noticing: ask what was agreed with a client, and the part of the record
+   that lived in the late-added source is simply missing. Offer to backfill it to match; never start one
+   unprompted, since it spends tokens the owner did not choose to spend.
+
+9. **Backfill status** — if `wiki-backfill-state.json` exists and is in progress, report
    `unitsDone / unitsTotal`, the date reached, any permanently failed units, and **any unit still marked
    `truncated`** — windows that were seen but not captured, and the likeliest source of a silent hole.
 

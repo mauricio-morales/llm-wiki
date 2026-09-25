@@ -280,6 +280,11 @@ Read `references/sources.md` and follow it. The short version:
    "Mercury" the client from the planet, and it is the only thing making an ambiguous topic usable.
    Push back gently on vague topics: "AI" or "technology" match everything and clear no bar. Three sharp
    topics beat ten broad ones. Read `references/news-sources.md`.
+**Every source enabled — here or at any later point — gets a backfill question.** At setup, Phase 5
+covers all of them at once. Afterwards, adding one source asks about that source, defaulting to match the
+coverage the others already have. A source enabled from today forward, with no question asked, leaves a
+hole the wiki will answer across without noticing.
+
 5. **Local sources** (a notes directory, an exports folder, a local app's database): get the absolute
    path and **try to read it**. A Cowork session is sandboxed, so a local path is often *not* reachable
    even though it is on the same machine — that is normal, not a misconfiguration.
@@ -598,8 +603,8 @@ requests and what each touches:
 
 | Request | Update |
 |---|---|
-| Add or remove a source | `llm-wiki.yml` sources, the ingest task prompt, possibly the execution location |
-| Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A Cowork session is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am |
+| Add or remove a source | `llm-wiki.yml` sources, the ingest task prompt, possibly the execution location. **When adding, always ask whether to backfill it and how far back** — defaulting to the depth the wiki's other sources already have. Plan it with the same chunked protocol as the first run, appended to any in-progress plan rather than started as a second one. See `references/backfill.md` → "Backfilling a source added later" |
+| Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A Cowork session is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am. Then ask about backfill, as for any new source |
 | Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
 | Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
 | Change the schedules | The task crons, and the ingest/brief ordering gap |

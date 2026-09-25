@@ -178,7 +178,10 @@ as a source" — that is a configuration change, not a one-off ingest. Doing it 
 believing it is wired up when it is not.
 
 Route it to the `wiki-setup` skill's reconfigure mode, which updates `llm-wiki.yml` and the ingest task
-together.
+together — **and always ask whether to backfill the new source, and how far back**, defaulting to match
+the coverage the wiki's other sources already have. A source monitored only from today forward answers
+questions just as confidently as one with full history, with no hint that the record is uneven. Run any
+backfill through the same chunked, checkpointed protocol as the first run.
 
 **If the source is on their machine** — a folder, a SQLite file, an application's own database — read
 `references/local-sources.md` in the `wiki-setup` skill before promising anything. A Cowork session is
