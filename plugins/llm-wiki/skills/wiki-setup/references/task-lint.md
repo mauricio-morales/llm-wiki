@@ -4,6 +4,25 @@
 
 <!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
 
+## Before anything: is this the run?
+
+This task is scheduled **every Saturday** (`0 9 * * 6`) so that it can run on the **first Saturday of the
+month** — the weekend, when the owner is least likely to need their token budget for anything else.
+
+Check `jobs.lint.schedule` in `llm-wiki.yml`:
+
+- **It is the weekly-Saturday form** (day-of-week `6`, day-of-month `*`) → if today's day of the month is
+  **greater than 7**, this is not the first Saturday. **Stop immediately and do nothing** — no reads, no
+  update check, no report. A skipped week should cost effectively nothing.
+- **It is anything else** — an older wiki still on `0 9 1 * *`, or a schedule the owner chose — **skip this
+  check and run normally.** Updates never change a schedule, so a wiki set up before this default still
+  fires on its old day; applying the first-Saturday test to it would make the lint silently never run.
+
+Why not a single cron expression: `0 9 1-7 * 6` looks right and is not. When both day-of-month and
+day-of-week are set, standard cron fires when **either** matches — so that expression runs on days 1–7
+**and** every Saturday. First-Saturday cannot be expressed reliably in cron alone; the weekly schedule
+plus this check is the portable way. **Do not "simplify" it back.**
+
 ## Step 0 — Adopt any pending update to this prompt
 
 {{TASK_SELF_UPDATE}}

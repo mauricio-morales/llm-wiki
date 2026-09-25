@@ -12,6 +12,24 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.23.0 — 2026-09-25
+
+**Changed — the monthly lint runs on the first Saturday of the month.**
+
+The 1st of the month lands on a workday most of the time. A weekend run spends tokens the owner is least
+likely to need for anything else.
+
+- **Scheduled by day of week only — `0 9 * * 6`, every Saturday** — and the task exits immediately, doing
+  nothing, unless the day of the month is 7 or less. A skipped Saturday costs effectively nothing.
+- **Deliberately not `0 9 1-7 * 6`.** That looks right and isn't: when both day fields are set, standard
+  cron fires when *either* matches, so it would run on days 1–7 **and** every Saturday. First-Saturday
+  cannot be expressed reliably in cron alone. Written into the template so nobody "simplifies" it back.
+- **The check only applies to the weekly-Saturday schedule.** Updates never change a schedule, so existing
+  wikis keep firing on the 1st; applying the first-Saturday test to them would make the lint silently
+  never run. On anything other than the weekly form, the task runs as scheduled.
+- **Update mode offers to move an old `0 9 1 * *` lint to the first Saturday** — asked, never done
+  silently, since the owner may have picked the 1st on purpose.
+
 ## 1.22.0 — 2026-09-25
 
 **Added — every newly added source gets a backfill question.**

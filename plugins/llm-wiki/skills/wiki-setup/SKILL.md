@@ -42,6 +42,10 @@ Before saying anything, check the working folder:
      `references/task-self-update.md`. Tasks normally do this themselves on their next run; doing it here
      means the owner sees the benefit tomorrow morning rather than the day after.
   3. **Clear `lastUpdateNudge`** so the brief stops asking.
+  3b. **If the lint is still on the old `0 9 1 * *` default, offer to move it** to the first Saturday of
+     the month. Ask; do not change it silently — the owner may have chosen the 1st deliberately, and an
+     update never changes a schedule without consent. If they agree, set the task's cron to `0 9 * * 6`
+     and `jobs.lint.schedule` to match, so the task's first-Saturday check engages.
   4. Report what changed, in plain terms — what the jobs will now do differently, not a version number.
 
   If everything is already current, say so in one line and stop. An update run that finds nothing should
@@ -392,7 +396,13 @@ Do not start the backfill during setup. Write the plan, then offer to run the fi
 
 ## Phase 7 — The monthly lint
 
-Default: the 1st of the month at 09:00, with auto-fix on for safe fixes, and `prune --months 6`.
+Default: **the first Saturday of the month at 09:00**, with auto-fix on for safe fixes, and
+`prune --months 6`. A weekend run spends tokens the owner is least likely to need for anything else; the
+1st of the month lands on a workday most of the time.
+
+It is scheduled **every Saturday** (`0 9 * * 6`) and the task exits immediately unless the day of the month
+is 7 or less. Do not write `0 9 1-7 * 6` instead — with both day fields set, cron fires when *either*
+matches, so that runs on days 1–7 **and** every Saturday.
 
 Ask one thing: *"Should it tidy the wiki automatically, or just report what it finds?"* If they pick
 report-only, record it — the task will run `lint` without `--fix` and list demote candidates without
@@ -480,7 +490,8 @@ after the ingest. None, if there are no Focus Areas.
 Unprefixed ids collide the moment this user sets up a second wiki, and a collision here is not a tidy
 error — it is a second wiki silently overwriting the first one's job.
 
-Defaults: ingest `0 6 * * *`, brief `30 7 * * 1-5`, lint `0 9 1 * *`. Cron is evaluated in local time.
+Defaults: ingest `0 6 * * *`, brief `30 7 * * 1-5`, lint `0 9 * * 6` (weekly, with the task itself
+running only on the first Saturday — see Phase 7). Cron is evaluated in local time.
 
 **Stamp every task.** Each generated prompt opens with
 `<!-- llm-wiki task: <kind> | template version: X.Y.Z | generated: YYYY-MM-DD -->`, and its
