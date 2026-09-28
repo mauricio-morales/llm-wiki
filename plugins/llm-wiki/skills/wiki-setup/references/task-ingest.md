@@ -291,6 +291,18 @@ reusable topic emerges that doesn't fit an existing page.
 Maintain the `### Index` routing line in the hub for every page touched. Add `[[cross-references]]`
 between affected pages; never leave a page with zero outgoing links. Set `updated` on every touched page.
 
+## Pages that have grown too large
+
+After this run's writes are complete, check the size of every page it touched. **Any page over
+`split_threshold_kb` in `llm-wiki.yml` (default 100 KB, ~25k tokens) gets split** — entity and state pages
+into semantic clusters, logs by period — following the `wiki` skill's "Splitting pages that grow too
+large". **Lossless or not at all**: write the subpages, verify every block landed exactly once, then
+convert the original into the folder's `_index.md` and redirect inbound links. **At most one split per
+run**, and report it.
+
+**When a page this prompt names has become a folder, read its `_index.md` to find where material goes** —
+for a split log, that is the current period file. Never recreate the old flat file beside the folder.
+
 ## Rules
 
 - **Append, never overwrite.** No version history exists — an overwrite is unrecoverable.

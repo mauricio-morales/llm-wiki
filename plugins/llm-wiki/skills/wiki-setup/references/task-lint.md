@@ -38,7 +38,9 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
 
 1. **`lint {{LINT_FIX_FLAG}}`** — full scan: orphans, stale pages, missing properties, broken refs, hub
    completeness, index drift, missing index descriptions, archived-in-live-index, credential leaks,
-   {{PRIVACY_LINT}} empty pages, cross-ref minimum, L1/L2 duplicates.
+   {{PRIVACY_LINT}} empty pages, cross-ref minimum, L1/L2 duplicates, **oversized pages** (past
+   `split_threshold_kb`, which the ingest should have split — a survivor means a split failed or was
+   skipped).
 
 2. **`prune --months {{PRUNE_MONTHS}}`** — LRU-Demote. Evict cold pages from the live hub index so
    routing stays precise as the wiki grows. Demotion is **not** deletion: the page keeps its file, keeps

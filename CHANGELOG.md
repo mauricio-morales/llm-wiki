@@ -12,6 +12,28 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.24.0 — 2026-09-28
+
+**Added — pages that grow too large are split on the fly, losslessly.**
+
+- **Threshold is `split_threshold_kb`, default 100 KB (~25k tokens)** — configurable. The limit is reading
+  cost, not disk: 1 MB of markdown is ~250k tokens, more than one pass can read alongside anything else,
+  and a page read only in part yields answers that miss the rest without knowing it. 100 KB keeps three
+  pages readable in one query. (A 2–5 MB threshold was considered and rejected: in a real vault the largest
+  page was 881 KB, ~226k tokens, and already too large to read whole.)
+- **Entity and state pages split into semantic clusters**, decided from the page's content — the themes it
+  keeps returning to — never chronologically, and never into a "Misc" page that regrows the problem.
+- **Logs split by period**, the one exception. A log is its chronology: the ingest appends to its newest
+  section and the brief reads its tail, and a semantic split would break both. (In the real vault, every
+  oversized page was a log or a state page.)
+- **Lossless or not at all**: write subpages first, verify every block landed exactly once, only then turn
+  the original into the folder's `_index.md` and redirect inbound links — changing only the link target,
+  the one sanctioned edit to another page's block. Any failure leaves the original untouched.
+- **At most one split per run**, reported, so structure changes deliberately rather than in a cascade.
+- **A named page that became a folder is followed through its `_index.md`** — including by task prompts
+  that hardcode the old path — and the flat file is never recreated beside it.
+- The lint flags any page still over the threshold, since that means a split failed or was skipped.
+
 ## 1.23.0 — 2026-09-25
 
 **Changed — the monthly lint runs on the first Saturday of the month.**

@@ -49,6 +49,12 @@ the entity itself:
 That `#hub` marker is what tells a query there is another level worth descending into, rather than a
 leaf page to open.
 
+**Split what grows too large.** A page past `split_threshold_kb` (default 100 KB, ~25k tokens) becomes a
+folder: entity and state pages split into **semantic** sub-pages — the themes the page keeps returning
+to, never "Misc" — while logs split **by period**, since a log is its chronology and its writer and
+readers depend on that. Splits are lossless, redirect inbound links, and leave the original as the
+folder's `_index.md` so its name still resolves.
+
 **Promote deliberately.** A client mentioned twice belongs in a log or on one page. A client with its own
 projects, staffing and renewal history has earned a folder. When you promote a page to a folder, keep the
 page name as the folder's `_index.md` so every existing `[[link]]` still resolves — pages link by name,

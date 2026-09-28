@@ -154,6 +154,9 @@ Read the hub `### Index` of `Wiki/{{PRIMARY_NS}}` first, then in practice these 
 
 {{BRIEF_SOURCE_PAGES}}
 
+**If a log named here has become a folder, it was split by period — read its `_index.md` and use the
+current period file.** "The tail" then means the tail of that file.
+
 These log pages are append-only and grow long — **do not read them start to finish.** Run
 `grep -n "^## 20" <file>` to find the date headers, then Read with an `offset` at the last few, enough to
 cover the window. Ingest only backfills through the prior day, so a gap for "today" is expected; state it

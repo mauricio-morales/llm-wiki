@@ -239,6 +239,62 @@ person who asks, forever — and the whole point of this wiki is that a question
 routing line in the nearest enclosing hub, cross-links to related pages, `updated` set, and the source
 recorded. A fact dumped somewhere unroutable has not been captured; it has been hidden.
 
+## Splitting pages that grow too large
+
+**The limit is reading cost, not disk size.** A megabyte of markdown is roughly 250k tokens — more than
+can be read in one pass alongside anything else. A page that cannot be read whole gets read in part, and
+an answer built from part of a page misses what was in the rest **without knowing it**. That is the same
+failure as a paged source read one page deep and reported as quiet.
+
+**Split a page when it passes `split_threshold_kb` in `llm-wiki.yml` (default 100 KB, ~25k tokens)** — the
+size at which three pages still fit comfortably in one query. Check after every write to a page; split
+**after** the run's writes are complete, never mid-write.
+
+### How to split — depends on what the page is
+
+**Entity and state pages** (a client, a person, a decisions register, a membership list) → **semantic
+clusters, never chronological.** Read the page and find the themes it actually keeps returning to — for a
+client that might be *Contracts & commercial*, *Staffing*, *Projects*, *Relationship & people*. Aim for
+3-7 subpages named for their cluster. **No "Misc" or "Other" page**: a dumping ground regrows into the
+problem it was meant to fix. A block that fits two clusters goes in the better one and is linked from the
+other.
+
+**Logs** (append-only, dated sections) → **by period**, and this is the one place chronology is right. A
+log *is* its chronology, the ingest appends to its newest section, and the brief reads its tail. Split into
+`<Log>/YYYY-Qn.md`; the current period stays the live file new material goes into. A semantic split would
+break both the writer and the reader.
+
+### Doing it without losing anything
+
+There is no version history, so a split is the riskiest write this wiki makes. In this order:
+
+1. **Write every new subpage first.** Each keeps the original's frontmatter type and gets its own
+   `created`/`updated`, and must itself come in under the threshold.
+2. **Verify it was lossless** — every content block of the original appears in exactly one subpage. Count
+   them. A block that landed nowhere is data destroyed with no way back; one that landed twice is a
+   future contradiction.
+3. **Only then turn the original into the folder's `_index.md`**: a short summary of the entity, and a
+   `### Index` with one routing line per subpage. The page name stays resolvable, so links elsewhere
+   survive.
+4. **Relink inbound references.** Find every `[[link]]` to the page. Where the linking block is plainly
+   about one cluster, point it at that subpage; otherwise leave it at the folder. **Change only the link
+   target** — this is the single sanctioned edit to another page's existing block, and it must not touch
+   anything else in that block.
+5. **Update routing**: the parent hub's line for this page gets `#hub`, per the sub-namespace rules.
+
+If any step fails, **stop and leave the original untouched.** A page that is too big is an inconvenience;
+a half-split page is data loss.
+
+**At most one split per run**, reported in the run's summary with the subpages created and how many links
+were redirected. Structure should change deliberately, not as a cascade.
+
+### Following a page that has become a folder
+
+Task prompts and other pages name pages by path. **When a named page is now a folder, read its
+`_index.md` — it says where things live.** For a split log, new material goes into the current period
+file and "the tail" means the tail of that file. Never recreate the old flat file beside the folder: that
+forks the page into two places and the wiki stops agreeing with itself.
+
 ## Where output goes — never the wiki root
 
 **Anything you produce that is not a wiki page goes in `Artifacts/YYYY-MM-DD-<scope>-<what>/`.** An
@@ -441,6 +497,9 @@ Phase 2 - Check Rules:
   - **Unmarked sub-hub**: a routing line pointing at a hub without the `#hub` marker, so routing treats an
     index as a leaf and never descends
   - **Over-deep nesting**: a page more than 4 segments below `Wiki/`
+  - **Oversized pages**: anything past `split_threshold_kb` (default 100 KB). Ingest splits on the fly, so a
+    survivor means a split failed or was skipped — report its size, and with `--fix` split it under the
+    same lossless procedure and one-per-run limit
   - **Missing index description**: a routing line with no text after the `--`
   - **Archived-in-live-index**: an `archived:` page still in `### Index` (unclean prune)
   - **Credential leak**: regex scan for token/password/secret/key patterns

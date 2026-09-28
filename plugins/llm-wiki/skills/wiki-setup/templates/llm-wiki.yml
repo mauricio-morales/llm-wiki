@@ -48,6 +48,12 @@ namespaces:
 # person's connectors. Everyone else queries, ingests manually, and runs their own brief if they want.
 ingest_owner: "{{INGEST_OWNER}}"
 
+# Pages larger than this are split: entity/state pages into semantic sub-pages, logs by period.
+# The limit is reading cost, not disk — 1 MB of markdown is ~250k tokens, too much to read in one pass,
+# and a page read only in part gives answers that miss the rest without knowing it. 100 KB (~25k tokens)
+# keeps three pages comfortably readable in a single query.
+split_threshold_kb: 100
+
 # How long to wait before a commitment with no stated deadline shows up in the brief, in days.
 # A nudge date is the point where a reasonable person starts wondering — not the day the ask was sent.
 # Too short and the brief reminds you about an email from yesterday, which teaches you to skim the one
