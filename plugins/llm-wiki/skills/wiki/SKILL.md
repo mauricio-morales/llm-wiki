@@ -264,6 +264,38 @@ log *is* its chronology, the ingest appends to its newest section, and the brief
 `<Log>/YYYY-Qn.md`; the current period stays the live file new material goes into. A semantic split would
 break both the writer and the reader.
 
+### Peers before depth
+
+**A split does not automatically mean going a folder deeper.** Nesting on every split walks a page down
+the tree until it breaks the schema's depth cap — 4 segments below `Wiki/` — and a page already at that
+depth (a project page under a client, say) cannot nest even once. So before creating a sub-folder, try the
+flat option first:
+
+**Split into peers — siblings in the same folder — by default.** `Wiki/Clients/Acme/Staffing.md` becomes
+`Staffing-Rates.md` and `Staffing-Placements.md` beside it, at the same depth.
+
+**Nest only when a peer genuinely does not make sense**, and the test for that is:
+
+- **Facets are peers.** The new pieces are different *aspects* of the same thing — rates and placements
+  are both facets of Acme's staffing. Peers.
+- **Collections nest.** The new pieces are *instances* of one category, and more will keep arriving — one
+  page per project, per engagement, per contract. That is a collection, and a collection earns a folder.
+  `Clients/Acme/Projects/` exists for exactly this reason.
+
+If in doubt, it is a facet. A folder with two pages in it that will never get a third was a pair of peers
+all along.
+
+**The depth cap is absolute.** A split that would place any page more than 4 segments below `Wiki/` must
+use peers, whatever the content suggests. If peers at the capped level are still too large, make more
+specific peers — never a deeper level.
+
+**What happens to the original page in a peer split:** it stays, as a **short overview** — a few lines on
+what the topic covers and a link to each peer. It is not a folder and gains no depth, but its name still
+resolves, so every existing link to it survives. Redirect inbound links whose context is plainly about
+one peer to that peer; leave the rest pointing at the overview. The peers' routing lines go **directly into
+the enclosing folder's `_index.md`**, as siblings — routing should reach them in one hop, not through the
+overview.
+
 ### Doing it without losing anything
 
 There is no version history, so a split is the riskiest write this wiki makes. In this order:
@@ -273,9 +305,9 @@ There is no version history, so a split is the riskiest write this wiki makes. I
 2. **Verify it was lossless** — every content block of the original appears in exactly one subpage. Count
    them. A block that landed nowhere is data destroyed with no way back; one that landed twice is a
    future contradiction.
-3. **Only then turn the original into the folder's `_index.md`**: a short summary of the entity, and a
-   `### Index` with one routing line per subpage. The page name stays resolvable, so links elsewhere
-   survive.
+3. **Only then convert the original** — into a short overview linking its peers (a peer split), or into
+   the new folder's `_index.md` with a `### Index` of routing lines (a nested split). Either way the page
+   name stays resolvable, so links elsewhere survive.
 4. **Relink inbound references.** Find every `[[link]]` to the page. Where the linking block is plainly
    about one cluster, point it at that subpage; otherwise leave it at the folder. **Change only the link
    target** — this is the single sanctioned edit to another page's existing block, and it must not touch
@@ -496,7 +528,10 @@ Phase 2 - Check Rules:
     routing — this is a dead end, not a cosmetic gap
   - **Unmarked sub-hub**: a routing line pointing at a hub without the `#hub` marker, so routing treats an
     index as a leaf and never descends
-  - **Over-deep nesting**: a page more than 4 segments below `Wiki/`
+  - **Over-deep nesting**: a page more than 4 segments below `Wiki/`. Usually the trace of a split that
+    nested when it should have made peers — fix by flattening into peers, never by moving the cap
+  - **Thin sub-folders**: a folder holding two or three pages that are facets rather than a growing
+    collection. Those were peers; flag them rather than flattening automatically
   - **Oversized pages**: anything past `split_threshold_kb` (default 100 KB). Ingest splits on the fly, so a
     survivor means a split failed or was skipped — report its size, and with `--fix` split it under the
     same lossless procedure and one-per-run limit

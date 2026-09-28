@@ -49,11 +49,14 @@ the entity itself:
 That `#hub` marker is what tells a query there is another level worth descending into, rather than a
 leaf page to open.
 
-**Split what grows too large.** A page past `split_threshold_kb` (default 100 KB, ~25k tokens) becomes a
-folder: entity and state pages split into **semantic** sub-pages — the themes the page keeps returning
+**Split what grows too large — peers before depth.** A page past `split_threshold_kb` (default 100 KB,
+~25k tokens) is split, and **by default into peers in the same folder**, not a folder deeper. Nest only
+for a *collection* — instances of one category that will keep arriving, like one page per project.
+*Facets* of the same thing are peers. The depth cap above is absolute: a split that would exceed it uses
+peers regardless. Entity and state pages split into **semantic** pieces — the themes the page keeps returning
 to, never "Misc" — while logs split **by period**, since a log is its chronology and its writer and
-readers depend on that. Splits are lossless, redirect inbound links, and leave the original as the
-folder's `_index.md` so its name still resolves.
+readers depend on that. Splits are lossless and redirect inbound links; the original stays as a short
+overview of its peers (or as the `_index.md` of a nested collection), so its name still resolves.
 
 **Promote deliberately.** A client mentioned twice belongs in a log or on one page. A client with its own
 projects, staffing and renewal history has earned a folder. When you promote a page to a folder, keep the

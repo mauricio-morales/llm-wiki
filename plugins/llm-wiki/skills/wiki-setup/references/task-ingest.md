@@ -296,9 +296,11 @@ between affected pages; never leave a page with zero outgoing links. Set `update
 After this run's writes are complete, check the size of every page it touched. **Any page over
 `split_threshold_kb` in `llm-wiki.yml` (default 100 KB, ~25k tokens) gets split** — entity and state pages
 into semantic clusters, logs by period — following the `wiki` skill's "Splitting pages that grow too
-large". **Lossless or not at all**: write the subpages, verify every block landed exactly once, then
-convert the original into the folder's `_index.md` and redirect inbound links. **At most one split per
-run**, and report it.
+large". **Peers before depth**: split into sibling pages in the same folder by default, and nest a folder
+deeper only for a growing collection (one page per project, per contract) — never past 4 segments below
+`Wiki/`. **Lossless or not at all**: write the new pages, verify every block landed exactly once, then
+convert the original into a short overview of its peers (or a nested collection's `_index.md`) and
+redirect inbound links. **At most one split per run**, and report it.
 
 **When a page this prompt names has become a folder, read its `_index.md` to find where material goes** —
 for a split log, that is the current period file. Never recreate the old flat file beside the folder.

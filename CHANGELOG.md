@@ -12,6 +12,27 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.24.1 — 2026-09-28
+
+**Fixed — repeated splits could break the schema's depth cap.**
+
+1.24.0 always split by nesting a folder deeper. Split a page, then split one of its sub-pages, and the tree
+walks down past the schema's cap of 4 segments below `Wiki/`. A page already at that depth — a project page
+under a client — could not be split even once without violating it.
+
+- **Peers before depth.** A split creates sibling pages in the same folder by default. Nesting a folder
+  deeper happens only when peers genuinely do not make sense.
+- **The test: facets are peers, collections nest.** Different *aspects* of one thing (a client's rates
+  versus its placements) are peers. *Instances* of a category that will keep arriving (one page per
+  project) are a collection, and a collection earns a folder. If in doubt, it is a facet.
+- **The depth cap is absolute** — a split that would exceed it uses peers, and if the peers are still too
+  large, more specific peers, never a deeper level.
+- **In a peer split the original stays as a short overview** linking its peers: no new depth, name still
+  resolvable, existing links intact. The peers' routing lines go straight into the enclosing folder's
+  `_index.md`, so routing reaches them in one hop rather than through the overview.
+- Lint now reads over-deep nesting as the trace of a split that should have made peers, and flags thin
+  sub-folders — two or three facets in a folder that will never get another page.
+
 ## 1.24.0 — 2026-09-28
 
 **Added — pages that grow too large are split on the fly, losslessly.**
