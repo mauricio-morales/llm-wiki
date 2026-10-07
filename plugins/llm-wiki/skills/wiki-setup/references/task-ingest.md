@@ -190,7 +190,7 @@ made, not a task.
 - `asked` — ISO date the ask was made or the commitment accepted
 - `due` — ISO date. **See below; this is never left empty.**
 - `dueIsExplicit` — `true` if a date was actually stated, `false` if defaulted
-- `status` — `open` · `fulfilled` · `withdrawn` · `superseded`
+- `status` — `open` · `fulfilled` · `withdrawn` · `superseded` · `aged-out`
 
 ### Setting `due` — the rule that makes this work
 
@@ -218,7 +218,8 @@ how "by Friday" becomes the wrong Friday.
 
 ### Closing them out
 
-Each run, check every `open` commitment for fulfilment. **Never close on age** — only on evidence.
+Each run, check every `open` commitment for fulfilment. **Never mark one `fulfilled` on age** — only on
+evidence. But do not keep one open forever either; see "Ageing out" below.
 
 **`theirs`** is fulfilled when: a reply lands in the thread answering it, the document or decision
 arrives, a ticket transitions, or someone states it is done. Record `fulfilled` with the date and how it
@@ -232,6 +233,26 @@ not having one.
 
 Also close on `withdrawn` (the other party dropped it, or the owner was released from it) and
 `superseded` (replaced by a newer ask). Record which, never silently delete.
+
+### Ageing out
+
+Much of what the owner owes and is owed gets resolved where this wiki cannot see it — on a call, in a
+hallway, in a message that never reached a connector. Waiting for evidence that will never arrive turns
+the ledger into a snowball: every unverifiable item stays open, the overdue list grows without limit, and
+the owner learns to skip the one section that should be the most actionable thing in the brief.
+
+So: **a commitment more than `commitment_ageout_days` past its due date (default 21) becomes
+`aged-out`** — meaning *outcome unknown, no longer tracked*. Record the date it aged out.
+
+- **`aged-out` is not `fulfilled`.** It must never be counted, reported or summarized as done. The wiki
+  does not know, and it must not claim to — a commitment quietly converted into a completed one is a
+  false record someone will eventually rely on.
+- **It leaves the brief and the Timeline's open sections.** That is the point.
+- **The wiki keeps listening.** Aged-out items are still matched against incoming material. Evidence it
+  was delivered → `fulfilled`, silently. Evidence it is still wanted — the other party chasing, a
+  follow-up, a reminder — → back to `open` with a fresh due date, since a chase is the clearest signal
+  that it was never actually done.
+- **Owner replies override it**: *"still open 41"* reopens it; *"done 41"* marks it fulfilled.
 
 **Capture the link at ingest time.** Slack search returns a permalink on every hit; email search on the
 Sent folder returns a web link; **Teams chat search returns a null `webUrl` whenever a date filter is

@@ -174,7 +174,9 @@ owner owes, should ever be forgotten.**
 ### What surfaces today
 
 An `open` commitment appears when **`due` is today or earlier**, and then **every day after that until it
-is closed.** Not once — every day. An overdue item that stops being mentioned is an item that got dropped.
+is closed or ages out.** Not once — every day, up to that point. An overdue item that *silently* stops
+being mentioned looks like one that got dropped, which is why ageing out is announced once rather than
+done quietly.
 
 **Nothing surfaces before its due date. Nothing.**
 
@@ -190,6 +192,19 @@ this one". Do not:
   a list stops getting read.
 
 Below `due`, commitments stay silently tracked. They are not gone; they are simply not today's problem.
+
+### Items that just aged out — say so once
+
+A commitment `commitment_ageout_days` past due (default 21) with no evidence either way becomes
+`aged-out` and leaves the list. **Mention it once, on the day it happens, in a single line after the
+commitment sections:**
+
+> *Stopped tracking [41], [52] — three weeks past due, no sign either way. Reply "still open 41" to keep
+> one.*
+
+One line, ids only, then never again. Silent removal would look like the wiki losing things; repeating it
+would rebuild the snowball. The one-time line gives the owner a last word on anything that still matters,
+through the reply channel they already use.
 
 ### Two sections, never merged
 

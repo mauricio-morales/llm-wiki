@@ -39,7 +39,8 @@ line: `[41] Ana Ruiz — the Q4 rollout timeline...`
 
 ## What a reply can be, and what to do with it
 
-**A state change** — *"close 41"*, *"[41] is done"*, *"drop 17, they went another way"*. Apply it to the
+**A state change** — *"close 41"*, *"[41] is done"*, *"drop 17, they went another way"*, or *"still open
+41"* for an item that just aged out (reopen it with a fresh due date). Apply it to the
 item: `fulfilled`, `withdrawn`, `superseded`. This is the most common reply and the one that must work
 reliably, because it is how the owner keeps the list honest.
 

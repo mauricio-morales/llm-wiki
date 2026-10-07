@@ -104,8 +104,10 @@ With no date stated, `due` = `asked` + `commitment_grace_days` (default 14), fla
 **Nothing surfaces before its due date**, in either direction. An ask sent yesterday is not a reminder;
 people need time to answer, and so does the owner.
 
-**Close only on evidence.** Something arriving, the owner delivering it, an explicit release. Never on
-age: an old ask is not a finished one.
+**Mark `fulfilled` only on evidence** — something arriving, the owner delivering it, an explicit release.
+But nothing stays open forever: more than `commitment_ageout_days` (default 21) past due with no evidence
+either way, it becomes `aged-out` — outcome unknown, no longer tracked. Never report an aged-out item as
+done; the wiki does not know, and must not claim to.
 
 ## If you had to look it up, write it down
 

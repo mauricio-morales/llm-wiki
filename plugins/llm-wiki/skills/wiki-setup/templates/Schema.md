@@ -291,16 +291,20 @@ reminds the owner of an email from yesterday, which trains them to skim the one 
 the most actionable thing in it. The same applies to what the owner owes.
 
 **Surfacing:** an open commitment appears in the brief when `due` is today or earlier, and **every day
-after until it closes. Never before** — not for something sent yesterday, not for a deadline next week,
+after until it closes or ages out. Never before** — not for something sent yesterday, not for a deadline next week,
 in either direction.
 
-**Closing:** only on evidence, never on age. `theirs` closes when the answer or artifact arrives; `mine`
+**Ageing out:** a commitment more than `commitment_ageout_days` past due (default 21) with no evidence
+either way becomes `aged-out` — *outcome unknown, no longer tracked* — and leaves the brief. It is **never
+counted as done**. Later evidence still updates it: delivered → `fulfilled`; chased again → reopened.
+
+**Closing:** `fulfilled` only on evidence, never on age. `theirs` closes when the answer or artifact arrives; `mine`
 closes when the owner produced it. Also `withdrawn` or `superseded`, recorded as such rather than deleted.
 
 ## Timeline sections
 
 `Timeline.md` carries **"Waiting on others"** and **"I owe"**, mirroring the two directions. Neither is
-pruned by date — unlike the calendar and commitment lines, an open commitment stays until it is closed.
+pruned by date — unlike the calendar and commitment lines, an open commitment stays until it is closed or ages out.
 
 ## L1/L2 Architecture
 

@@ -12,6 +12,25 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.25.0 — 2026-10-07
+
+**Added — overdue commitments age out instead of accumulating forever.**
+
+From the field: the owner was completing things the wiki never saw evidence of — resolved on a call, in a
+hallway, in a message no connector reaches — so they stayed open indefinitely, and the overdue list grew
+into a snowball the owner learned to skip. That followed from 1.10.0's "close only on evidence, never on
+age", which assumed evidence would eventually arrive. Often it does not.
+
+- **More than `commitment_ageout_days` past due (default 21), with no evidence either way, a commitment
+  becomes `aged-out`** — outcome unknown, no longer tracked — and leaves the brief and the Timeline.
+- **`aged-out` is never counted as done.** The wiki does not know, and must not claim to; a commitment
+  quietly converted into a completed one is a false record someone will eventually rely on. "Fulfilled
+  only on evidence, never on age" still holds.
+- **Announced once**, in a single line listing the ids, on the day it happens — silent removal looks like
+  the wiki losing things, and repeating it rebuilds the snowball. Replying *"still open 41"* keeps one.
+- **The wiki keeps listening.** Later evidence of delivery marks an aged-out item fulfilled; the other
+  party chasing it reopens it with a fresh due date, since a chase is the clearest sign it was never done.
+
 ## 1.24.1 — 2026-09-28
 
 **Fixed — repeated splits could break the schema's depth cap.**

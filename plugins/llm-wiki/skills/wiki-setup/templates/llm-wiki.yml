@@ -60,6 +60,12 @@ split_threshold_kb: 100
 # section that should be the most actionable thing in it. Applies to what you are owed and what you owe.
 # A stated deadline always overrides this.
 commitment_grace_days: 14
+
+# How long past its due date a commitment can stay unresolved before it ages out — status `aged-out`,
+# outcome unknown, no longer shown. Much gets settled where the wiki cannot see it, and waiting forever
+# for evidence turns the overdue list into a snowball. Aged-out is never counted as done, and a later
+# chase or delivery still reopens or closes it.
+commitment_ageout_days: 21
 shared_folder: {{SHARED_FOLDER}}   # true if this folder is on a synced drive
 
 # Sources the ingest job checks. status: enabled | no_connector | declined
