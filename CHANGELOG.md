@@ -12,6 +12,27 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.27.0 — 2026-10-08
+
+**Changed — upcoming items reappear on a cadence that tightens as the date approaches.**
+
+From the field: anything a few days out was listed in every brief, so by midweek an item due next
+Thursday had been read five times and was being skimmed past.
+
+- **How often an upcoming item reappears depends on how far away it still is**: every brief for 0–2 days
+  ahead, every 2 days for 3–6 days ahead, once a week for 7+ days ahead. Configurable as
+  `jobs.brief.reminder_cadence`.
+- **The cadence ramps up on its own** — the interval shrinks as the date approaches, so an item goes
+  weekly, then every other day, then daily for its last three days, with no extra logic.
+- **A new item is always shown once**, and **an item whose date or substance changed counts as new** — a
+  moved deadline is exactly what the owner needs to see.
+- **Overdue and due-today items are unaffected**: commitments past due still show daily until they close
+  or age out.
+- The lookahead extends from 7 days to the Timeline's 30, so the weekly band has something to apply to;
+  the five-item cap still bounds the section. Items carry their date in words ("Thu Oct 16") since one
+  shown weekly must carry its own context.
+- New `lastShown` map in `wiki-brief-state.json`, keyed on item id, calendar event id, or date and title.
+
 ## 1.26.0 — 2026-10-08
 
 **Changed — news is its own scheduled job, with topics and cadence chosen at setup.**

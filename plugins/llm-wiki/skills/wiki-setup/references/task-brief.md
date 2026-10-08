@@ -305,13 +305,47 @@ its archive.
 
 ## Step 4: What's coming up
 
-Today plus the next 7 calendar days, from `Timeline.md`: what they own, what needs preparation, what has
-a hard date. Include commitments surfaced from conversations that aren't on the calendar — those are the
-ones that get missed.
+Upcoming items from `Timeline.md`, as far ahead as it reaches (30 days): what the owner owns, what needs
+preparation, what has a hard date. Include commitments surfaced from conversations that aren't on the
+calendar — those are the ones that get missed.
 
-**Five items, ranked by impact then date.** A routine recurring meeting is not news and does not earn a
-line; something needing preparation does. If the week is genuinely full, say so in a sentence rather than
-listing it — the calendar already exists and the owner can open it.
+### How often an upcoming item reappears
+
+An item due next Thursday shown every single morning is noise by Wednesday, and it teaches the owner to
+skim the section. **How often it reappears depends on how far away it still is:**
+
+| Days ahead | Shown |
+|---|---|
+| 0–2 (today, tomorrow, the day after) | **every brief** |
+| 3–6 | **every 2 days** |
+| 7 or more | **once a week** |
+
+Bands come from `jobs.brief.reminder_cadence` in `llm-wiki.yml`; those are the defaults.
+
+Record when each item was last shown in `wiki-brief-state.json` under `lastShown`, keyed on the item's
+`[id]` where it has one, otherwise on the calendar event's id, otherwise on its date plus title. Then:
+
+- **Show it if it has never been shown**, whatever its band — the owner should hear about a new item once.
+- **Otherwise show it only if the days since it was last shown are at least its band's interval.** Count
+  calendar days, so a weekend without briefs counts toward the gap.
+- **The interval shrinks as the date approaches, so the cadence ramps up on its own** — weekly, then every
+  other day, then daily for the last three days. Nothing extra is needed to make that happen.
+- **An item whose date or substance changed counts as new**: show it once, then resume its cadence. A
+  deadline that moved is exactly what the owner needs to see.
+- Prune `lastShown` entries once their date has passed.
+
+**Overdue and due-today items are unaffected.** Commitments past due still appear every day until they
+close or age out (Step 3); this cadence applies only to things still ahead.
+
+### Selecting what fits
+
+Of the items due to appear today, **five at most, ranked by impact then date.** A routine recurring
+meeting is not news and does not earn a line; something needing preparation does. If the week is
+genuinely full, say so in a sentence rather than listing it — the calendar already exists and the owner
+can open it.
+
+Give each item its date in words the owner can't misread at a glance — *"Thu Oct 16"*, not *"in 6
+days"* — since an item shown weekly has to carry its own context.
 
 ## Step 5: Deliver
 

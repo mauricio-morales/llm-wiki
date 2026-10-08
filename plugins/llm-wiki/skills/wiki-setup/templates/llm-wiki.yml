@@ -118,6 +118,13 @@ jobs:
     state_file: "wiki-ingest-state.json"
   brief:
     enabled: {{BRIEF_ENABLED}}
+    # How often an upcoming item reappears, by how far ahead it is. An item due next week shown every
+    # morning is noise by midweek; the interval shrinks as the date approaches, so reminders ramp up on
+    # their own. Overdue and due-today items are unaffected — they show daily until closed.
+    reminder_cadence:
+      daily_within_days: 2          # 0-2 days ahead: every brief
+      every_other_day_within_days: 6  # 3-6 days ahead: every 2 days
+      weekly_beyond: true           # 7+ days ahead: once a week
     template_version: "{{PLUGIN_VERSION}}"
     preferences: []
     task_id: "{{BRIEF_TASK_ID}}"

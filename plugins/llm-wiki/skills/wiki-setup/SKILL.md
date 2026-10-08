@@ -464,7 +464,7 @@ All paths relative to the wiki folder.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
 7b. `wiki-news-state.json` — `{"lastSuccessfulRun": null, "cursor": 0, "topicLastScanned": {}, "seenStories": [], "threads": [], "pending": []}`, only if news topics were given.
-8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null}`, only if the brief is enabled.
+8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null, "lastShown": {}}`, only if the brief is enabled.
 9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
 10. `CLAUDE.md` — from `templates/CLAUDE.md`. **This is the piece that makes the wiki automatic**: it is
     what routes every future question to `query` and every "save this" to `ingest` without anyone typing
