@@ -12,6 +12,28 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.28.0 — 2026-10-08
+
+**Changed — news lives in `News` sub-namespaces and is pulled in at read time, never written onto main pages.**
+
+News captures were written onto the entity's own page under "Market and news", and into Focus Area logs
+and `Objectives.md`. That mixed outside reporting into pages meant to record what the owner's organisation
+itself knows — reading a client page, nobody could tell at a glance what was agreed from what a newspaper
+said.
+
+- **One `News` sub-namespace per namespace that has news**: `Wiki/Clients/News/Acme.md`,
+  `Wiki/People/News/<Name>.md`, `Wiki/<Focus-Area>/News/<topic>.md`. News about a client that is itself a
+  folder still goes in `Clients/News/`, not inside the client's folder — depth stays at three segments.
+  Topics with no entity here go in the primary namespace's `News/`. Created on first capture, never empty.
+- **Main pages are never written by the news job** — entity pages, Focus Area `Log.md`/`Decisions.md`, and
+  `Objectives.md` hold internal facts only. The owner asking ("add that to Acme's page") is the exception,
+  and the line is marked as outside reporting.
+- **News is pulled in at read time.** A question about an entity reads its news page too and answers with
+  outside reporting visibly separated from internal facts. Focus Area reports read their `News/` for the
+  period. The brief keeps reading `News-Log.md`.
+- **Existing wikis**: "update the wiki" offers to move any news already on main pages into the `News`
+  sub-namespaces, losslessly. The lint flags news found on main pages.
+
 ## 1.27.0 — 2026-10-08
 
 **Changed — upcoming items reappear on a cadence that tightens as the date approaches.**

@@ -172,7 +172,7 @@ review time.
 below. That history is the most useful thing on the page at the next planning round, and the first thing
 anyone is tempted to delete.
 
-### News item (inside News-Log.md and on entity pages)
+### News item (inside `News/` sub-namespaces and News-Log.md — never on main pages)
 
 ```
 - [id] YYYY-MM-DD -- <headline> -- <outlet> -- touches [[Wiki/Clients/Acme]] (direct)
@@ -195,9 +195,22 @@ and gets ignored.
 A story that touches nothing this wiki knows is **not captured**, however interesting. That filter is
 what separates this from a news feed.
 
-Captured stories are double-routed: the log, **and** the entity's own page under a "Market and news"
-section — a story about a client that lives only in a chronological log is findable only by someone who
-already knows when it happened.
+**News lives in a `News` sub-namespace, never on main pages.** Main pages — a client, a person, a Focus
+Area's `Log.md` and `Decisions.md`, `Objectives.md` — record what the organisation itself knows. Outside
+reporting is a different kind of fact, of different reliability, and mixing it in means nobody reading the
+client page can tell what was agreed from what a newspaper said.
+
+- One `News` sub-namespace per namespace that has any: `Wiki/Clients/News/Acme.md`,
+  `Wiki/People/News/<Name>.md`, `Wiki/<Focus-Area>/News/<topic>.md`. News about a client that is a folder
+  still goes in `Wiki/Clients/News/`, never inside the client's folder.
+- Topics with no entity here (an industry, a regulator) go in `Wiki/<primary>/News/`.
+- `News-Log.md` in the primary namespace stays the chronological record the brief reads.
+- Created on first capture, never in advance, with an `_index.md` and a `#hub` line in the parent hub.
+
+**News is pulled in at read time.** A question about Acme reads `Clients/News/Acme` alongside the client
+page and presents it as outside reporting, separately from internal facts. Nothing is written onto the
+main page unless the owner asks — "add that to Acme's page" — and then it is marked as sourced from outside
+reporting.
 
 ### Hub (namespace index)
 ```yaml

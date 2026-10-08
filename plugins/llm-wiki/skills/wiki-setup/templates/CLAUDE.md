@@ -68,8 +68,13 @@ merely matches the topic is not captured, and that is most of them. Never captur
 alone: company names collide, and a wiki filling with same-name coincidences loses trust faster than one
 that misses a story.
 
-Every captured item states which entity it touches and whether the link is direct or indirect, and is
-routed both to the news log and to that entity's own page. **Stories carried by several independent
+Every captured item states which entity it touches and whether the link is direct or indirect. **News
+lives in a `News` sub-namespace — `Wiki/Clients/News/Acme.md`, never on the Acme page itself.** Main pages
+hold internal facts; outside reporting would dilute them.
+
+**When answering about an entity, check its news page too** (`Wiki/<namespace>/News/<Entity>.md`) and
+include anything relevant, clearly labeled as outside reporting and kept separate from what the wiki
+records internally. Write news onto a main page only when the owner asks for it. **Stories carried by several independent
 outlets rank above single-outlet ones**; syndicated copies of one story count once.
 
 News is scanned by **its own scheduled job**, not the ingest, at the cadence the owner chose. A news link

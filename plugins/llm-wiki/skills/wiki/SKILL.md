@@ -464,8 +464,19 @@ Phase 1b - Access Logging (LRU signal + routing transparency):
   - If the L3 fallback hits an archived page (`archived:` set), offer to re-promote it: move its routing
     line back into the hub `### Index`, drop the `archived:` property
 
+Phase 1c - Outside reporting (only when the question is about an entity or a Focus Area):
+  - Check that namespace's `News` sub-namespace for the entity's news page —
+    `Wiki/Clients/News/Acme.md` for a question about Acme — and read the recent items
+  - News is kept off main pages by design and **pulled in here, at read time**. Do not skip it: it is the
+    only way outside developments reach an answer about an entity
+  - Keep it to what bears on the question; a question about Acme's contract terms does not need its press
+    coverage
+
 Phase 2 - Synthesize:
   - Combine information across pages
+  - **Keep outside reporting visibly separate from internal facts** — "Internally: … / In the news: …".
+    The owner must be able to tell what their organisation knows from what a newspaper said, and give
+    each the weight it deserves. Note single-source items as such
   - Note confidence levels (from page properties) and staleness (from `updated` dates)
   - Answer with source attribution
 
@@ -532,6 +543,10 @@ Phase 2 - Check Rules:
     nested when it should have made peers — fix by flattening into peers, never by moving the cap
   - **Thin sub-folders**: a folder holding two or three pages that are facets rather than a growing
     collection. Those were peers; flag them rather than flattening automatically
+  - **News on main pages**: a "Market and news" section on an entity page, or news items in a Focus Area's
+    `Log.md`, `Decisions.md` or `Objectives.md`. News belongs in the namespace's `News` sub-namespace; flag
+    it, and with `--fix` move it there under the lossless procedure — unless the line is marked as added at
+    the owner's request
   - **Oversized pages**: anything past `split_threshold_kb` (default 100 KB). Ingest splits on the fly, so a
     survivor means a split failed or was skipped — report its size, and with `--fix` split it under the
     same lossless procedure and one-per-run limit

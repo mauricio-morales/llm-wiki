@@ -134,8 +134,10 @@ A search snippet is a lead, not a source. For every candidate that survived tria
    Syndicated copies of the same wire story are one source, not two. If it cannot be corroborated, it may
    still be captured, **marked `single-source`**; a consequential claim stated as settled on one outlet's
    word is how a wiki ends up repeating a retracted story.
-4. **Connect it to the wiki.** Read the touched entity's page and its "Market and news" section. Is this
-   new, or a development of something already recorded? A development updates the existing item in place.
+4. **Connect it to the wiki.** Read the entity's **news page** — `Wiki/<its namespace>/News/<Entity>.md` —
+   to see whether this is new or a development of something already recorded; a development updates the
+   existing item in place. Read the entity's main page for context if it helps judge relevance, but **never
+   write to it** (see Step 6).
 5. **Decide whether it is still developing.** If so, open a thread: `{storyKey, entity, watchFor,
    nextCheck, opened}` — `watchFor` says concretely what would be the next development ("deal closes or is
    blocked"; "fine amount announced"), `nextCheck` when it is worth looking (a stated date if there is one,
@@ -224,14 +226,37 @@ same story arriving from ten outlets over three days is captured once.
 
 ## Step 6 — Route
 
-Double-routed, like Focus Area material:
+**News never goes on an entity's main page.** A client page records what the owner's organisation knows
+about that client — contracts, staffing, decisions, relationships. Outside reporting is a different kind
+of fact, of different reliability, and mixed into those pages it dilutes them: someone reading the client
+page cannot tell at a glance what was agreed from what a newspaper said. So news lives apart, and is
+**brought in at read time** (see "Reading news back in", below).
 
-- `Wiki/{{PRIMARY_NS}}/News-Log.md` — the chronological record, one dated section per run, even a run
-  that captured nothing (see the report).
-- **The entity's own page**, under a "Market and news" section — a story about a client that lives only in
-  a log is findable only by someone who already knows when it happened.
-- **A Focus Area's `Log.md`**, fully, where it bears on one — typed as a `signal`, with the same `[id]`.
-- **`Objectives.md`**, as a flagged line, where it threatens or advances an objective.
+Write each capture to:
+
+- **`Wiki/<namespace>/News/<Entity>.md`** — the `News` sub-namespace of the namespace the entity lives in.
+  A client's news goes in `Wiki/Clients/News/Acme.md`, a person's in `Wiki/People/News/<Name>.md`, a
+  Focus Area's in `Wiki/<Focus-Area>/News/<topic>.md`. **One `News` sub-namespace per namespace, not one per
+  entity**, so news about a client that is itself a folder (`Wiki/Clients/CS-Disco/`) still goes to
+  `Wiki/Clients/News/CS-Disco.md` — keeping depth at three segments and the client's folder clean.
+- **A topic with no entity in the wiki** — an industry, a regulator, a market — goes to
+  `Wiki/{{PRIMARY_NS}}/News/<Topic>.md`.
+- **`Wiki/{{PRIMARY_NS}}/News-Log.md`** — the chronological record, one dated section per run, even a run
+  that captured nothing (see the report). The brief reads this.
+
+Each news page is a log: dated items, newest at the bottom, each with its `[id]`, the connection to this
+wiki, its report count and its sources. It splits by period when it grows large, like any log.
+
+**Create a `News` sub-namespace on its first capture**, never in advance — with an `_index.md` hub routing
+to each news page, and a `#hub` line in the parent namespace's `### Index`:
+`[[Wiki/Clients/News]] -- #hub · outside reporting on clients, kept apart from internal facts #news`.
+
+**Never write news to**: an entity's main page, a Focus Area's `Log.md` or `Decisions.md`, or
+`Objectives.md`. Those hold internal facts. If a story bears on an objective or a commitment, say so in this
+run's report and let the brief and reports surface it — they read news; they are not fed it.
+
+**The one exception is the owner asking.** "Add that to Acme's page" is a decision to treat a story as part
+of the record; do it, and mark the line as sourced from outside reporting with its link.
 
 Maintain the hub `### Index` line for every page touched, add `[[cross-references]]`, set `updated`.
 **When a page this prompt names has become a folder, read its `_index.md` to find where material goes.**

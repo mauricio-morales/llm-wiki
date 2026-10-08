@@ -53,6 +53,10 @@ Before saying anything, check the working folder:
      `topics_per_run`, and move `news.cursor` and the ingest state's `seenStories` into a new
      `wiki-news-state.json`. This one question is asked because a new job's cadence is the owner's
      choice; an update never invents a schedule.
+  3d. **If any main page carries news** — a "Market and news" section on an entity page, or news `signal`
+     lines in a Focus Area's `Log.md` or in `Objectives.md` — offer to move it into the matching `News`
+     sub-namespace. Ask first, then move it under the lossless split procedure: write the news page,
+     verify every item landed exactly once, only then remove it from the main page, and redirect any links.
   4. Report what changed, in plain terms — what the jobs will now do differently, not a version number.
 
   If everything is already current, say so in one line and stop. An update run that finds nothing should

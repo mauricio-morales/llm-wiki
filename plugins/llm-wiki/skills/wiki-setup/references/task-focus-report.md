@@ -33,6 +33,11 @@ about the last one.
 The period runs from the last report's date (see `Wiki/{{FOCUS_AREA}}/Reports/`, newest page) to today.
 If there is no previous report, the period starts at the Focus Area's earliest captured item, and say so.
 
+Also read `Wiki/{{FOCUS_AREA}}/News/`, if it exists, for the period — outside reporting is kept off the
+Focus Area's own pages and comes in here, at report time. Use it as input to insights where it moved the
+picture, and label it as outside reporting rather than presenting it as something the owner's organisation
+did or decided.
+
 Read, in this order: `Wiki/{{FOCUS_AREA}}/Log.md` (tail only — `grep -n "^## 20"` then read from the last
 few date headers), `Decisions.md` in full — it is the live state, not a log — and `Goals.md`.
 

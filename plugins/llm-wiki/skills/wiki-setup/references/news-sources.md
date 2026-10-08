@@ -131,10 +131,21 @@ lives in `wiki-news-state.json`, never in the config. Config is the owner's; sta
 
 ## Where captures go
 
-Double-routed: `Wiki/<primary>/News-Log.md` (one dated section per run) **and** the entity's own page
-under "Market and news", plus a Focus Area's log and `Objectives.md` where they bear on one. Each item
-carries an `[id]` from the wiki-wide counter, the connection to this wiki, its report count, and a
-text-only archive of the page. **Archive only what is captured**, never everything opened.
+**Never onto an entity's main page.** Main pages hold internal facts; outside reporting is a different
+kind of fact and would dilute them. Captures go to:
+
+- `Wiki/<namespace>/News/<Entity>.md` — one `News` sub-namespace per namespace that has news (clients,
+  people, a Focus Area), created on first capture. News about a client that is a folder still goes to
+  `Wiki/Clients/News/<Client>.md`, never inside the client's folder.
+- `Wiki/<primary>/News/<Topic>.md` for a topic with no entity in the wiki — an industry, a regulator.
+- `Wiki/<primary>/News-Log.md`, one dated section per run, for the brief.
+
+Never a Focus Area's `Log.md`, its `Decisions.md`, or `Objectives.md` either. **News is pulled in at read
+time** — a question about an entity, a Focus Area report, the brief — rather than written into internal
+pages. The owner saying "add that to Acme's page" is the one exception.
+
+Each item carries an `[id]` from the wiki-wide counter, the connection to this wiki, its report count, and
+a text-only archive of the page. **Archive only what is captured**, never everything opened.
 
 ## In the brief
 
