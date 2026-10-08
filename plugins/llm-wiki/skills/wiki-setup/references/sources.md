@@ -85,12 +85,10 @@ noise for a purely technical one. → routed by namespace, typically `Business` 
 Merged PRs, releases and architecture-relevant discussion in named repos. Decisions and rationale, not
 diffs. → `Tech`
 
-**12. Web news on named topics**
-Up to 10 topics scanned round-robin — an employer, competitors, an industry, a regulator, a market they
-sell into. **The wiki is the filter**: a story is captured because it touches a client, person, employer
-or objective this wiki already knows, not because it matched a keyword. Needs web access rather than a
-connector. Ask for each topic *and why it matters*, since that is what distinguishes the company from the
-same-named bakery. See `references/news-sources.md`. → `News-Log` plus the entity's own page
+**12. Web news — not a source here**
+News is configured in its own setup step and runs as **its own scheduled task**, not as part of the
+ingest: following a story to its primary source and back again days later does not fit inside a
+connector sweep. Do not list it in the source picker. See `references/news-sources.md`.
 
 **13. Anything else with a connector**
 The catalog is not a closed list. If a connector is present that isn't listed here, offer it — same three

@@ -118,16 +118,20 @@ Where Focus Areas are configured, this rule outranks everything else in this job
 If the window held nothing for a Focus Area, **say so explicitly in the report** rather than omitting the
 section. Silence and "nothing happened" must never look the same.
 
-## News topics
+## News is not this job's
 
-{{NEWS_BLOCK}}
+**Do not scan the web here.** News is a separate scheduled task (`jobs.news` in `llm-wiki.yml`), with
+its own budget, cadence and state file, because pursuing a story — opening it, finding the primary
+source, corroborating it, following it up days later — does not fit inside a connector sweep.
 
-<!-- Setup fills this from references/news-sources.md when news topics are configured, with this wiki's
-     topics and their `why`. Omit the section entirely when none are. -->
+Two things still apply in this job:
 
-The rule that keeps this from becoming a feed: **capture a story because it touches something this wiki
-already knows — a client, a person, the employer, a Focus Area, an objective — not because it matched the
-topic.** A story matching the topic and touching nothing here is not captured. That is most of them.
+- **A link to a news article shared in a message** is a shared link like any other: follow it once, per
+  "Follow shared links once" below. It is not a scan.
+- **If `news.enabled` is true but there is no `jobs.news`**, the wiki was set up before news had its own
+  task, and nothing is scanning it now. Say so in one line of the report, every run, until it is fixed:
+  *"News scanning is paused — it moved to its own job; say 'update the wiki' to create it."* A capability
+  that stops without a word is worse than one that was never there.
 
 ## Commitment tracking — both directions
 

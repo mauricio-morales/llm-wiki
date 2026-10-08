@@ -80,6 +80,13 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    line in this report. Also report any source that has been reporting itself unavailable run after run —
    a connector that quietly stopped working looks exactly like a quiet month.
 
+   **News health**, if `jobs.news` exists — read `wiki-news-state.json`. A stale `lastSuccessfulRun`, a
+   topic whose `topicLastScanned` is more than two weeks old, or a `pending` queue that keeps growing means
+   the job is failing, starved by its fetch budget, or carrying more topics than its cadence can cover.
+   Also flag a topic that has captured nothing in two months: it is either too vague to clear the bar or
+   no longer worth watching, and the owner should choose which. If `news.enabled` is true and there is no
+   `jobs.news`, nothing is scanning the news at all — say so and point at "update the wiki".
+
 6. **Version drift** — compare three things: `wiki_version` and `skills_version` in `llm-wiki.yml`, the
    line in `.claude/skills/.llm-wiki-version`, and the version of whatever llm-wiki plugin is running in
    this session (if one is).

@@ -69,7 +69,13 @@ alone: company names collide, and a wiki filling with same-name coincidences los
 that misses a story.
 
 Every captured item states which entity it touches and whether the link is direct or indirect, and is
-routed both to the news log and to that entity's own page.
+routed both to the news log and to that entity's own page. **Stories carried by several independent
+outlets rank above single-outlet ones**; syndicated copies of one story count once.
+
+News is scanned by **its own scheduled job**, not the ingest, at the cadence the owner chose. A news link
+pasted into a session is ingested like any other link. "Add a news topic", "stop watching X" or "check the
+news weekly" are reconfigure requests: they change `news.topics` or `jobs.news.schedule` in
+`llm-wiki.yml` and regenerate the news task — never only a prompt.
 
 ## Objectives
 
@@ -149,7 +155,7 @@ Filing means filing **properly** — right page, routing line in the nearest enc
 **Never write anything to the folder root.** The root holds only what is listed here. Derived output goes
 under `Artifacts/`; facts it establishes are ingested into `Wiki/` with the artifact linked as the source,
 because a number reachable only inside a spreadsheet is not in the knowledge base.
-- `wiki-ingest-state.json`, `wiki-brief-state.json` — job cursors at the folder root, outside `Wiki/` so
+- `wiki-ingest-state.json`, `wiki-brief-state.json`, `wiki-news-state.json` — job cursors at the folder root, outside `Wiki/` so
   they are never mistaken for wiki content. They hold cursors and tracking data, never credentials.
 - `.claude/skills/` — a copy of the wiki skills, so this folder works on its own for anyone who syncs it.
   **Do not personalize these files.** They are replaced by updates. Wiki-specific behavior belongs in this

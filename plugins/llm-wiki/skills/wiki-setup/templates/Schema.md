@@ -176,9 +176,16 @@ anyone is tempted to delete.
 
 ```
 - [id] YYYY-MM-DD -- <headline> -- <outlet> -- touches [[Wiki/Clients/Acme]] (direct)
+  -- reports: 3 (<outlet>, <outlet>, <primary source>)
   -- <one or two sentences on what it says and why it matters here>
-  -- [source](url) ([archived](../../Archives/...))
+  -- [source](url) · [primary](url) ([archived](../../Archives/...))
+  -- single-source | not read — paywalled          (only when they apply)
+  -- YYYY-MM-DD update: <development, appended by a later run — never rewrite the original>
 ```
+
+**`reports` counts independent outlets** — syndicated copies of one wire story are one report. A story
+carried by many outlets ranks above one carried by a single outlet, in the brief and when the per-run cap
+forces a choice; it never substitutes for the connection below.
 
 **The connection is mandatory**: which entity in this wiki the story touches, and whether that link is
 `direct` (it names them) or `indirect` (it plainly bears on them — a regulator in their industry, an

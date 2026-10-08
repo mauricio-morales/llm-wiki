@@ -1,6 +1,6 @@
 ---
 name: wiki-setup
-description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the three scheduled jobs (daily ingest, daily brief, monthly lint). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "update the wiki", "upgrade the wiki", "reconfigure the wiki", "add a source", "change my brief", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
+description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "update the wiki", "upgrade the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
 ---
 
 # LLM Wiki — setup
@@ -46,6 +46,13 @@ Before saying anything, check the working folder:
      the month. Ask; do not change it silently — the owner may have chosen the 1st deliberately, and an
      update never changes a schedule without consent. If they agree, set the task's cron to `0 9 * * 6`
      and `jobs.lint.schedule` to match, so the task's first-Saturday check engages.
+  3c. **If `news.enabled` is true but there is no `jobs.news`**, news is still configured the old way —
+     inside the ingest — and the regenerated ingest no longer scans it, so nothing is scanning it now.
+     Create the news task per Phase 3b: keep the existing topics, ask **only** how often (one
+     `AskUserQuestion`, weekday mornings recommended), derive the time, write `jobs.news`, compute
+     `topics_per_run`, and move `news.cursor` and the ingest state's `seenStories` into a new
+     `wiki-news-state.json`. This one question is asked because a new job's cadence is the owner's
+     choice; an update never invents a schedule.
   4. Report what changed, in plain terms — what the jobs will now do differently, not a version number.
 
   If everything is already current, say so in one line and stop. An update run that finds nothing should
@@ -277,13 +284,6 @@ Read `references/sources.md` and follow it. The short version:
 
    Also capture the **noise list** here — the bot channels, automated digests and system senders worth
    skipping. Getting it now saves the first month of runs from drowning in notification traffic.
-4b. **News topics.** Offer it: *"Want me to scan the news? Up to ten topics — your employer, competitors,
-   your industry, a regulator, a market you sell into. I only keep stories that touch something this wiki
-   already knows about, so it stays useful rather than becoming a feed."*
-   **Zero is fine.** If yes, get each topic **and why it matters in their words** — that is what tells
-   "Mercury" the client from the planet, and it is the only thing making an ambiguous topic usable.
-   Push back gently on vague topics: "AI" or "technology" match everything and clear no bar. Three sharp
-   topics beat ten broad ones. Read `references/news-sources.md`.
 **Every source enabled — here or at any later point — gets a backfill question.** At setup, Phase 5
 covers all of them at once. Afterwards, adding one source asks about that source, defaulting to match the
 coverage the others already have. A source enabled from today forward, with no question asked, leaves a
@@ -296,6 +296,27 @@ hole the wiki will answer across without noticing.
    it needs an MCP server configured in the desktop app, which is a detour that does not belong in the
    middle of setup. Mention that it can be wired up afterwards and that `references/local-sources.md` has
    the steps. **Never record a path you could not read**: it becomes a job that fails silently every night.
+
+## Phase 3b — News
+
+Read `references/news-sources.md`. **News is its own scheduled job, not a source of the ingest** — a
+story has to be opened, traced to its primary source, corroborated and followed up days later, and that
+work does not fit inside a connector sweep. So it gets its own step here, and two questions in one
+`AskUserQuestion` call:
+
+1. **What to watch** — up to ten topics or areas of interest, **each with why it matters in their own
+   words**. Propose the obvious candidates first from what you already know — the employer, the Focus
+   Areas, what the purpose sentence names — and let them add. For an area rather than a named entity,
+   offer two or three search phrasings. Push back gently on vague topics ("AI"): ask what about it they
+   care about.
+2. **How often** — every weekday morning (recommended), every day, twice a week, or once a week.
+
+**Zero topics is a complete answer** — no news job, no `News-Log`, not raised again. Tell them, in one
+line, what they get: *"I only keep stories that touch something this wiki knows — and a story many
+outlets are carrying ranks above one only a single outlet has."*
+
+Do not ask what time; derive it (one hour before the ingest by default, so it never overlaps the ingest
+and finishes before the brief) and show it in the Phase 8 summary.
 
 ## Phase 4 — Where the jobs run
 
@@ -411,7 +432,8 @@ demoting them. Either way, it **never deletes a page**; say that, because "prune
 ## Phase 8 — Confirm once
 
 Show the whole plan in one compact summary: name, audience, language, layout, namespaces, every source
-with its status and scope, where the jobs run, the three schedules, where the brief goes, the backfill
+with its status and scope, the news topics with their `why` and the news cadence, where the jobs run,
+every schedule, where the brief goes, the backfill
 depth with its unit estimate. Then ask for a single yes.
 
 This is the one place to be thorough. It is much cheaper to fix a wrong answer here than after three
@@ -441,6 +463,7 @@ All paths relative to the wiki folder.
 7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
+7b. `wiki-news-state.json` — `{"lastSuccessfulRun": null, "cursor": 0, "topicLastScanned": {}, "seenStories": [], "threads": [], "pending": []}`, only if news topics were given.
 8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null}`, only if the brief is enabled.
 9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
 10. `CLAUDE.md` — from `templates/CLAUDE.md`. **This is the piece that makes the wiki automatic**: it is
@@ -465,10 +488,10 @@ All paths relative to the wiki folder.
 
 Never write a credential into any of these. Never create a git repository.
 
-## Phase 10 — Create the three scheduled tasks
+## Phase 10 — Create the scheduled tasks
 
 Use the scheduled-task tool. Fill the templates in `references/`: `task-ingest.md`, `task-brief.md`,
-`task-lint.md`.
+`task-lint.md`, and `task-news.md` when news topics were given.
 
 Each prompt must be **fully self-contained** — every run starts with no memory of this conversation.
 Spell out the absolute folder path, connector names, channel ids, scope, **the verbatim customization
@@ -482,6 +505,7 @@ chose" into a task prompt.
 | Ingest | `<slug>-wiki-ingest` | `<Wiki name> · daily ingest` |
 | Brief | `<slug>-wiki-brief` | `<Wiki name> · daily brief` |
 | Lint | `<slug>-wiki-lint` | `<Wiki name> · monthly lint` |
+| News | `<slug>-wiki-news` | `<Wiki name> · news scan` |
 | Focus report | `<slug>-focus-<area>` | `<Wiki name> · <Area> report` |
 
 One report task **per Focus Area** that asked for one, from `references/task-focus-report.md`, scheduled
@@ -491,7 +515,10 @@ Unprefixed ids collide the moment this user sets up a second wiki, and a collisi
 error — it is a second wiki silently overwriting the first one's job.
 
 Defaults: ingest `0 6 * * *`, brief `30 7 * * 1-5`, lint `0 9 * * 6` (weekly, with the task itself
-running only on the first Saturday — see Phase 7). Cron is evaluated in local time.
+running only on the first Saturday — see Phase 7), news `0 5 * * 1-5` (or the owner's cadence from Phase
+3b, at one hour before the ingest). Cron is evaluated in local time. **The news job must never overlap the
+ingest** — both write entity pages and the shared id counter — so when the ingest moves, the news job
+moves with it.
 
 **Stamp every task.** Each generated prompt opens with
 `<!-- llm-wiki task: <kind> | template version: X.Y.Z | generated: YYYY-MM-DD -->`, and its
@@ -500,7 +527,7 @@ each task's Step 0, so a task generated today can adopt a later version of its o
 anyone regenerating it by hand. Without the stamp there is no way to tell which template version a
 running task came from, and it would silently run the original instructions forever.
 
-After creating them, **verify all three appear in the task list** with the right prefix, and record their
+After creating them, **verify every one appears in the task list** with the right prefix, and record their
 real ids in `llm-wiki.yml`. Tell the user the tasks run while the Claude app is open, and that a task due
 while it was closed runs on next launch.
 
@@ -512,7 +539,9 @@ Offer, in this order:
    morning. Strongly recommended — an empty wiki on day one is what makes people abandon this.
 2. **Start the backfill**, if they chose one: run the first 2-3 units, then stop and show progress. Do
    not attempt the whole thing.
-3. **Send a test brief**, so they can confirm it arrives where they expect and looks right.
+3. **Run the news scan once now**, if news topics were given — so the first brief already has something in
+   it, and so a topic that returns nothing but same-name noise is caught and sharpened today.
+4. **Send a test brief**, so they can confirm it arrives where they expect and looks right.
 
 ## Phase 12 — Hand over
 
@@ -520,7 +549,7 @@ Tell them, in a few lines, in plain language:
 
 - **They never need a slash command again.** Ask a question and it searches the wiki. Say "save this" or
   "remember this" or paste something in and it files it. That is the whole interface.
-- What the three jobs will do and when, and that they run on this machine while the app is open.
+- What each job will do and when — including the news scan's cadence and topics, if any — and that they run on this machine while the app is open.
 - Where the wiki lives — the actual folder path — and that it is plain markdown they can open in any
   editor. If it is on a synced drive, that it reaches their other devices that way.
 - That saying **"reconfigure the wiki"** re-opens this wizard — to add a source, change the brief, or
@@ -552,7 +581,9 @@ The ones most often missed, because they need composing rather than copying:
 | `{{WIKI_SLUG}}` | The short name. Every task id and title carries it |
 | `{{PLUGIN_VERSION}}` | The running plugin's version, from its `plugin.json`. `unknown` if it cannot be read — never a guess |
 | `{{INGEST_OWNER}} {{SHARED_FOLDER}} {{SHARED_BLOCK}}` | Who owns the scheduled ingest, and the shared-folder rules in `CLAUDE.md`. On a solo wiki, `SHARED_BLOCK` says plainly that this wiki is not shared — do not leave it empty |
-| `{{NEWS_BLOCK}} {{NEWS_TOPICS_YAML}} {{NEWS_ENABLED}}` | The news procedure from `references/news-sources.md` with this wiki's topics and their `why`. Omit the whole section when no topics were given — do not ship an empty scanner |
+| `{{NEWS_TOPICS_YAML}} {{NEWS_ENABLED}} {{NEWS_TOPICS_PER_RUN}}` | The owner's topics with `why` verbatim (and `queries`/`outlets` where given); `false`, an empty list and `1` when none were given |
+| `{{NEWS_JOB_YAML}}` | The `jobs.news` block from `references/news-sources.md` — task id, cadence, state file, stamp. When no topics were given, the explicit line `  # news: not configured — no topics were given` |
+| `{{NEWS_TOPICS_BLOCK}}` | In `task-news.md`: each topic's name, verbatim `why`, `queries` and `outlets`, readable as prose. The news task is only created when this is non-empty |
 | `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
@@ -618,7 +649,8 @@ requests and what each touches:
 | Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A Cowork session is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am. Then ask about backfill, as for any new source |
 | Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
 | Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
-| Change the schedules | The task crons, and the ingest/brief ordering gap |
+| Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
+| Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
 | Add a namespace | `llm-wiki.yml`, a new hub page, the Schema's namespace list, the Dashboard |
 | Change the privacy rules | The Schema's exclusions section and `CLAUDE.md`'s privacy block |
 | Backfill further back | Extend `wiki-backfill-state.json` with new units and re-plan |

@@ -12,6 +12,40 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.26.0 — 2026-10-08
+
+**Changed — news is its own scheduled job, with topics and cadence chosen at setup.**
+
+News scanning ran inside the daily ingest, and it did not fit there. A connector sweep is bounded and
+paged; a news story is not — the search hit is only a lead, the article has to be read, the primary
+source behind it found, a consequential claim corroborated, and a developing story checked again days
+later. Sharing one run, the web work and the connectors competed for the same budget, and whichever lost
+came back silently thin.
+
+- **A separate task, `<slug>-wiki-news`**, with its own template (`references/task-news.md`), its own
+  state file (`wiki-news-state.json`) and its own failures: a run that cannot reach the web never holds
+  back the ingest's window. The ingest no longer scans the web.
+- **Setup asks two things in its own step**: which topics or areas of interest to watch (up to ten, each
+  with why it matters in the owner's words, with optional search phrasings and outlets for areas), and how
+  often — weekday mornings, daily, twice a week or weekly. The time is derived: before the ingest, never
+  overlapping it, finished before the brief. The rotation is sized so every topic comes round weekly.
+- **Stories are pursued, not skimmed**: articles opened and re-graded on full text, followed to the
+  primary source (two hops at most), consequential claims corroborated or marked `single-source`,
+  developing stories tracked as threads and followed up, all within a per-run fetch budget whose
+  overflow is queued rather than dropped.
+- **Stories carried by multiple independent outlets rank higher** — for what gets opened first, what
+  survives the per-run cap, and what the brief shows. Syndicated copies count once, and coverage ranks
+  among stories that already touch the wiki; it never lets an unrelated story in.
+- **The brief reads every news section since the last brief**, so a less frequent cadence still lands.
+- **A clock deadline as well as a fetch budget.** Scheduling the news job before the ingest does not stop
+  a slow run overrunning into it, and both draw ids from the shared `nextItemId` — overlapping increments
+  can issue the same id twice and route a reply to the wrong item. The run stops opening pages and stops
+  capturing ten minutes before the ingest's next start, queueing the rest, and never takes an id after
+  the deadline.
+- **Existing wikis:** after updating, the ingest stops scanning news and says so in every report until
+  the news job exists. "Update the wiki" creates it, keeping your topics, asking only how often, and
+  moving the old rotation state across.
+
 ## 1.25.0 — 2026-10-07
 
 **Added — overdue commitments age out instead of accumulating forever.**

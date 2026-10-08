@@ -148,11 +148,14 @@ Archives/                 text-only snapshots of any URL that got ingested
 wiki-*-state.json         job cursors and the backfill plan
 ```
 
-Plus three scheduled jobs:
+Plus the scheduled jobs:
 
 - **Daily ingest** — reads your sources, files what matters, tracks what you're waiting on
 - **Daily brief** — sends you what happened and what's coming, wherever you want it
 - **Monthly lint** — checks the wiki's health, retires pages nobody reads, reports storage
+- **News scan** — if you name topics or areas to watch: on the cadence you pick, it searches, reads the
+  article, traces it to the primary source and follows developing stories up, keeping only what touches
+  something your wiki knows — stories many outlets carry ranked above single-outlet ones
 - **A report per Focus Area** — if you named any: a cumulative HTML report (sidebar of every run, overview
   with trends) plus a short summary message saying what changed and what needs you
 

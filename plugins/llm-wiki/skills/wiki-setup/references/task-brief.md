@@ -277,17 +277,31 @@ If none of those apply, skip the section silently.
 
 ## Step 3.7: News — at most two lines
 
-If news topics are configured, read the newest section of `Wiki/{{PRIMARY_NS}}/News-Log.md`.
+If a news job is configured (`jobs.news` in `llm-wiki.yml`), read **every section of
+`Wiki/{{PRIMARY_NS}}/News-Log.md` dated since the last brief** — the news job may run on a different
+cadence from this one, and a twice-weekly scan written on Monday still belongs in Tuesday's brief.
 
 News is **low-impact by default** under the triage above: it is context, not something the owner owes or
 is owed, and it must never displace a commitment. Surface it only when it is **direct and consequential**
 — a client acquired, an employer announcement, a regulatory change hitting a Focus Area, a named
 competitor doing something material.
 
-**At most two items, one line each, below the commitments.** Everything else waits in the wiki.
+**Rank by independent reports** (the `reports:` count on each item), then by consequence: a story many
+outlets carry outranks one a single outlet carries. **At most two items, one line each, below the
+commitments**, each with its `[id]` so the owner can reply *"more on 63"*. Everything else waits in the
+wiki.
 
 **A story that changes the stake on an existing commitment is not a news line** — say it *on that
 commitment*, where it changes a priority. That is the version the owner can act on.
+
+**If `news.enabled` is true but there is no `jobs.news`**, nothing is scanning: one line at the bottom,
+*"News scanning is paused — say 'update the wiki' to give it its own job."* Once a week at most, with the
+update nudge if both apply.
+
+A reply about news — *"drop Globex"*, *"watch Initech too"*, *"news weekly instead"* — is configuration:
+apply it to `news.topics` or `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, and
+regenerate the news task's prompt. *"More on 63"* is answered in the next brief from the captured item and
+its archive.
 
 ## Step 4: What's coming up
 

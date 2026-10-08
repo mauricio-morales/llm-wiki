@@ -1,112 +1,156 @@
-# News topics — scanning the web, filtered by what the wiki already knows
+# News — its own job, filtered by what the wiki already knows
 
 A news feed nobody filters is noise, and it is the fastest way to make a wiki unreadable. What makes this
 worth having is that **the wiki is the filter**: a story matters here because it touches a client, a
 person, an employer, a competitor or an objective this wiki already tracks. Everything else is a headline
 the owner could have got anywhere.
 
+**News is a separate scheduled task, not a source of the ingest.** The ingest reads connectors — bounded,
+paged, structured. News is open-ended: a search hit is a lead, the article has to be opened, the primary
+source behind it found, a consequential claim corroborated, and a developing story checked again days
+later. Inside the ingest that work fought the connectors for the same budget, and whichever lost was
+silently thin. On its own it gets its own budget, its own cadence chosen by the owner, and its own
+failures — a run that cannot reach the web never holds back the ingest's window. The run procedure lives
+in `references/task-news.md`; this file is what setup needs to ask and configure.
+
+## Asking — two questions
+
+Ask in one `AskUserQuestion` call where possible, after the sources, never folded into the source picker.
+
+### 1. What to watch
+
+*"Want me to keep an eye on the news? Up to ten topics or areas — your employer, competitors, your
+industry, a regulator, a market you sell into, a technology you are betting on. I only keep stories that
+touch something this wiki knows about, so it stays useful rather than becoming a feed."*
+
+**Zero is a real answer.** No topics → no news task, no `News-Log`, nothing to explain later.
+
+**Propose before asking.** By this point setup knows the employer (from the owner's email domain), the
+purpose sentence, the Focus Areas and objectives, and often the clients and competitors the purpose names.
+Offer the obvious candidates as a multi-select — *"your employer, Example Corp; the Tech vertical Focus
+Area; the EU AI Act, which your purpose mentions"* — and let them add their own. Extrapolate what can be
+extrapolated; ask only for intent.
+
+For each topic, get:
+
+- **`name`** — the company, person, regulator, market or area.
+- **`why`** — why it matters, **in their words, verbatim**. Required. It is what separates "Acme Corp" the
+  employer from a same-named bakery and "Mercury" the client from the planet, and for an *area of
+  interest* it is the test itself: a story that bears on what the `why` says is relevant even when it
+  names nothing in the wiki. Without it an area is just a keyword.
+- **`queries`** — optional, and worth offering for areas rather than entities. "Nearshore software
+  services" surfaces under "nearshoring", "IT outsourcing Latin America", "delivery centre opens"; one
+  phrase misses most of it. Propose two or three; let them correct.
+- **`outlets`** — optional. A trade publication, a regulator's press page, a company's newsroom. Checked
+  directly each time the topic comes round, because the best source for a niche area is rarely what a
+  general search ranks first.
+
+**Push back gently on vague topics.** "AI" or "technology" match everything and clear no bar; ask what
+about it they care about, and turn the answer into the `why` and `queries`. **Ten is a ceiling, not a
+target** — three sharp topics produce a better wiki than ten vague ones.
+
+### 2. How often
+
+*"How often should I check?"* Options, recommended first:
+
+| Choice | Cron (default time) | Rotation |
+|---|---|---|
+| **Every weekday morning (recommended)** | `0 5 * * 1-5` | every topic at least weekly |
+| Every day | `0 5 * * *` | every topic at least weekly |
+| Twice a week | `0 5 * * 1,4` | every topic, every run |
+| Once a week | `0 5 * * 1` | every topic, every run |
+
+"Other" covers more than once a day for a fast-moving situation — it is expensive and rarely changes what
+the brief says, so do not offer it unprompted.
+
+**Time of day is derived, not asked:** the run must **finish before the brief** and **never overlap the
+ingest**, since both write entity pages and the shared id counter. Default to one hour before the ingest.
+If the ingest is moved later, the news job moves with it. Say the time once in the confirmation summary.
+
+## Sizing the rotation
+
+`topics_per_run` is computed, not asked: **the smallest number that brings every topic round at least
+once a week** at the chosen cadence — `ceil(topics / runs_per_week)`, minimum 1, and every topic on a
+weekly or twice-weekly cadence. Recompute it whenever topics or cadence change. A weekday job with six
+topics scans two a day; a weekly one scans all six.
+
+The task's window per topic is "since that topic was last scanned", so a less frequent cadence costs
+nothing in coverage — only in how quickly the owner hears.
+
+## Multiple reports rank higher
+
+**A story carried by several independent outlets outranks one carried by a single outlet.** Breadth of
+coverage is the cheapest honest signal of weight available to a run: it means editors in more than one
+newsroom judged it worth reporting, and it means the facts have been checked more than once. A single
+trade-blog item and a story the wires, the business press and the regulator all carry are not the same
+size, and a wiki that grades them the same buries the second under the first.
+
+- **Count independent reports, not copies.** Syndicated wire copy, a press release reprinted verbatim
+  and aggregator rewrites of one article are **one** report. Independent means separate reporting.
+- **The count decides ordering**, everywhere ordering happens: which candidates are opened first when the
+  fetch budget is tight, which captures survive `max_captured_per_run`, and which items the brief shows.
+- **It never replaces the relevance bar.** A widely covered story that touches nothing in this wiki is
+  still not captured, and a single-outlet story that names a client still is. Coverage ranks among
+  stories that already cleared the bar; it does not let one in.
+- **Record it on the item** — `reports: 4 (Reuters, FT, Bloomberg, regulator notice)` — and update it in
+  place when a later run finds the story spreading. A story going from one outlet to five is itself
+  news, and a reason to re-rank it.
+
 ## Configuration
 
-Up to **10 topics**, in `llm-wiki.yml`:
+In `llm-wiki.yml`:
 
 ```yaml
 news:
   enabled: true
-  topics_per_run: 3          # round-robin; each topic comes round every 3-4 days
-  max_captured_per_run: 5    # hard cap on what reaches the wiki
-  cursor: 0                  # which topic the rotation is up to
+  topics_per_run: 2          # computed: every topic comes round at least weekly
+  max_captured_per_run: 5    # hard cap on what reaches the wiki per run
+  max_fetches_per_run: 25    # page opens per run, follow-ups and primary-source hops included
   topics:
-    - name: "Acme Corp"
+    - name: "Example Corp"
       why: "our employer — funding, leadership, layoffs, product launches"
     - name: "Globex"
       why: "largest competitor in our vertical"
     - name: "EU AI Act enforcement"
       why: "we sell to European public sector; enforcement changes our compliance story"
+      queries: ["AI Act enforcement", "AI Office fines", "high-risk AI obligations"]
+      outlets: ["https://digital-strategy.ec.europa.eu/en/news"]
+
+jobs:
+  news:
+    enabled: true
+    template_version: "X.Y.Z"
+    preferences: []
+    task_id: "<slug>-wiki-news"
+    schedule: "0 5 * * 1-5"
+    state_file: "wiki-news-state.json"
 ```
 
-**`why` is not decoration.** It is what separates a story that matters from one that merely mentions the
-word — "Acme Corp" the employer versus a same-named bakery, "Mercury" the client versus the planet. Ask
-for it, and keep it in the owner's words.
-
-**Ten is a ceiling, not a target.** Three sharp topics produce a better wiki than ten vague ones, and
-vague topics ("AI", "technology") return endless matches that clear no bar and waste every run.
-
-## Round-robin
-
-Scan `topics_per_run` topics each run, advancing `cursor` and wrapping. Each topic comes round every
-three or four days — enough for anything that matters, and it keeps a daily job bounded.
-
-Two exceptions to strict rotation:
-
-- **A topic that produced a high-relevance capture last run is re-scanned next run**, once. Stories that
-  touch this wiki tend to develop over days, and the follow-up is usually more useful than the first hit.
-- **A topic never scanned** (newly added) goes first, regardless of cursor.
-
-Record the scan in the run report **even when nothing was captured**: which topics were scanned, and that
-they were quiet. Otherwise "no news items" and "we did not look" are indistinguishable, which is the same
-failure as a truncated page-scan reported as a quiet week.
-
-## Relevance — the part that matters
-
-Before scanning, build the **known-entities set** from the wiki: client names (`Wiki/Clients`,
-`Prospective-Clients`, `Former-Clients`), people (`Wiki/People`, `My-Team`, `Consultants`), the employer,
-and every Focus Area statement and objective. This is cheap — hub `### Index` lines carry most of it.
-
-Then grade every candidate story:
-
-- **Direct** — it names a known entity. A client, a person the owner works with, the employer, a named
-  competitor. **Capture it.**
-- **Indirect** — it plainly bears on one without naming it: a regulator acting in a client's industry, an
-  acquisition in a client's market, a competitor of a client, a policy change affecting a Focus Area.
-  **Capture it, and say in one line what the connection is** — an indirect item with the connection
-  unstated reads as a random headline and gets ignored.
-- **Topical only** — it matches the topic but touches nothing this wiki knows. **Do not capture it.**
-  This is most of what any search returns, and dropping it is the whole discipline. A story worth reading
-  in general is not the same as a story worth keeping here.
-
-**Never capture a story on a keyword match alone.** Company names collide, people share names, and a
-wiki filling with same-name coincidences loses trust faster than one that misses a story.
-
-**Cap at `max_captured_per_run`.** If more clear the bar than the cap allows, keep the ones touching the
-most entities, or an objective, and say how many were dropped.
+Run state — per-topic last-scanned dates, rotation cursor, seen stories, open threads, pending candidates —
+lives in `wiki-news-state.json`, never in the config. Config is the owner's; state is the job's.
 
 ## Where captures go
 
-Double-routed, like Focus Area material:
-
-- `Wiki/{{PRIMARY_NS}}/News-Log.md` — the chronological record, one dated section per run.
-- **The entity's own page** — a story about a client belongs on that client's page, under a "Market and
-  news" section, not only in a log nobody reads backwards.
-- A Focus Area's pages too, where it bears on one.
-
-Each captured item records: the headline, the outlet, the date, **the connection to this wiki** (which
-entity, direct or indirect), one or two sentences on what it says, and the link — with a text-only
-snapshot in `Archives/` per the normal URL rule.
-
-**Archive only what is captured**, never everything scanned. Ten topics a day of full snapshots would
-bury the folder inside a month.
-
-## Deduplication
-
-The same story appears in many outlets and develops over days. Keep a `seenStories` set in the ingest
-state keyed on a normalized headline plus the primary entity. A follow-up that adds something material
-updates the existing entry in place rather than adding a new one; a re-run of the same story is skipped
-silently.
+Double-routed: `Wiki/<primary>/News-Log.md` (one dated section per run) **and** the entity's own page
+under "Market and news", plus a Focus Area's log and `Objectives.md` where they bear on one. Each item
+carries an `[id]` from the wiki-wide counter, the connection to this wiki, its report count, and a
+text-only archive of the page. **Archive only what is captured**, never everything opened.
 
 ## In the brief
 
-News is **low-impact by default** under the brief's triage — it is context, not a commitment, and it must
-never crowd out something the owner owes or is owed.
+News is **low-impact by default** under the brief's triage — context, not a commitment, and it must never
+crowd out something the owner owes or is owed. The brief reads every `News-Log` section dated since the
+last brief (a twice-weekly job writes on Monday and Thursday; Tuesday's brief still needs Monday's), and
+surfaces only what is **direct and consequential**, ranked by independent reports, **one line, at most two
+items**, below the commitments. A story that changes the stake on an existing commitment is said **on the
+commitment**.
 
-Surface it only when it is **direct and consequential**: a client acquired, an employer announcement, a
-regulatory change hitting a Focus Area, a named competitor doing something material. **One line, at most
-two items**, below the commitments. Everything else waits in the wiki for whenever the owner reads it.
+## Changing it later
 
-A story that changes the stake on an existing commitment is different — say that **on the commitment**,
-where it changes a priority, rather than as a separate news line.
+"Add a news topic", "stop watching Globex", "check the news weekly instead" are reconfigure requests:
+update `news.topics` or `jobs.news.schedule`, recompute `topics_per_run`, regenerate the news task's
+prompt. A reply to a brief like *"drop Globex"* or *"more on 63"* goes the same way through the brief's
+reply handling — topics are configuration, so they go to `llm-wiki.yml`, never only into a prompt.
 
-## When the web is unavailable
-
-Web access is not guaranteed in every environment a run happens in. If it is unavailable, **report it as
-a source that could not be checked** — exactly as with any unauthorized connector — and leave the cursor
-where it is so nothing is skipped. Do not silently produce a run with no news and no explanation.
+Removing the last topic disables the task (keep the config and state so it can be turned back on). Adding
+the first topic to a wiki with none creates it.

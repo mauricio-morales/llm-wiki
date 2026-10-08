@@ -89,14 +89,18 @@ focus_areas:
 #    metrics: ["pipeline in the vertical", "clients with a growth plan", "AI-services deals in flight"]
 #    report: { enabled: true, task_id: "acme-focus-tech-vertical", schedule: "0 8 * * 1", delivery: slack, destination: "..." }
 
-# Web news scanning. Up to 10 topics, rotated so a daily job stays bounded. A story is captured only
-# when it touches something this wiki already knows — the wiki is the filter, which is the whole
-# difference between this and a news alert. `why` disambiguates the topic and is required.
+# Web news. Its own scheduled task (jobs.news), not part of the ingest: a story is pursued — article
+# read, primary source found, consequential claims corroborated, developing stories followed up — and
+# captured only when it touches something this wiki already knows. The wiki is the filter, which is the
+# whole difference between this and a news alert. Stories carried by several independent outlets rank
+# above single-outlet ones. Up to 10 topics; `why` is required and kept in the owner's words — for an
+# area of interest it IS the relevance test. `queries` and `outlets` are optional search hints.
+# Rotation state lives in wiki-news-state.json, not here.
 news:
   enabled: {{NEWS_ENABLED}}
-  topics_per_run: 3
+  topics_per_run: {{NEWS_TOPICS_PER_RUN}}    # computed: every topic comes round at least weekly
   max_captured_per_run: 5
-  cursor: 0
+  max_fetches_per_run: 25     # page opens per run, follow-ups and primary-source hops included
   topics:
 {{NEWS_TOPICS_YAML}}
 
@@ -125,6 +129,9 @@ jobs:
     # Below is what this person's calendar looked like at setup — an observation, not a rule, and
     # safe to correct by hand. Naming conventions are personal; the coverage rule is not.
     skip_pattern_observed: "{{SKIP_PATTERN}}"
+  # Present only when news topics are configured. Schedule chosen by the owner; time of day derived so
+  # it never overlaps the ingest and finishes before the brief.
+{{NEWS_JOB_YAML}}
   lint:
     enabled: {{LINT_ENABLED}}
     template_version: "{{PLUGIN_VERSION}}"
