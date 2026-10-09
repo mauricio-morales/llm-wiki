@@ -295,7 +295,7 @@ wiki.
 commitment*, where it changes a priority. That is the version the owner can act on.
 
 **If `news.enabled` is true but there is no `jobs.news`**, nothing is scanning: one line at the bottom,
-*"News scanning is paused — say 'update the wiki' to give it its own job."* Once a week at most, with the
+*"News scanning is paused — start a new session on this folder and type /wiki-setup upgrade to give it its own job."* Once a week at most, with the
 update nudge if both apply.
 
 A reply about news — *"drop Globex"*, *"watch Initech too"*, *"news weekly instead"* — is configuration:

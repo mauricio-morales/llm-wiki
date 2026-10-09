@@ -1,6 +1,6 @@
 ---
 name: wiki-setup
-description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "update the wiki", "upgrade the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
+description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "/wiki-setup upgrade", "update the wiki", "upgrade the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
 ---
 
 # LLM Wiki — setup
@@ -33,7 +33,8 @@ Before saying anything, check the working folder:
   because it is the reason to do it now rather than later.
 - **A backfill is in progress and the user asked to continue it** → skip straight to `references/backfill.md`
   and drain units. This is not a setup run.
-- **The user said "update the wiki" / "upgrade the wiki"**, or arrived because a brief told them to →
+- **Invoked as `/wiki-setup upgrade` (or `update`), or the user said "update the wiki" / "upgrade the
+  wiki"**, or arrived because a brief told them to →
   **update mode**, not a reconfiguration. Do not re-ask a single setup question. Run, in order:
   1. Update the folder's `.claude/skills/` from the current plugin, per `references/updates.md` — replace
      unmodified files, three-way merge modified ones, refresh the baseline, bump `skills_version` and

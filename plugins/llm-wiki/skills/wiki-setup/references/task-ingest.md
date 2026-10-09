@@ -130,7 +130,7 @@ Two things still apply in this job:
   "Follow shared links once" below. It is not a scan.
 - **If `news.enabled` is true but there is no `jobs.news`**, the wiki was set up before news had its own
   task, and nothing is scanning it now. Say so in one line of the report, every run, until it is fixed:
-  *"News scanning is paused — it moved to its own job; say 'update the wiki' to create it."* A capability
+  *"News scanning is paused — it moved to its own job; start a new session on this folder and type /wiki-setup upgrade to create it."* A capability
   that stops without a word is worse than one that was never there.
 
 ## Commitment tracking — both directions

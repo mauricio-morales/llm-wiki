@@ -175,6 +175,51 @@ Plus the scheduled jobs:
 
 ---
 
+## Upgrading
+
+New versions add features and fix problems, and your wiki keeps working on the old one until you upgrade.
+You don't need to watch for releases: **your morning brief will tell you, about once a week, when your
+wiki is behind.** You can also upgrade any time.
+
+### 1. Update the plugin
+
+In the Claude desktop app, open **Settings → Plugins**, find **llm-wiki**, and check for updates. If
+there is one, update it.
+
+- **Installed from the marketplace** (`mauricio-morales/llm-wiki`) — that's the whole step.
+- **Installed by uploading a zip** — an uploaded zip can't update itself. Download the latest zip from
+  [Releases](https://github.com/mauricio-morales/llm-wiki/releases) and upload it the same way. It's worth
+  switching to the marketplace while you're at it, so next time this step is one click.
+
+### 2. Upgrade your wiki
+
+Start a **new** Cowork session on your wiki folder — a new one, so it picks up the plugin you just
+updated — and type:
+
+```
+/wiki-setup upgrade
+```
+
+(Typing "upgrade the wiki" works too.)
+
+It won't ask you the setup questions again. It:
+
+- refreshes the copy of the plugin's instructions kept inside your wiki folder, **keeping anything you've
+  customized**
+- rebuilds your scheduled jobs (ingest, brief, lint, news) so they follow the new version from the next run
+- adds any new job the version introduces, asking only what it genuinely needs from you — how often to
+  check the news, say
+- tells you in plain words what will work differently from tomorrow
+
+If your wiki is already up to date, it says so in one line and stops.
+
+**More than one wiki?** Do step 2 in each wiki's folder.
+
+**Joined someone else's wiki?** You don't need to do anything. The person who set it up runs the upgrade,
+and the updated instructions reach you through the shared folder. Please don't run it yourself on a shared
+wiki: two people upgrading the same folder from different versions is how a synced folder ends up with
+conflicting copies.
+
 ## How it works, briefly
 
 **The idea.** Ordinary retrieval re-reads your sources on every question, so nothing accumulates — the

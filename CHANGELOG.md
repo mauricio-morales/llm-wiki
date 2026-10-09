@@ -12,6 +12,17 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.28.1 — 2026-10-09
+
+- **README gained an "Upgrading" section**: update the plugin in Settings → Plugins (or re-upload the zip,
+  for zip installs, which cannot update themselves), then start a **new** session on the wiki folder and
+  type `/wiki-setup upgrade`. It explains what the upgrade does and does not ask, that it is per wiki, and
+  that people who joined someone else's shared wiki should not run it.
+- **`/wiki-setup upgrade` (or `update`) is now recognised explicitly** as upgrade mode. Previously only the
+  phrases "update the wiki" / "upgrade the wiki" were; an explicit command is more dependable than phrasing.
+- **Every in-product reminder now gives the README's instruction word for word** — the weekly update nudge
+  and the news-migration notices — so the brief and the documentation never disagree about how to upgrade.
+
 ## 1.28.0 — 2026-10-08
 
 **Changed — news lives in `News` sub-namespaces and is pulled in at read time, never written onto main pages.**
