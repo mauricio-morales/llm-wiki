@@ -150,6 +150,16 @@ wiki folder.
 **Users personalize `CLAUDE.md` and `Wiki/Schema.md`, never the skill files** — those are replaced by
 updates. If a change would invite someone to edit a skill file in their folder, it belongs somewhere else.
 
+## New optional features must be registered
+
+Any feature that only exists if the owner switches it on — like Focus Areas, Objectives, news — gets a row
+in `plugins/llm-wiki/skills/wiki-setup/references/features.md`, **in the release that ships it**, with the
+version it shipped in.
+
+That registry is the only way an upgrade knows a feature exists. Leave it out and every wiki set up before
+that release never hears about the feature — and the fallback is a recommendation in a closing paragraph,
+which in practice nobody reads. Upgrades ask about registered features as real questions.
+
 ## Writing style for skill content
 
 These files are read by a model as instructions, and they are long. What works here:

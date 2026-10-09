@@ -44,7 +44,8 @@ Before saying anything, check the working folder:
   and drain units. This is not a setup run.
 - **The user asked to upgrade or update the wiki** — in any wording — or arrived because a brief told them
   to (`/wiki-setup upgrade` also lands here) →
-  **update mode**, not a reconfiguration. Do not re-ask a single setup question. Run, in order:
+  **update mode**, not a reconfiguration. **Never re-ask a question the owner has already answered** — but
+  always ask about optional features they have never been offered (step 3e). Run, in order:
   1. Update the folder's `.claude/skills/` from the current plugin, per `references/updates.md` — replace
      unmodified files, three-way merge modified ones, refresh the baseline, bump `skills_version` and
      `wiki_version`, and set `lastUpdateCheck` to today.
@@ -67,7 +68,17 @@ Before saying anything, check the working folder:
      lines in a Focus Area's `Log.md` or in `Objectives.md` — offer to move it into the matching `News`
      sub-namespace. Ask first, then move it under the lossless split procedure: write the news page,
      verify every item landed exactly once, only then remove it from the main page, and redirect any links.
-  4. Report what changed, in plain terms — what the jobs will now do differently, not a version number.
+  3e. **Offer every optional feature this wiki has never been asked about**, per `references/features.md`
+     — every registered feature that is not already on and not recorded as `declined` in
+     `feature_offers`. Not by version comparison: a wiki upgraded past a feature's release may still never
+     have been asked about it. **One `AskUserQuestion` call, one question per feature, each
+     answered *Set it up now*, *Not now* or *No thanks*.** Run the setup phase for every "now" straight
+     away, in this session, and record the others under `feature_offers`.
+     **Never put a new feature in the closing summary as a recommendation instead of asking.** A sentence
+     at the end of a long reply is one almost nobody reads; the feature stays invisible to exactly the
+     people who would want it.
+  4. Report what changed, in plain terms — what the jobs will now do differently, not a version number —
+     including any feature just set up. Do not re-pitch features the owner declined or deferred.
 
   If everything is already current, say so in one line and stop. An update run that finds nothing should
   cost the user five seconds.
@@ -230,7 +241,8 @@ a vertical you own, a transformation you're driving, a market you're opening? Up
 fits, that's completely fine."*
 
 **Zero is a real answer and must be frictionless.** If they say no, create nothing — no namespace, no
-pages, no report job — and do not raise it again. Do not talk them into one.
+pages, no report job — and do not raise it again. Do not talk them into one. Record it in `llm-wiki.yml`
+as `feature_offers: { focus-areas: { offered_in: setup, answer: declined } }`, so no upgrade asks again.
 
 For each Focus Area they name (cap at three; if they list more, say so and ask which three actually define
 their next two quarters):
@@ -257,8 +269,8 @@ Read `references/objectives.md`. Ask once, right after Focus Areas:
 *"Are you measured on anything specific — OKRs this quarter, a scorecard, team targets? If so I'll report
 against them rather than just against activity."*
 
-**No is a complete answer**, and common — plenty of people have nothing written down. Accept it and move
-on without raising it again.
+**No is a complete answer**, and common — plenty of people have nothing written down. Accept it, record
+`objectives` as `declined` under `feature_offers`, and move on without raising it again.
 
 If yes, capture what they can give you now: the statement in their words, the measure, the target and
 baseline, the period, and where the number comes from. **Never invent a target.** "Grow the pipeline"
@@ -325,7 +337,8 @@ work does not fit inside a connector sweep. So it gets its own step here, and tw
    care about.
 2. **How often** — every weekday morning (recommended), every day, twice a week, or once a week.
 
-**Zero topics is a complete answer** — no news job, no `News-Log`, not raised again. Tell them, in one
+**Zero topics is a complete answer** — no news job, no `News-Log`, not raised again; record `news` as
+`declined` under `feature_offers` so no upgrade re-offers it. Tell them, in one
 line, what they get: *"I only keep stories that touch something this wiki knows — and a story many
 outlets are carrying ranks above one only a single outlet has."*
 

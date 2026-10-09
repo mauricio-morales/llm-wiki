@@ -11,6 +11,10 @@ slug: {{WIKI_SLUG}}            # short handle; prefixes every scheduled task id 
 # otherwise run last month's logic for months without any sign that anything is behind.
 wiki_version: "{{PLUGIN_VERSION}}"
 skills_version: "{{PLUGIN_VERSION}}"
+
+# Optional features offered on an upgrade, and what the owner answered: `later` is offered again next
+# upgrade, `declined` never is. Features set up at the time need no entry — being on is the record.
+feature_offers: {}
 # Last time a session checked for a newer published version. Checked at most weekly, only when the
 # plugin is present, only after a request is finished, and never during a scheduled run.
 lastUpdateCheck: null

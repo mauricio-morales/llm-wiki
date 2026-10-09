@@ -12,6 +12,31 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.29.0 — 2026-10-09
+
+**Changed — an upgrade asks about new optional features instead of mentioning them.**
+
+From the field: an upgrade rebuilt the jobs correctly, then closed with a paragraph saying news was now
+available and the owner should ask for it. A sentence at the end of a long reply is one almost nobody
+reads, so the feature stayed invisible to the people it was for. The cause was upgrade mode's own rule —
+"do not re-ask a single setup question" — which protected answers already given but also forbade asking
+anything new.
+
+- **Never re-ask what was already answered; always ask about what was never offered.** The two are now
+  separate rules.
+- **New `references/features.md` registry** of optional features — Focus Areas, Objectives, news — with
+  the version each shipped in and the setup phase that enables it.
+- **Upgrade asks with `AskUserQuestion`, one question per feature, batched**: *Set it up now* (runs its
+  setup in the same session), *Not now* (asked again next upgrade), or *No thanks* (never again). Asked
+  after the mechanical upgrade and before the summary, so the summary reports what was set up.
+- **Offered by record, not by version.** A wiki upgraded past a feature's release may still never have
+  been asked — earlier upgrades offered nothing — so the test is whether `feature_offers` records an
+  answer, not whether the wiki's version is newer.
+- **Setup now records declines** in `feature_offers`, so upgrades never re-ask what setup settled. Wikis
+  set up before this may be asked once more about something declined back then; once, then on record.
+- Recommending a feature in the closing summary instead of asking is explicitly forbidden.
+- Maintainers must register every new optional feature in the release that ships it (repo `CLAUDE.md`).
+
 ## 1.28.2 — 2026-10-09
 
 **Fixed — upgrading is a plain request, not a command.**
