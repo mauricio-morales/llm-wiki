@@ -51,15 +51,15 @@ this wiki, in plain terms:
 - ❌ *"llm-wiki 1.9.0 is available (you're on 1.7.0)."*
 - ✅ *"Your wiki is a few versions behind — the newer one drains paged sources properly, which affects
   your email ingest. Update llm-wiki in Settings → Plugins, then start a new session on this folder and
-  type /wiki-setup upgrade."*
+  ask it to upgrade the wiki."*
 
 **Make it one action.** Tell them the exact words to say, and where. Not "run the setup wizard", not a
 command they have to remember correctly — *"update llm-wiki in Settings → Plugins, then start a new session on
-this folder and type /wiki-setup upgrade"*. That is the same instruction the README gives, word for word, so
+this folder and ask it to upgrade the wiki"*. That is the same instruction the README gives, word for word, so
 the brief and the documentation never disagree about how to upgrade.
 
 If the reason is signal 3, say the honest version: *"this wiki hasn't checked for updates in three weeks
-— check Settings → Plugins for an update, then start a new session here and type /wiki-setup upgrade."*
+— check Settings → Plugins for an update, then start a new session here and ask it to upgrade the wiki."*
 
 ## After they do it
 

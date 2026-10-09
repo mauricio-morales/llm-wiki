@@ -12,6 +12,19 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.28.2 — 2026-10-09
+
+**Fixed — upgrading is a plain request, not a command.**
+
+- 1.28.1 presented `/wiki-setup upgrade` as something to type. It is not meant as a command: the README and
+  every reminder now say to start a new session on the wiki folder and **ask it to upgrade the wiki**, in
+  any wording. The explicit form still works, but nobody is told to use it.
+- **Upgrade requests use the installed plugin's instructions, not the copy inside the wiki folder.** That
+  copy is the thing being upgraded — it is the old version, and may predate upgrade mode altogether — so
+  with both present, the plugin's version is the one that must answer "upgrade the wiki". Stated in the
+  skill's description and as its own section, since a stale copy picking up the request would run
+  outdated instructions without anyone noticing.
+
 ## 1.28.1 — 2026-10-09
 
 - **README gained an "Upgrading" section**: update the plugin in Settings → Plugins (or re-upload the zip,

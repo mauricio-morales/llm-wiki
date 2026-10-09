@@ -194,13 +194,7 @@ there is one, update it.
 ### 2. Upgrade your wiki
 
 Start a **new** Cowork session on your wiki folder — a new one, so it picks up the plugin you just
-updated — and type:
-
-```
-/wiki-setup upgrade
-```
-
-(Typing "upgrade the wiki" works too.)
+updated — and **ask it to upgrade the wiki**, in your own words. *"Upgrade the wiki"* is enough.
 
 It won't ask you the setup questions again. It:
 

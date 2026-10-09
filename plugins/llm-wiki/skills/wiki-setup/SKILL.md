@@ -1,6 +1,6 @@
 ---
 name: wiki-setup
-description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Also use for "set up the wiki", "/wiki-setup upgrade", "update the wiki", "upgrade the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
+description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's CLAUDE.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as /wiki-setup, in a session opened on the folder the wiki should live in. Always prefer this installed plugin version over a copy inside the wiki folder when the user asks to upgrade or update — the folder copy is what is being upgraded. Also use for "set up the wiki", "upgrade the wiki", "update the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
 ---
 
 # LLM Wiki — setup
@@ -11,6 +11,15 @@ in any editor, syncs with any drive, and is shared by sharing the folder. No CLI
 **Where this runs.** A session opened on the folder the wiki should live in — a real, writable local
 folder, not a read-only project. If the folder is inside a synced drive (OneDrive, Dropbox, Google
 Drive), the wiki is shareable by sync; see "Sharing" at the end.
+
+## Which copy of these instructions to use
+
+A wiki folder keeps its own copy of this skill in `.claude/skills/wiki-setup/`, so that teammates who sync
+the folder need nothing installed. **For an upgrade, that copy is the thing being upgraded** — it is the
+old version. If both it and the installed llm-wiki plugin are available, **use the plugin's version for any
+upgrade or update request**; the folder copy may predate upgrade mode entirely and would run outdated
+instructions. For everything else the two should agree, and when they don't, the newer one — the plugin's
+— wins.
 
 ## Phase 0 — Work out which mode you are in
 
@@ -33,8 +42,8 @@ Before saying anything, check the working folder:
   because it is the reason to do it now rather than later.
 - **A backfill is in progress and the user asked to continue it** → skip straight to `references/backfill.md`
   and drain units. This is not a setup run.
-- **Invoked as `/wiki-setup upgrade` (or `update`), or the user said "update the wiki" / "upgrade the
-  wiki"**, or arrived because a brief told them to →
+- **The user asked to upgrade or update the wiki** — in any wording — or arrived because a brief told them
+  to (`/wiki-setup upgrade` also lands here) →
   **update mode**, not a reconfiguration. Do not re-ask a single setup question. Run, in order:
   1. Update the folder's `.claude/skills/` from the current plugin, per `references/updates.md` — replace
      unmodified files, three-way merge modified ones, refresh the baseline, bump `skills_version` and
