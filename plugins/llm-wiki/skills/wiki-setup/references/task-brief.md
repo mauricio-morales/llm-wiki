@@ -118,6 +118,7 @@ Score every candidate item on both axes before selecting anything.
 - **Low** — a courtesy chase, an FYI, something nobody is waiting on
 
 **Urgency** — the clock: *overdue* · *due today or tomorrow* · *due this week* · *no date or far off*.
+An item involving someone the owner meets **today** counts as due today (see Step 2.5).
 
 **Rank by impact first, urgency second.** A high-impact item due Thursday outranks a low-impact one that
 has been overdue for a month. Age alone is the weakest signal there is — it measures how long something
@@ -164,6 +165,30 @@ as-is rather than treating it as a fault.
 
 Also worth a cheap glance each run — read the hub `### Index`, open a child page only if something is
 actively in flight: {{WATCH_HUBS}}
+
+## Step 2.5: Today's calendar — as context, not as a list
+
+The ingest already captured the calendar, but it ran hours ago and meetings move, appear and get cancelled.
+**Read today's calendar fresh**, through the calendar connector — today only, it is one cheap call. If the
+connector is unavailable, fall back to today's lines in `Timeline.md` and carry on; this step must never
+hold up the brief.
+
+**Do not list it back.** The owner has their calendar open; a brief that recites it wastes the five-minute
+budget. Use it as a lens instead: for each meeting today that is not a routine recurring slot, a personal
+block, or a placeholder, ask **whether the wiki holds anything the owner should walk into it knowing**:
+
+- an open commitment with someone attending, in either direction
+- a recent decision, open question or Focus Area thread involving them or their organisation
+- a sensitivity-flagged attendee
+- recent news about their company (from its `News` page)
+
+Where it does, **say it on the item the brief already shows**, tied to the meeting: *"[41] you owe Ana the
+rollout timeline — you see her at 14:00."* Where the item would not otherwise have made the cut, it can
+earn a line on the strength of the meeting. A meeting with nothing relevant behind it gets no mention.
+
+**A meeting today raises urgency.** In the triage above, an item involving someone the owner sees today
+ranks as if it were due today, whatever its actual date. A commitment due Thursday is suddenly today's
+business if the other person is across the table at 14:00.
 
 ## Step 3: Commitments — the section that has to be right
 

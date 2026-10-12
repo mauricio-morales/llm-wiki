@@ -12,6 +12,23 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.30.0 — 2026-10-12
+
+**Added — the brief reads today's calendar fresh, as context for what it surfaces.**
+
+The ingest captures the calendar, but hours before the brief runs, and meetings move. Apart from dated
+commitments the brief had little sense of what the owner's day actually holds.
+
+- **Today's calendar is read live** at brief time, through the calendar connector — today only, one call —
+  falling back to `Timeline.md` if the connector is unavailable, never holding up the brief.
+- **Used as a lens, not a list.** The brief does not recite the calendar. For each non-routine meeting it
+  checks whether the wiki holds something worth walking in knowing — an open commitment with an attendee,
+  a recent decision or Focus Area thread involving them, a sensitivity-flagged attendee, news about their
+  company — and says so on the item it already shows: *"[41] you owe Ana the rollout timeline — you see
+  her at 14:00."* Meetings with nothing behind them get no mention.
+- **A meeting today raises urgency**: an item involving someone the owner sees today ranks as due today in
+  the triage, whatever its date.
+
 ## 1.29.0 — 2026-10-09
 
 **Changed — an upgrade asks about new optional features instead of mentioning them.**
