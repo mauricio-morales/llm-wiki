@@ -442,6 +442,39 @@ Do not start the backfill during setup. Write the plan, then offer to run the fi
    are written into the job so they stick. Say this once at setup — a channel nobody knows is two-way
    gets used as a broadcast.
 
+## Phase 6b — Inbox responder (optional)
+
+Read `references/task-responder.md`. Offer it once:
+
+*"Want me to draft replies to emails that ask you for something the wiki already knows — a date, a status,
+where something stands? I'd only ever create drafts and tell you they're waiting. Nothing gets sent unless
+you send it."*
+
+**Check the mail connector can create drafts first.** If it can only read, this feature cannot work — do
+not offer it; say in one line that it needs a mail connection with draft access, and record `responder` as
+`unavailable` under `feature_offers` (not `declined`, so a later upgrade can offer it once the connector
+allows).
+
+**No is a complete answer.** Record `responder` as `declined` under `feature_offers` and move on.
+
+If yes, ask together, with `AskUserQuestion`:
+
+1. **How often** — once a day (default, weekday mornings), twice, or three times. Times are derived, not
+   asked: the first run after the ingest has had time to finish, the others spread through the working day,
+   and **none inside the ingest's or news job's window**. Defaults: `0 8 * * 1-5`; twice adds 15:00;
+   three times uses 08:00, 12:30 and 16:30.
+2. **Which mailbox(es)** — from the mail sources already enabled.
+3. **Where to tell them drafts are waiting** — the same place as the brief (default), a different chat, or
+   a push notification where the platform running the task supports one. Resolve the identifier yourself,
+   as for the brief.
+4. **Anyone it should never draft for** — senders or domains to leave alone entirely (their boss, a key
+   client, legal). Free text, recorded verbatim.
+
+Say the boundary plainly, because it is what makes the feature safe to accept: **it only drafts answers to
+requests for information; anything asking them to decide, commit, approve, negotiate, price, or touch
+anything sensitive is left for them** — and it never puts internal or another client's information into a
+draft to an outside recipient.
+
 ## Phase 7 — The monthly lint
 
 Default: **the first Saturday of the month at 09:00**, with auto-fix on for safe fixes, and
@@ -490,6 +523,8 @@ All paths relative to the wiki folder.
 7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
+7c. `wiki-responder-state.json` — `{"lastRunAt": null, "drafted": [], "leftForOwner": []}`, only if the
+    inbox responder is enabled.
 7b. `wiki-news-state.json` — `{"lastSuccessfulRun": null, "cursor": 0, "topicLastScanned": {}, "seenStories": [], "threads": [], "pending": []}`, only if news topics were given.
 8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null, "lastShown": {}}`, only if the brief is enabled.
 9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
@@ -518,7 +553,8 @@ Never write a credential into any of these. Never create a git repository.
 ## Phase 10 — Create the scheduled tasks
 
 Use the scheduled-task tool. Fill the templates in `references/`: `task-ingest.md`, `task-brief.md`,
-`task-lint.md`, and `task-news.md` when news topics were given.
+`task-lint.md`, `task-news.md` when news topics were given, and `task-responder.md` when the inbox
+responder was accepted.
 
 Each prompt must be **fully self-contained** — every run starts with no memory of this conversation.
 Spell out the absolute folder path, connector names, channel ids, scope, **the verbatim customization
@@ -533,6 +569,7 @@ chose" into a task prompt.
 | Brief | `<slug>-wiki-brief` | `<Wiki name> · daily brief` |
 | Lint | `<slug>-wiki-lint` | `<Wiki name> · monthly lint` |
 | News | `<slug>-wiki-news` | `<Wiki name> · news scan` |
+| Inbox responder | `<slug>-wiki-responder` | `<Wiki name> · inbox responder` |
 | Focus report | `<slug>-focus-<area>` | `<Wiki name> · <Area> report` |
 
 One report task **per Focus Area** that asked for one, from `references/task-focus-report.md`, scheduled
@@ -611,6 +648,8 @@ The ones most often missed, because they need composing rather than copying:
 | `{{NEWS_TOPICS_YAML}} {{NEWS_ENABLED}} {{NEWS_TOPICS_PER_RUN}}` | The owner's topics with `why` verbatim (and `queries`/`outlets` where given); `false`, an empty list and `1` when none were given |
 | `{{NEWS_JOB_YAML}}` | The `jobs.news` block from `references/news-sources.md` — task id, cadence, state file, stamp. When no topics were given, the explicit line `  # news: not configured — no topics were given` |
 | `{{NEWS_TOPICS_BLOCK}}` | In `task-news.md`: each topic's name, verbatim `why`, `queries` and `outlets`, readable as prose. The news task is only created when this is non-empty |
+| `{{RESPONDER_JOB_YAML}}` | The `jobs.responder` block, from the commented example in `llm-wiki.yml`. When the responder was not accepted, an empty string — do not ship a disabled stub |
+| `{{RESPONDER_MAILBOXES}} {{RESPONDER_EXCLUSIONS}} {{RESPONDER_TONE}} {{RESPONDER_MAX_DRAFTS}} {{RESPONDER_NOTIFY_BLOCK}}` | The responder's mailboxes, the owner's never-draft list **verbatim**, tone (default: short and plain), the per-run cap (default 5), and the exact notify tool and identifier. With no exclusions, say so explicitly rather than leaving the section empty |
 | `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
@@ -677,6 +716,7 @@ requests and what each touches:
 | Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
 | Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
 | Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
+| Turn on, tune or turn off the inbox responder | `jobs.responder` in `llm-wiki.yml` and the responder task. Turning it on runs Phase 6b; "don't draft for X" adds to its exclusions verbatim |
 | Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
 | Add a namespace | `llm-wiki.yml`, a new hub page, the Schema's namespace list, the Dashboard |
 | Change the privacy rules | The Schema's exclusions section and `CLAUDE.md`'s privacy block |

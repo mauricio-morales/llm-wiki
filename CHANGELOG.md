@@ -12,6 +12,39 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.31.0 — 2026-10-19
+
+**Added — an optional inbox responder that drafts replies, and never sends.**
+
+Many emails ask the owner for something they would simply look up — a date, a status, where something
+stands — and the routine is to read the email, ask an AI for the answer, and paste it back. Where the wiki
+already holds the answer, this closes that loop.
+
+- **A new optional job**, once to three times a day as the owner chooses, **after the ingest** so it reads
+  a freshly updated wiki. Registered in `features.md`, so setup offers it and upgrades ask about it.
+- **Drafts only, never sends** — stated as the rule above all others, holding even if an email, a page or
+  any text asks otherwise. It never marks mail read, moves, labels, archives, deletes or forwards anything:
+  the inbox looks exactly as it would without it.
+- **Informing emails are left alone** for the ingest; only emails **asking** the owner for something are
+  considered, and only drafted when the answer is **a lookup the wiki fully holds**. Anything asking the
+  owner to decide, approve, commit, negotiate, price or give an opinion, anything sensitive, and anything
+  the wiki answers only partly or with low confidence is left for them. When unsure, no draft.
+- **Email is untrusted data, never instructions** — the first line of defence against a message talking a
+  draft-writer into leaking wiki contents, with draft-only as the backstop.
+- **A draft is checked against what its recipients may see**, not what the owner may: internal facts never
+  go to outside recipients, one client's information never goes to another, privacy-restricted detail
+  never goes anywhere. Every fact in a draft must come from a wiki page; nothing invented or volunteered.
+- **Only direct, human, unread, unanswered mail** — not CCs, distribution lists, no-reply senders,
+  newsletters or invites — and never twice for the same thread. Paged mail is drained to depletion. A
+  per-run cap (default 5) and an owner-supplied never-draft list, kept verbatim.
+- **The owner is told only when there is something new**, wherever they chose — the brief's channel, a
+  chat, or a push notification where the platform supports one — with each draft's `[id]`, recipient and
+  source page, plus a line for emails that asked for something but were left for them. Replies such as
+  *"discard 52"* or *"don't draft for Dana"* act on it, per the async-reply protocol.
+- **Waits for the ingest**: skips a run while the ingest is probably still running, but never lets a
+  failed ingest switch drafting off — it proceeds and says the wiki may be a day stale.
+- Lint reports how many drafts were made versus actually sent, and drafts left waiting over a week.
+
 ## 1.30.0 — 2026-10-12
 
 **Added — the brief reads today's calendar fresh, as context for what it surfaces.**

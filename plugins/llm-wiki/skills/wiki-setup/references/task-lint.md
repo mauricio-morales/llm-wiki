@@ -80,6 +80,11 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    line in this report. Also report any source that has been reporting itself unavailable run after run —
    a connector that quietly stopped working looks exactly like a quiet month.
 
+   **Inbox responder health**, if `jobs.responder` exists — read `wiki-responder-state.json`. Report a
+   stale `lastRunAt`, runs skipped because the ingest was still running, how many drafts it made this
+   month and how many the owner actually sent (the drafts are only useful if they are being used), and
+   drafts left unsent for more than a week. **Never delete or edit a draft here** — report only.
+
    **News health**, if `jobs.news` exists — read `wiki-news-state.json`. A stale `lastSuccessfulRun`, a
    topic whose `topicLastScanned` is more than two weeks old, or a `pending` queue that keeps growing means
    the job is failing, starved by its fetch budget, or carrying more topics than its cadence can cover.

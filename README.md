@@ -126,6 +126,7 @@ personal: it reads your pending asks and your calendar and goes to your Slack.
 | **Focus Areas** | Up to three things your role is accountable for. Anything touching one gets captured in full and reported on a schedule. Zero is fine |
 | **How far back** | Nothing, 2 weeks, 3 months (recommended), 6 months, a year |
 | **Your brief** | Where it goes, when, and whether it skips days you're out |
+| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent |
 
 Anything you skip gets a sensible default. "Just do whatever's normal" is a complete answer.
 
@@ -158,6 +159,11 @@ Plus the scheduled jobs:
   something your wiki knows — stories many outlets carry ranked above single-outlet ones
 - **A report per Focus Area** — if you named any: a cumulative HTML report (sidebar of every run, overview
   with trends) plus a short summary message saying what changed and what needs you
+- **Inbox responder** — if you want it: once to three times a day, it finds emails asking you for something
+  your wiki already knows — a date, a status, where something stands — **writes a reply draft**, and tells
+  you drafts are waiting. **It never sends anything**, never marks mail read, and leaves anything asking you
+  to decide, commit, approve or negotiate for you. It never puts internal or another client's information
+  into a draft to an outside recipient
 
 ---
 

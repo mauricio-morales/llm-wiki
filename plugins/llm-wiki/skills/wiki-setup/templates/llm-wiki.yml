@@ -143,6 +143,20 @@ jobs:
   # Present only when news topics are configured. Schedule chosen by the owner; time of day derived so
   # it never overlaps the ingest and finishes before the brief.
 {{NEWS_JOB_YAML}}
+  # Present only when the inbox responder was accepted. It DRAFTS replies to emails asking the owner for
+  # information the wiki holds, and tells them drafts are waiting. It never sends, never marks mail read,
+  # never moves or deletes anything. Runs after the ingest; times derived from the chosen frequency.
+{{RESPONDER_JOB_YAML}}
+#  responder:
+#    template_version: "1.31.0"
+#    task_id: "acme-wiki-responder"
+#    schedule: ["0 8 * * 1-5"]           # once; twice adds "0 15 * * 1-5"
+#    mailboxes: ["ana@example.com"]
+#    never_draft_for: ["legal@example.com", "the CEO"]   # verbatim, owner's words
+#    notify: { via: slack, destination: "<resolved id>" }
+#    max_drafts_per_run: 5
+#    state_file: "wiki-responder-state.json"
+#    preferences: []
   lint:
     enabled: {{LINT_ENABLED}}
     template_version: "{{PLUGIN_VERSION}}"
