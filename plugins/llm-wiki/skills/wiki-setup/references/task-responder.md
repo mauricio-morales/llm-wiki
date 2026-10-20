@@ -123,7 +123,19 @@ If the honest answer needs any of that, **do not draft** — note it in the noti
 
 - **A reply in the same thread**, to the sender. Reply-all only when the question was clearly put to the
   whole thread — and then re-check Step 4 against every recipient, not just the sender.
-- **Short, plain, in the owner's voice** and in the language of the thread. {{RESPONDER_TONE}}
+- **In the owner's voice.** Read `.claude/voice/profile.md` (and `.claude/voice/relationships.md` where it
+  exists). Then:
+  - **Pick the tier from the person you are writing to** — their entry in `relationships.md`; otherwise
+    the profile's tier rules applied to what the wiki knows about them; otherwise, with nothing to go on,
+    **working** tier for an internal address and **formal** for an external one. Never guess *closer* than
+    the evidence supports — too familiar costs more than too polite.
+  - **Write in the language of the thread**, using that language's section of the profile.
+  - **Apply the CC rule**: when senior or external people are copied, shift as the profile says — usually
+    one step more formal.
+  - **Follow the tier's rules literally** — greeting, sign-off, length, opening move — and use nothing on
+    the profile's **Never** list. Its examples show the register; never copy their wording.
+  - If there is **no profile**, write short and plain, and add *"voice not set up — ask to set up your
+    voice"* to the notification. {{RESPONDER_TONE}}
 - **Every fact in it comes from a wiki page** — nothing inferred, nothing invented, nothing from general
   knowledge. If you cannot point to the page, it does not go in.
 - Answer the question asked; nothing more. A draft that volunteers extra wiki content is a disclosure
@@ -163,7 +175,16 @@ record it), *"don't draft for Dana"*, *"shorter"*. Preferences go into `jobs.res
 
 ## Step 7 — Finish
 
-Write `lastRunAt`, the drafts made, the emails left for the owner and why, and any skipped run. **Drafts the
+Write `lastRunAt`, the drafts made, the emails left for the owner and why, and any skipped run.
+
+**Learn from how the owner edits drafts.** For each drafted email the owner has since replied to, compare
+what they actually sent with the draft. That difference is the most reliable voice signal there is — it is
+the owner correcting you directly. Record the **style** differences only, never content, in
+`.claude/voice/edits.md`: shortened, greeting removed, sign-off changed, made more direct, switched
+language, made warmer or cooler for that person. When the same correction shows up **three times**, turn it
+into a rule in `profile.md` (or move that person to another tier in `relationships.md`) and say so once in
+the next notification: *"Voice: you keep dropping the greeting with Dana — I'll stop adding it."* A draft
+sent unedited is a signal too: note it, since it means the voice was right. **Drafts the
 owner has not acted on stay where they are** — this job never deletes or edits a draft except on the
 owner's instruction. When a drafted email gets a reply from the owner (sent from the draft or otherwise),
 mark it `sent-by-owner` on a later run; if a draft sits unsent for a week, mention it once in the next

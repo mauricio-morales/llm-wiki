@@ -84,6 +84,10 @@ Read `llm-wiki.yml` and `Wiki/Schema.md` first, then follow the `wiki` skill's `
    stale `lastRunAt`, runs skipped because the ingest was still running, how many drafts it made this
    month and how many the owner actually sent (the drafts are only useful if they are being used), and
    drafts left unsent for more than a week. **Never delete or edit a draft here** — report only.
+   Also the **voice**: the profile's age (suggest "refresh my voice" past six months), and how much the
+   owner is editing drafts before sending, from `.claude/voice/edits.md`. Heavy, repeated edits mean the
+   voice is off; drafts sent unedited mean it is right. If the responder is on and there is no profile, say
+   so — it is writing in a generic voice.
 
    **News health**, if `jobs.news` exists — read `wiki-news-state.json`. A stale `lastSuccessfulRun`, a
    topic whose `topicLastScanned` is more than two weeks old, or a `pending` queue that keeps growing means

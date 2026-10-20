@@ -12,6 +12,35 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.32.0 — 2026-10-20
+
+**Added — the inbox responder writes in the owner's voice, tiered by how close they are to the reader.**
+
+A draft in a generic voice is one the owner has to rewrite, which defeats the responder; one in the wrong
+register — chummy to a client's CEO, stiff to a close colleague — is worse than none. So the responder is
+no longer switched on until the owner's voice exists.
+
+- **New `voice-profiler` subagent** (`agents/voice-profiler.md`) — the plugin's first. It reads the
+  owner's sent mail in its own context, so hundreds of emails never enter the setup conversation, and
+  returns a compact profile. Falls back to running inline where subagents are unavailable.
+- **Built on established methods**, credited in the README: comparing the owner's writing with the
+  model's own default reply to the same message (after `voice-extract`'s SICO approach) to capture what is
+  distinctively theirs; measured features rather than adjectives, with vague rules rejected; and tiering
+  by reader after audience design and accommodation theory — including the shift when senior or external
+  people are copied, and separate voices per language.
+- **Tiers come from the owner's own behaviour** — close, working, formal by default, following the data —
+  not from message frequency alone.
+- **Style only, never content**: no quoted sentences, names, clients or figures; invented examples. In a
+  **team** wiki, where the folder is shared, tiers are written as rules by relationship type rather than a
+  list of which named colleagues are treated how.
+- **Calibrated with the owner at setup**: one invented sample per tier, judged *sounds like me / too
+  formal / too casual / not me*, applied as concrete rules.
+- **Keeps learning**: the responder compares each draft with what the owner actually sent, records the
+  style differences, and turns a correction seen three times into a rule — and says so.
+- When unsure of the reader, it never guesses a closer register than the evidence supports.
+- Stored in `.claude/voice/`, which updates never touch. Registered in `features.md`, so wikis that
+  already run the responder are asked about it on upgrade. Lint reports the profile's age and edit rate.
+
 ## 1.31.0 — 2026-10-19
 
 **Added — an optional inbox responder that drafts replies, and never sends.**

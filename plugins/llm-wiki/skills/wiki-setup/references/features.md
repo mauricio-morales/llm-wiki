@@ -13,6 +13,7 @@ almost nobody reads, which makes the feature invisible to exactly the people who
 | Objectives — the owner's KPIs or OKRs, driving reports and the brief | `objectives` | 1.15.0 | Phase 2c | `Wiki/<primary>/Objectives.md` exists |
 | News — topics to watch, scanned by its own job at a chosen cadence | `news` | 1.21.0 | Phase 3b | `news.enabled` is true |
 | Inbox responder — drafts replies to emails asking for information the wiki holds; never sends | `responder` | 1.31.0 | Phase 6b | `jobs.responder` exists |
+| Your email voice — drafts written the way the owner writes, by how close they are to the reader. **Offered only when the inbox responder is on** | `voice` | 1.32.0 | Phase 6b, "Then build their voice" | `.claude/voice/profile.md` exists |
 
 **Maintainers: every new optional feature gets a row here, in the release that ships it.** Without one, an
 upgrade has no way to know the feature exists, and every wiki that predates it never hears about it.

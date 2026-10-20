@@ -126,7 +126,7 @@ personal: it reads your pending asks and your calendar and goes to your Slack.
 | **Focus Areas** | Up to three things your role is accountable for. Anything touching one gets captured in full and reported on a schedule. Zero is fine |
 | **How far back** | Nothing, 2 weeks, 3 months (recommended), 6 months, a year |
 | **Your brief** | Where it goes, when, and whether it skips days you're out |
-| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent |
+| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent. If yes, it learns your writing voice from your sent mail and checks samples with you |
 
 Anything you skip gets a sensible default. "Just do whatever's normal" is a complete answer.
 
@@ -163,7 +163,9 @@ Plus the scheduled jobs:
   your wiki already knows — a date, a status, where something stands — **writes a reply draft**, and tells
   you drafts are waiting. **It never sends anything**, never marks mail read, and leaves anything asking you
   to decide, commit, approve or negotiate for you. It never puts internal or another client's information
-  into a draft to an outside recipient
+  into a draft to an outside recipient. Drafts are written **in your voice**: during setup it reads your sent mail
+  to learn how you write — and how that changes with how close you are to the reader — shows you a sample
+  for each and asks if it sounds like you, then keeps learning from how you edit drafts before sending
 
 ---
 
@@ -316,6 +318,7 @@ merge; it never deletes them.
 
 ```
 .claude-plugin/plugin.json   manifest
+agents/voice-profiler.md     learns the owner's email voice from their sent mail, in its own context
 hooks/                       SessionStart check that orients a session on a wiki folder
 skills/wiki/                 the engine: query, ingest, prune, lint, status, import
 skills/wiki-setup/           the setup wizard
@@ -338,6 +341,13 @@ and this plugin follows it closely.
 **The implementation** — [**llm-wiki**](https://github.com/MehmetGoekce/llm-wiki) by **Mehmet Gökçe**,
 MIT licensed. The L1/L2 cache architecture, hub-index routing, LRU-demote, and the schema, hub, dashboard
 and access-log templates are derived from that project.
+
+**The voice method** — the inbox responder's voice profiling compares the owner's real writing against the
+model's own default output, after the "SICO comparative analysis" approach of the
+[`voice-extract`](https://claudeskills.info/skills/athola/claude-night-market/voice-extract/) skill
+(athola/claude-night-market), and tiers that voice by reader following Bell's
+[audience design](https://en.wikipedia.org/wiki/Audience_design) and Giles' communication accommodation
+theory. Ideas, not code — but the debt is real.
 
 **This plugin** rebuilds it to set itself up conversationally instead of through a shell script, and adds
 what running unattended needs: scheduled ingest, brief and lint jobs, connector sources rather than a

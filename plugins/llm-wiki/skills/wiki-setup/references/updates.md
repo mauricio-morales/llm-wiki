@@ -114,7 +114,8 @@ session** — the current one is already running the old text.
 - **Never update during a scheduled run.** A job that rewrites its own instructions mid-flight is
   unreviewable and unattributable when it misbehaves.
 - **Never overwrite a locally-modified file** without showing the conflict.
-- **Never touch `CLAUDE.md`, `Wiki/`, or anything outside `.claude/skills/`** as part of an update. Those
-  are the user's, permanently.
+- **Never touch `CLAUDE.md`, `Wiki/`, `.claude/voice/`, or anything else outside `.claude/skills/`** as
+  part of an update. Those are the user's, permanently — the voice profile above all, since it holds their
+  calibration and every correction learned from their edits.
 - **Never downgrade.** If the folder is newer than the plugin, the folder wins — say so, so nobody
   "fixes" it backwards.

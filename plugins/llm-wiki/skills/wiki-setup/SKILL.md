@@ -475,6 +475,28 @@ requests for information; anything asking them to decide, commit, approve, negot
 anything sensitive is left for them** — and it never puts internal or another client's information into a
 draft to an outside recipient.
 
+### Then build their voice — before the first draft is ever written
+
+A draft in the wrong voice is one the owner has to rewrite, which defeats the point; one in the wrong
+*register* — chummy to a client's CEO, stiff to a close colleague — is worse than none. So the responder is
+not switched on until the owner's voice exists.
+
+1. **Dispatch the `voice-profiler` agent** (this plugin's `agents/voice-profiler.md`) with the wiki path,
+   the owner's name, address(es) and organisation domains, the mailbox(es), the wiki's `audience`, and any
+   languages you know they write in. It reads their sent mail in its own context and returns a compact
+   profile, so hundreds of emails never land in this conversation. If subagents are not available here,
+   follow that file's procedure directly — it is self-contained.
+2. **Calibrate with the owner.** Show the invented example reply for each tier it found, and ask with one
+   `AskUserQuestion` — one question per tier: *Sounds like me* / *Too formal* / *Too casual* / *Not me —
+   I'll say why*. Apply each answer to `profile.md` as a concrete rule, not an adjective ("drop the
+   greeting with peers", not "be warmer"). One round is enough; real drafts and the owner's edits refine it
+   from there.
+3. **Tell them the profile is a first draft**, that it learns from how they edit drafts before sending, and
+   that "refresh my voice" rebuilds it.
+
+If the profile cannot be built — no sent mail readable, too little of it — **do not switch the responder
+on.** Say why, and record `responder` as `later`.
+
 ## Phase 7 — The monthly lint
 
 Default: **the first Saturday of the month at 09:00**, with auto-fix on for safe fixes, and
@@ -716,6 +738,7 @@ requests and what each touches:
 | Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
 | Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
 | Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
+| "Set up / refresh my voice" | Dispatch the `voice-profiler` agent, then calibrate as in Phase 6b. A refresh keeps `.claude/voice/edits.md` and feeds it in |
 | Turn on, tune or turn off the inbox responder | `jobs.responder` in `llm-wiki.yml` and the responder task. Turning it on runs Phase 6b; "don't draft for X" adds to its exclusions verbatim |
 | Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
 | Add a namespace | `llm-wiki.yml`, a new hub page, the Schema's namespace list, the Dashboard |

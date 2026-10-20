@@ -74,6 +74,7 @@ this repo is development tooling that must never reach a user.
 ```
 plugins/llm-wiki/                  <- THE PLUGIN. Everything shipped lives here.
   .claude-plugin/plugin.json         the plugin manifest
+  agents/voice-profiler.md           subagent: builds the owner's email voice from sent mail
   skills/wiki/SKILL.md               the engine: query, ingest, prune, lint, status, import
   skills/wiki-setup/SKILL.md         the setup wizard — the only command a user types
   skills/wiki-setup/references/      loaded by the wizard on demand: source catalog, backfill
