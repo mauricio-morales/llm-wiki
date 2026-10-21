@@ -12,6 +12,33 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.36.0 — 2026-10-21
+
+**Added — rescheduling moves the meeting, not just a draft about it.** A reply saying "Friday 10:00 works"
+still left the owner to go and move the invite — the work the feature was meant to remove.
+
+- **New `move` mode** (`jobs.responder.scheduling: move | draft | off`; the old `true` reads as `draft`).
+  Offered on upgrade to anyone with rescheduling on, as a question.
+- **All-internal meetings are moved** — to the time proposed when everyone is free then, otherwise to the
+  earliest slot where everyone is, checked in the work calendars. The calendar's own update tells the
+  attendees; no email is drafted.
+- **An outside attendee's proposed time is accepted by moving the meeting** when they are the only outside
+  party and the owner and every colleague are free. Otherwise they get a drafted reply with options — and
+  when they pick one, the next run moves the meeting.
+- **Narrow by design:** only meetings the owner organises (on someone else's meeting an edit changes only
+  the owner's copy); only start and end, never attendees, title, description or link; one occurrence, never
+  a whole series; re-checked immediately before the change; each meeting moved at most once by the job; at
+  most three moves a run. Email is still never sent.
+- **Every move is listed** in the notification with old and new time; replying "undo 57" moves it back.
+- Meetings where the owner is not the organiser still get a drafted reply.
+
+**Fixed — times are chosen in everyone's own timezone.** A slot was judged against the owner's working
+day and the attendee's calendar, and people rarely block their evenings — so a colleague abroad was offered
+20:00 their time. Each attendee's timezone is now established first (their page, published working hours,
+directory or signature location, their emails' `Date` offsets, the meetings they organise) and recorded on
+their page as `timezone`. Every slot must sit inside every attendee's local working day; with someone's
+timezone unknown, nothing is moved and options are drafted inside the known overlap.
+
 ## 1.35.0 — 2026-10-21
 
 **Changed — rescheduling asks only what the calendars can't answer.**

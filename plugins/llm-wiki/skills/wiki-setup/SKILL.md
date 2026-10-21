@@ -484,16 +484,25 @@ draft to an outside recipient.
 
 Only if a connected calendar can show the owner's availability — their own events at least, and ideally
 colleagues' free/busy. With no calendar, record `scheduling` as `unavailable` under `feature_offers` and
-say so in one line. Otherwise ask once, with `AskUserQuestion`:
+say so in one line. Check too whether the connector has a tool that **updates an event's time**; without
+one, only the draft answer below is possible — offer just that and say why.
 
-*"When someone proposes a new time for a meeting, or declines because they can't make it, should I check
-the calendars and draft the reply? If everyone on it is from your organisation, I'd pick the earliest time
-everyone's free and draft the move; if anyone's external, a few times that work for all of you, for them
-to choose. I'd never touch the calendar itself: you move the meeting when you send."*
+Ask once, with `AskUserQuestion`:
 
-Yes sets `scheduling: true` in `jobs.responder` (default 3 options per draft); no records `scheduling` as
-`declined`. Say what it leaves alone: requests for a brand-new meeting, a decline of a whole series, and a
-large meeting one person can't make.
+*"When someone proposes a new time for one of your meetings, or declines because they can't make it,
+what should I do?"*
+
+- **Move the meeting for me (Recommended)** — when everyone on it is from your organisation, I check
+  their calendars and move the meeting to the time they proposed, or the earliest time everyone's free.
+  When someone outside proposed the time and you're all free, I move it there too. Otherwise I draft them a
+  few times to choose from, and move it once they pick. Every move is listed in your notification, and
+  "undo" puts it back. Only meetings you organise, only their time — never who's invited.
+- **Just draft the replies** — I never touch the calendar; you move meetings yourself.
+- **Neither.**
+
+Record `scheduling: move`, `draft`, or `declined` under `feature_offers`. Default 3 options per draft.
+Say what it always leaves to them: a request for a brand-new meeting, a decline of a whole series, a large
+meeting one person can't make, and a meeting it has already moved once.
 
 ### Then build their voice — before the first draft is ever written
 
@@ -570,7 +579,7 @@ All paths relative to the wiki folder.
 7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
-7c. `wiki-responder-state.json` — `{"lastRunAt": null, "drafted": [], "leftForOwner": []}`, only if the
+7c. `wiki-responder-state.json` — `{"lastRunAt": null, "drafted": [], "moved": [], "leftForOwner": []}`, only if the
     inbox responder is enabled.
 7b. `wiki-news-state.json` — `{"lastSuccessfulRun": null, "cursor": 0, "topicLastScanned": {}, "seenStories": [], "threads": [], "pending": []}`, only if news topics were given.
 8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null, "lastShown": {}}`, only if the brief is enabled.
@@ -697,7 +706,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{NEWS_TOPICS_BLOCK}}` | In `task-news.md`: each topic's name, verbatim `why`, `queries` and `outlets`, readable as prose. The news task is only created when this is non-empty |
 | `{{RESPONDER_JOB_YAML}}` | The `jobs.responder` block, from the commented example in `llm-wiki.yml`. When the responder was not accepted, an empty string — do not ship a disabled stub |
 | `{{RESPONDER_MAILBOXES}} {{RESPONDER_EXCLUSIONS}} {{RESPONDER_TONE}} {{RESPONDER_MAX_DRAFTS}} {{RESPONDER_NOTIFY_BLOCK}}` | The responder's mailboxes, the owner's never-draft list **verbatim**, tone (default: short and plain), the per-run cap (default 5), and the exact notify tool and identifier. With no exclusions, say so explicitly rather than leaving the section empty |
-| `{{RESPONDER_CALENDAR}} {{RESPONDER_SLOT_OPTIONS}}` | The calendar connector and the exact tools that read events and look up colleagues' availability in the work calendar (read tools only — never name a tool that creates, updates or responds to events), and the number of options per rescheduling draft (default 3). With no calendar: *"none — rescheduling is unavailable"*. Fill both even when rescheduling is off, so switching it on is a one-line config change |
+| `{{RESPONDER_CALENDAR}} {{RESPONDER_SLOT_OPTIONS}}` | The calendar connector and the exact tools that read events and look up colleagues' availability in the work calendar — plus, **only when `scheduling` is `move`**, the one tool that updates an event, named with its constraint (start and end only, never attendees). Never name a tool that creates, cancels or responds to events, and the number of options per rescheduling draft (default 3). With no calendar: *"none — rescheduling is unavailable"*. Fill both even when rescheduling is off, so switching it on is a one-line config change |
 | `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
@@ -766,7 +775,7 @@ requests and what each touches:
 | Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
 | "Set up / refresh my voice" | Dispatch the `voice-profiler` agent, then calibrate as in Phase 6b. A refresh keeps `.claude/voice/edits.md` and feeds it in |
 | Turn on, tune or turn off the inbox responder | `jobs.responder` in `llm-wiki.yml` and the responder task. Turning it on runs Phase 6b; "don't draft for X" adds to its exclusions verbatim |
-| Turn rescheduling drafts on or off | `jobs.responder.scheduling` in `llm-wiki.yml` — the task reads it each run, so nothing is regenerated. Turning it on with no calendar named in the task regenerates the task with `{{RESPONDER_CALENDAR}}` filled |
+| Rescheduling: move meetings, only draft, or off | `jobs.responder.scheduling` (`move` / `draft` / `off`) in `llm-wiki.yml`. The task reads it each run; switching to `move` regenerates the task so `{{RESPONDER_CALENDAR}}` names the update tool. "Don't move meetings with X" adds to the exclusions verbatim |
 | Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
 | Add a namespace | `llm-wiki.yml`, a new hub page, the Schema's namespace list, the Dashboard |
 | Change the privacy rules | The Schema's exclusions section and `CLAUDE.md`'s privacy block |

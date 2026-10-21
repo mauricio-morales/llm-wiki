@@ -126,7 +126,7 @@ personal: it reads your pending asks and your calendar and goes to your Slack.
 | **Focus Areas** | Up to three things your role is accountable for. Anything touching one gets captured in full and reported on a schedule. Zero is fine |
 | **How far back** | Nothing, 2 weeks, 3 months (recommended), 6 months, a year |
 | **Your brief** | Where it goes, when, and whether it skips days you're out |
-| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent. If yes, it learns your writing voice from your sent mail and checks samples with you, and offers to draft rescheduling replies from your calendar |
+| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent. If yes, it learns your writing voice from your sent mail and checks samples with you, and offers to handle meeting reschedules — moving the meeting itself, or just drafting replies |
 
 Anything you skip gets a sensible default. "Just do whatever's normal" is a complete answer.
 
@@ -167,9 +167,10 @@ Plus the scheduled jobs:
   to learn how you write — and how that changes with how close you are to the reader — shows you a sample
   for each and asks if it sounds like you, then keeps learning from how you edit drafts before sending.
   Optionally it also handles **rescheduling**: when someone proposes a new time or declines because they
-  can't make it, it checks the calendars and drafts the reply: for a meeting with only colleagues, the
-  earliest time everyone's free; with anyone external, a few times that suit all your colleagues, for them
-  to pick. It never touches the calendar — you move the meeting when you send
+  can't make it, it checks your colleagues' calendars and **moves the meeting** — to the time proposed, or
+  the earliest time everyone's free. Only when someone outside has to choose does it draft them a few
+  times, and it moves the meeting once they pick. Only meetings you organise, only their time; every move
+  is listed with an undo. Prefer to move meetings yourself? Choose drafts only
 
 ---
 
