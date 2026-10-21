@@ -148,13 +148,16 @@ jobs:
   # never moves or deletes anything. Runs after the ingest; times derived from the chosen frequency.
 {{RESPONDER_JOB_YAML}}
 #  responder:
-#    template_version: "1.31.0"
+#    template_version: "1.34.0"
 #    task_id: "acme-wiki-responder"
 #    schedule: ["0 8 * * 1-5"]           # once; twice adds "0 15 * * 1-5"
 #    mailboxes: ["ana@example.com"]
 #    never_draft_for: ["legal@example.com", "the CEO"]   # verbatim, owner's words
 #    notify: { via: slack, destination: "<resolved id>" }
 #    max_drafts_per_run: 5
+#    scheduling: false                    # true: draft replies to new-time proposals and "can't make it"
+#                                         # declines from calendar availability; the calendar is never changed
+#    slot_options: 3                      # times offered per rescheduling draft
 #    state_file: "wiki-responder-state.json"
 #    preferences: []
   lint:

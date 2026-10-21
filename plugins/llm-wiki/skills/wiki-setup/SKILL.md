@@ -480,6 +480,20 @@ requests for information; anything asking them to decide, commit, approve, negot
 anything sensitive is left for them** — and it never puts internal or another client's information into a
 draft to an outside recipient.
 
+### Then offer rescheduling
+
+Only if a connected calendar can show the owner's availability — their own events at least, and ideally
+colleagues' free/busy. With no calendar, record `scheduling` as `unavailable` under `feature_offers` and
+say so in one line. Otherwise ask once, with `AskUserQuestion`:
+
+*"When someone proposes a new time for a meeting, or declines because they can't make it, should I check
+your calendar and draft the reply — a yes if you're free, or a few times that work if not? I'd never touch
+the calendar itself: you move the meeting once they confirm."*
+
+Yes sets `scheduling: true` in `jobs.responder` (default 3 options per draft); no records `scheduling` as
+`declined`. Say what it leaves alone: requests for a brand-new meeting, a decline of a whole series, and a
+large meeting one person can't make.
+
 ### Then build their voice — before the first draft is ever written
 
 A draft in the wrong voice is one the owner has to rewrite, which defeats the point; one in the wrong
@@ -682,6 +696,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{NEWS_TOPICS_BLOCK}}` | In `task-news.md`: each topic's name, verbatim `why`, `queries` and `outlets`, readable as prose. The news task is only created when this is non-empty |
 | `{{RESPONDER_JOB_YAML}}` | The `jobs.responder` block, from the commented example in `llm-wiki.yml`. When the responder was not accepted, an empty string — do not ship a disabled stub |
 | `{{RESPONDER_MAILBOXES}} {{RESPONDER_EXCLUSIONS}} {{RESPONDER_TONE}} {{RESPONDER_MAX_DRAFTS}} {{RESPONDER_NOTIFY_BLOCK}}` | The responder's mailboxes, the owner's never-draft list **verbatim**, tone (default: short and plain), the per-run cap (default 5), and the exact notify tool and identifier. With no exclusions, say so explicitly rather than leaving the section empty |
+| `{{RESPONDER_CALENDAR}} {{RESPONDER_SLOT_OPTIONS}}` | The calendar connector and the exact tools that read events and free/busy (read tools only — never name a tool that creates, updates or responds to events), and the number of options per rescheduling draft (default 3). With no calendar: *"none — rescheduling is unavailable"*. Fill both even when rescheduling is off, so switching it on is a one-line config change |
 | `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
@@ -750,6 +765,7 @@ requests and what each touches:
 | Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
 | "Set up / refresh my voice" | Dispatch the `voice-profiler` agent, then calibrate as in Phase 6b. A refresh keeps `.claude/voice/edits.md` and feeds it in |
 | Turn on, tune or turn off the inbox responder | `jobs.responder` in `llm-wiki.yml` and the responder task. Turning it on runs Phase 6b; "don't draft for X" adds to its exclusions verbatim |
+| Turn rescheduling drafts on or off | `jobs.responder.scheduling` in `llm-wiki.yml` — the task reads it each run, so nothing is regenerated. Turning it on with no calendar named in the task regenerates the task with `{{RESPONDER_CALENDAR}}` filled |
 | Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
 | Add a namespace | `llm-wiki.yml`, a new hub page, the Schema's namespace list, the Dashboard |
 | Change the privacy rules | The Schema's exclusions section and `CLAUDE.md`'s privacy block |

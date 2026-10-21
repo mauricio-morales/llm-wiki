@@ -14,6 +14,7 @@ almost nobody reads, which makes the feature invisible to exactly the people who
 | News — topics to watch, scanned by its own job at a chosen cadence | `news` | 1.21.0 | Phase 3b | `news.enabled` is true |
 | Inbox responder — drafts replies to emails asking for information the wiki holds; never sends. **Personal wikis only** | `responder` | 1.31.0 | Phase 6b | `jobs.responder` exists |
 | Your email voice — drafts written the way the owner writes, by how close they are to the reader. **Offered only when the inbox responder is on; personal wikis only** | `voice` | 1.32.0 | Phase 6b, "Then build their voice" | `.claude/voice/profile.md` exists |
+| Rescheduling — when someone proposes a new time or declines because they can't make it, check the calendar and draft a yes or new options; never touches the calendar. **Offered only when the inbox responder is on and a calendar is connected; personal wikis only** | `scheduling` | 1.34.0 | Phase 6b, "Then offer rescheduling" | `jobs.responder.scheduling` is true |
 
 **Maintainers: every new optional feature gets a row here, in the release that ships it.** Without one, an
 upgrade has no way to know the feature exists, and every wiki that predates it never hears about it.

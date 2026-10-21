@@ -126,7 +126,7 @@ personal: it reads your pending asks and your calendar and goes to your Slack.
 | **Focus Areas** | Up to three things your role is accountable for. Anything touching one gets captured in full and reported on a schedule. Zero is fine |
 | **How far back** | Nothing, 2 weeks, 3 months (recommended), 6 months, a year |
 | **Your brief** | Where it goes, when, and whether it skips days you're out |
-| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent. If yes, it learns your writing voice from your sent mail and checks samples with you |
+| **Inbox responder** | Optional. Whether to draft replies to emails asking for information your wiki has, how often, and where to tell you drafts are waiting. Drafts only — nothing is ever sent. If yes, it learns your writing voice from your sent mail and checks samples with you, and offers to draft rescheduling replies from your calendar |
 
 Anything you skip gets a sensible default. "Just do whatever's normal" is a complete answer.
 
@@ -165,7 +165,10 @@ Plus the scheduled jobs:
   to decide, commit, approve or negotiate for you. It never puts internal or another client's information
   into a draft to an outside recipient. Drafts are written **in your voice**: during setup it reads your sent mail
   to learn how you write — and how that changes with how close you are to the reader — shows you a sample
-  for each and asks if it sounds like you, then keeps learning from how you edit drafts before sending
+  for each and asks if it sounds like you, then keeps learning from how you edit drafts before sending.
+  Optionally it also handles **rescheduling**: when someone proposes a new time or declines because they
+  can't make it, it checks your calendar and drafts a yes, or a few times that work. It never touches the
+  calendar — you move the meeting once they confirm
 
 ---
 

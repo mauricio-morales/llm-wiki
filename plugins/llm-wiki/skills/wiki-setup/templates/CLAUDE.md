@@ -97,6 +97,9 @@ invented target produces invented progress, and it will be quoted at a review.
 If this wiki has the inbox responder, it drafts replies to emails asking the owner for information the wiki
 holds. **Neither it nor any session here sends email on its own initiative** — a draft is the furthest it
 goes, and sending is always the owner's act, or an explicit instruction from them in this conversation.
+The same goes for the calendar: accepting, declining, proposing a time, or creating, moving or cancelling
+an event all notify other people, so none happens without the owner asking for it here. The responder
+never does any of them — its rescheduling drafts only offer times, and the owner moves the meeting.
 
 When writing any email for the owner — a responder draft, or one they ask for here — **use their voice**
 from `.claude/voice/profile.md`, if this wiki has one:

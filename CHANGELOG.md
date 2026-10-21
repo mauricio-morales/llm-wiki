@@ -12,6 +12,31 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.34.0 — 2026-10-21
+
+**Added — rescheduling drafts in the inbox responder.** Optional; offered on upgrade when the responder is
+on and a calendar is connected.
+
+- **A new time proposed** for a meeting the owner is in — the calendar's own "new time proposed" response,
+  or a plain email asking to move it. If the owner (and every colleague whose free/busy is visible) is free
+  for the whole length and within working hours, it drafts a yes; otherwise a counter with options near the
+  proposed time.
+- **A decline that says they can't make it** — a clash, a day off, travel, leave — for a meeting the owner
+  organised. It drafts a reply offering new times, after their return date when they gave one.
+- **Options** keep the meeting's length, sit within the next five working days, avoid busy, tentative and
+  out-of-office time, respect the other person's working day where the wiki knows their timezone, land on
+  different days, and are written in full with timezones. No common time means no draft.
+- **Left for the owner:** declines with no reason, declines of a whole series, requests for a new meeting,
+  a large meeting one person can't make (unless they are its reason), and an occurrence of a recurring
+  meeting with no slot before the next one.
+- **The calendar is read-only.** The job never accepts, declines, proposes, creates, moves, cancels or
+  holds anything — each would notify other people. Drafts never say why the owner is busy or show anyone's
+  calendar to outsiders. Every notification ends with "the invites are unchanged".
+- **Later runs re-check** the times a draft offered and say when one has filled, and when the other person
+  picks a time, say so once so the owner can move the invite.
+- Config: `jobs.responder.scheduling` and `slot_options`. Read each run, so switching it on or off needs no
+  task rebuild.
+
 ## 1.33.0 — 2026-10-21
 
 **Changed — tone lives on each person's page, defaults to formal, and a group gets its most formal reader's.**
