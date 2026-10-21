@@ -143,36 +143,51 @@ email where you cannot identify the meeting on the calendar with certainty.
 - **One occurrence of a recurring meeting**: only if a slot exists before the next occurrence. If not,
   skipping this one is usually the answer, and that is the owner's call — note it: *"next one is Tue anyway"*.
 
-**When is someone free?** For the meeting's whole length, nothing on their calendar shows busy, tentative
-or out of office, and it falls within working hours — the owner's from `owner.working_hours` (when null,
-infer them from the calendar's own pattern, as the brief does, and write them back). **Every attendee
-whose availability the calendar shows** — usually colleagues in the same organisation — must be free too.
-Outside attendees' calendars are not visible; the reply lets them choose.
+**Who is internal?** An attendee is internal when their address is in one of the owner's organisation
+domains — `owner.org_domains` in `llm-wiki.yml`. When that is null, take the domain of `owner.email`, add
+any other domain the work directory shows for the owner's colleagues, and write it back. Everyone else is
+external.
 
-**A new time proposed → confirm it or counter it.**
+**When is someone free?** For the meeting's whole length, nothing shows busy, tentative or out of office,
+and it falls within their working hours — the owner's from `owner.working_hours` (when null, infer them
+from the calendar's own pattern, as the brief does, and write them back). **For every internal attendee,
+look up their availability in the work calendar** with the availability tool, never a guess; their working
+hours are what the calendar reports, or the owner's when it reports none. An internal attendee whose
+availability cannot be read counts as unknown, like an external one. External calendars are not visible.
 
-- **Free** → draft a short yes. It must not say the invite has been moved — it hasn't. The notification
-  tells the owner to move it.
-- **Not free** → draft a counter with options near the proposed time.
+**Who is on the meeting decides how much to ask** — the aim is the fewest round trips the facts allow:
 
-**A decline → offer new times**, in a reply to the person who declined. If they said when they are back,
-every option is after that. If they named a time that suits them, treat it as a new time proposed.
+- **Everyone internal, every calendar readable → one time, no options.** The calendars have already
+  answered what a list of options would ask, so pick the **earliest slot where everyone is free** and draft
+  the move to it: *"Let's move it to Fri 24 Oct, 10:00–10:30 — everyone's free then."*
+- **Anyone external → options**, each one free for the owner **and every internal attendee**, so the only
+  thing left to ask is the external people's choice.
+- **An internal calendar that cannot be read → options**, as for external, and the notification says whose
+  calendar it could not see.
 
-**Choosing options:**
+**A new time proposed.** Everyone who can be checked is free at it → draft a yes. Someone is not → when
+everyone is internal, draft the move to the earliest common slot; otherwise a counter with options near
+the proposed time. No draft may say the invite has been moved — it hasn't. The notification tells the owner
+to move it.
+
+**A decline.** Draft the reply to the person who declined. If they said when they are back, every time is
+after that; if they named a time that suits them, treat it as a new time proposed. Then one time or
+options, as above.
+
+**Choosing times:**
 
 - The same length as the original meeting.
-- Within the next five working days from tomorrow (or from their return); for a recurring occurrence,
-  before the next one.
-- Free for the owner and every visible attendee, as above, and within the other person's working day
-  where the wiki records their timezone or location. When it is unknown, prefer the middle of the owner's
-  day.
-- **{{RESPONDER_SLOT_OPTIONS}} options**, on different days where possible.
+- No sooner than two working hours after this run — the slot must still be there when the owner sends —
+  and within the next five working days (from their return, if later); for a recurring occurrence, before
+  the next one.
+- Within each external person's working day where the wiki records their timezone or location. When it is
+  unknown, prefer the middle of the owner's day.
+- Options: **{{RESPONDER_SLOT_OPTIONS}}**, on different days where possible.
 - Each written in full — weekday, date, time and timezone, in the recipient's timezone when known with the
   owner's alongside: *"Thu 23 Oct, 15:00–15:30 CET (09:00 EST)"*. An ambiguous time is a meeting missed.
 - **No slot fits → no draft.** List it as left for the owner: *"no common time in the next week"*.
 
-**The options are not held.** Nothing is booked, so a slot can fill before the owner sends — Step 7
-re-checks.
+**Nothing is held.** A slot can fill before the owner sends — Step 7 re-checks.
 
 ## Step 4 — Check what the recipient may see
 
@@ -244,6 +259,7 @@ leave the rest for the next run.
 > *Reschedules:*
 > *[55] Weekly sync — Ana is off Thu; offered Fri 24, Mon 27, Tue 28*
 > *[56] Globex review — Dana proposed Wed 15:00; you're free, drafted a yes*
+> *[57] Pricing sync — all internal, Leo is out Thu; moved to the next common slot, Fri 24 10:00*
 > *The invites are unchanged: once they confirm, move the meeting yourself.*
 
 Lead each with its `[id]`, say who it goes to and where the answer came from — that is what lets the owner
@@ -273,8 +289,9 @@ owner has not acted on stay where they are** — this job never deletes or edits
 owner's instruction.
 
 **Re-check rescheduling drafts.** For each one still unsent, check the times it offered against the
-calendar again. If one has since filled, say so once: *"[55] Fri 24 10:00 is now booked — edit before
-sending."* Never edit the draft yourself. When the other person replies picking a time, say once:
+calendar again — the owner's and every internal attendee's. If one has since filled, say so once: *"[55]
+Fri 24 10:00 is now booked — edit before sending."* For a one-time draft to an all-internal meeting, name
+the next common slot in the same line, so the fix is one edit. Never edit the draft yourself. When the other person replies picking a time, say once:
 *"[55] Ana picked Mon 27 14:00 — move the invite."* When the meeting's original time has passed with no
 reply, stop mentioning it.
 

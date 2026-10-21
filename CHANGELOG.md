@@ -12,6 +12,22 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.35.0 — 2026-10-21
+
+**Changed — rescheduling asks only what the calendars can't answer.**
+
+- **Internal attendees' availability is looked up in the work calendar**, never guessed. An attendee is
+  internal when their address is in the owner's organisation domains — new `owner.org_domains`, resolved
+  at run time from the owner's email and the work directory when null.
+- **A meeting with only internal attendees gets one time, not options**: the earliest slot where everyone is
+  free, drafted as the move. A proposed time that clashes for someone is answered with that slot instead of
+  a list.
+- **Options are kept for meetings with anyone external** — and every option is free for the owner and every
+  internal attendee, so the only open question is the external people's choice. An internal calendar that
+  can't be read is treated the same way, and the notification names it.
+- **No slot sooner than two working hours after the run**, so it is still free when the owner sends. A
+  later run that finds a drafted slot filled names the next common one alongside.
+
 ## 1.34.0 — 2026-10-21
 
 **Added — rescheduling drafts in the inbox responder.** Optional; offered on upgrade when the responder is

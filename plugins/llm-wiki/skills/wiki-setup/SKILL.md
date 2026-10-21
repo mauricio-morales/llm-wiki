@@ -487,8 +487,9 @@ colleagues' free/busy. With no calendar, record `scheduling` as `unavailable` un
 say so in one line. Otherwise ask once, with `AskUserQuestion`:
 
 *"When someone proposes a new time for a meeting, or declines because they can't make it, should I check
-your calendar and draft the reply — a yes if you're free, or a few times that work if not? I'd never touch
-the calendar itself: you move the meeting once they confirm."*
+the calendars and draft the reply? If everyone on it is from your organisation, I'd pick the earliest time
+everyone's free and draft the move; if anyone's external, a few times that work for all of you, for them
+to choose. I'd never touch the calendar itself: you move the meeting when you send."*
 
 Yes sets `scheduling: true` in `jobs.responder` (default 3 options per draft); no records `scheduling` as
 `declined`. Say what it leaves alone: requests for a brand-new meeting, a decline of a whole series, and a
@@ -696,7 +697,7 @@ The ones most often missed, because they need composing rather than copying:
 | `{{NEWS_TOPICS_BLOCK}}` | In `task-news.md`: each topic's name, verbatim `why`, `queries` and `outlets`, readable as prose. The news task is only created when this is non-empty |
 | `{{RESPONDER_JOB_YAML}}` | The `jobs.responder` block, from the commented example in `llm-wiki.yml`. When the responder was not accepted, an empty string — do not ship a disabled stub |
 | `{{RESPONDER_MAILBOXES}} {{RESPONDER_EXCLUSIONS}} {{RESPONDER_TONE}} {{RESPONDER_MAX_DRAFTS}} {{RESPONDER_NOTIFY_BLOCK}}` | The responder's mailboxes, the owner's never-draft list **verbatim**, tone (default: short and plain), the per-run cap (default 5), and the exact notify tool and identifier. With no exclusions, say so explicitly rather than leaving the section empty |
-| `{{RESPONDER_CALENDAR}} {{RESPONDER_SLOT_OPTIONS}}` | The calendar connector and the exact tools that read events and free/busy (read tools only — never name a tool that creates, updates or responds to events), and the number of options per rescheduling draft (default 3). With no calendar: *"none — rescheduling is unavailable"*. Fill both even when rescheduling is off, so switching it on is a one-line config change |
+| `{{RESPONDER_CALENDAR}} {{RESPONDER_SLOT_OPTIONS}}` | The calendar connector and the exact tools that read events and look up colleagues' availability in the work calendar (read tools only — never name a tool that creates, updates or responds to events), and the number of options per rescheduling draft (default 3). With no calendar: *"none — rescheduling is unavailable"*. Fill both even when rescheduling is off, so switching it on is a one-line config change |
 | `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
 | `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
 | `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |

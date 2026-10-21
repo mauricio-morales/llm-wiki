@@ -167,8 +167,9 @@ Plus the scheduled jobs:
   to learn how you write — and how that changes with how close you are to the reader — shows you a sample
   for each and asks if it sounds like you, then keeps learning from how you edit drafts before sending.
   Optionally it also handles **rescheduling**: when someone proposes a new time or declines because they
-  can't make it, it checks your calendar and drafts a yes, or a few times that work. It never touches the
-  calendar — you move the meeting once they confirm
+  can't make it, it checks the calendars and drafts the reply: for a meeting with only colleagues, the
+  earliest time everyone's free; with anyone external, a few times that suit all your colleagues, for them
+  to pick. It never touches the calendar — you move the meeting when you send
 
 ---
 

@@ -31,6 +31,8 @@ owner:
   email: "{{OWNER_EMAIL}}"
   timezone: "{{OWNER_TZ}}"            # IANA, from the environment — e.g. Europe/Warsaw
   working_hours: null                 # null on purpose: the brief infers it from the calendar
+  org_domains: null                   # null: the owner's email domain, plus colleagues' domains the
+                                      # directory shows — resolved at run time and written back
   chat_user_id: "{{OWNER_CHAT_ID}}"   # from the chat connector's current-user lookup; null is fine
 
 tool: {{TOOL}}                 # obsidian (folders, YAML frontmatter) | logseq (flat files, outliner)
@@ -157,7 +159,8 @@ jobs:
 #    max_drafts_per_run: 5
 #    scheduling: false                    # true: draft replies to new-time proposals and "can't make it"
 #                                         # declines from calendar availability; the calendar is never changed
-#    slot_options: 3                      # times offered per rescheduling draft
+#    slot_options: 3                      # times offered when someone external is on the meeting;
+#                                         # all-internal meetings get the earliest common slot instead
 #    state_file: "wiki-responder-state.json"
 #    preferences: []
   lint:
