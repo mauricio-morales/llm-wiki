@@ -21,10 +21,10 @@ sandboxed session and the scheduled tasks can both reach, and outside `Wiki/` be
 a wiki page and must never be routed to or quoted from:
 
 - `profile.md` — the voice, by relationship tier and language (structure below).
-- `relationships.md` — **personal wikis only**: who falls in which tier.
 - `manifest.json` — built date, period read, message counts per tier and language, method, your model.
 
-Then return a short report to whoever dispatched you (see the end).
+**And a tag on each person's own wiki page** — who gets which tone lives with the person, not in a side
+file (Step 5b). Then return a short report to whoever dispatched you (see the end).
 
 ## The one privacy rule
 
@@ -33,12 +33,9 @@ names, no figures, no project details, no personal details about anyone. Habitua
 words ("Sounds good —", "Thanks!", "Dale, gracias") are style and may be recorded; anything longer is content.
 All examples in the profile are **invented**, on neutral made-up topics.
 
-**In a `team` wiki the folder is shared with colleagues.** Do not write a per-person list there — a file
-saying which named colleagues the owner writes to casually and which formally is not something to publish
-to those colleagues. Write **tier rules by relationship type** instead (direct reports, peers, own
-leadership, client day-to-day contacts, client executives, vendors, unknown external), and let the drafting
-job classify recipients at the time from those rules and what the wiki knows about them. In a `personal`
-wiki, the per-person map is fine.
+**Personal wikis only.** If the dispatch says the wiki's `audience` is `team`, stop and say so: a shared
+wiki has no inbox responder and no personal voice — email drafted from it is always formal — and person
+pages that colleagues sync must not carry a tag saying how the owner treats them.
 
 ## Step 1 — Collect the corpus
 
@@ -72,8 +69,21 @@ Default to three tiers — **close**, **working**, **formal** — but follow the
 a fourth register (say, their own leadership), keep it; if two collapse into one, merge them. **The owner's
 writing decides the tier, not frequency alone** — someone emailed rarely but always warmly is close.
 
+**Use meeting transcripts too — 1:1s above all.** How the owner talks to someone across a table is strong
+evidence of how close they are: first names or titles, personal topics, humour, how directly they disagree,
+which language they speak. Read the owner's 1:1s and small meetings from the last three months — from the
+transcript sources the wiki is connected to, or `Meetings-Log` where the raw transcript is unavailable.
+
+**But speech is not writing.** Everyone is more casual aloud than in email. Transcripts decide **the tier
+and the language** for a person; they never change **how the owner writes** — that comes from sent mail
+alone. A profile built from speech would draft every email like a chat.
+
+Transcripts are also transcribed by machine: names get garbled. **Never assign a tier to a name you can
+only match uncertainly** to a person in the wiki; leave that person untagged, which means formal.
+
 **Also look at the CC line.** Compare how the owner writes to the same person with and without senior or
-external people copied in. That shift — usually toward one step more formal — is a rule of its own.
+external people copied in. If there is a consistent shift, record it — but the drafting rule that matters
+most is simpler: a message is written for its **most formal** reader (see "Groups" below).
 
 **And at language.** If the owner writes in more than one language, find when: by recipient, by
 organisation, by who started the thread. Each language gets its own voice section; they are rarely
@@ -113,7 +123,7 @@ Built YYYY-MM-DD from N sent messages, <period>. Tiers: close, working, formal.
 ## Never
 - <phrases and habits they never use — including the AI defaults below>
 
-## Tier: close        (who: <rule, or "see relationships.md">)
+## Tier: close        (who: tagged `voice: close` on their page)
 - Greeting: ...   Sign-off: ...   Length: ...
 - <concrete rules>
 - Example (invented): <3-5 line reply on a made-up topic>
@@ -121,8 +131,10 @@ Built YYYY-MM-DD from N sent messages, <period>. Tiers: close, working, formal.
 ## Tier: working ...
 ## Tier: formal ...
 
-## When others are copied
-- <the CC shift, concretely>
+## Groups
+- A message to several people is written in the **most formal** tier among everyone on it, To and CC.
+  Anyone without a tag counts as formal. The least formal voice is used only when every reader is close.
+- <any additional shift observed when senior or external people are copied>
 
 ## Languages
 - <when each is used; per-language differences>
@@ -138,6 +150,26 @@ genuinely uses them: *"I hope this email finds you well"*, *"I wanted to reach o
 hesitate to"*, *"Thank you for reaching out"*, *"Great question"*, *"Certainly!"*, *"I'd be happy to"*,
 *"delve"*, *"Let me know if you have any questions"* as a reflexive closer.
 
+## Step 5b — Tag each person's page
+
+For every person you placed in a tier **with confidence**, set two properties in the frontmatter of their
+existing wiki page — wherever it lives: `People`, `My-Team`, `Consultants`, a client's contacts:
+
+```yaml
+voice: close            # close | working | formal
+voice-language: es      # the language the owner uses with them, where it is consistent
+```
+
+**Properties only.** Never edit the page's body — the wiki is append-only and has no version history.
+Set `updated`. Do not tag a page you are unsure of: **no tag means formal**, which is the safe default.
+
+**Do not create pages.** If someone the owner is clearly close with has no page, list them in your report
+instead; the dispatcher asks the owner whether to create pages for them. Without a page they will be
+written to formally, which is wrong for them but never embarrassing.
+
+Remove any old `.claude/voice/relationships.md` once its people are carried onto their pages — one place
+for this, not two that drift apart.
+
 ## Step 6 — Pressure-test it
 
 Reread the profile as if you had to write a reply from it alone. Replace every vague rule with a specific
@@ -151,6 +183,8 @@ Return, briefly:
 - the tiers found, with message counts, and anything thin ("only 6 formal-tier messages — that tier is a
   weak guess");
 - the three to five most distinctive traits, in plain words;
+- **people you would place in close or working but who have no wiki page** — name and tier only — so the
+  owner can choose whether to create pages for them;
 - **one invented example reply per tier**, for the owner to judge — the dispatcher shows these to them and
   asks whether they sound right;
 - where the files were written.

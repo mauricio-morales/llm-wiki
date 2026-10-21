@@ -20,7 +20,8 @@ holds, it **writes a reply draft** — and tells the owner drafts are waiting. *
 Draft replies to {{OWNER_NAME}}'s email where the wiki at `{{WIKI_PATH}}` already holds the answer, and
 tell them the drafts are waiting.
 
-Read `llm-wiki.yml` and `Wiki/Schema.md` first.
+Read `llm-wiki.yml` and `Wiki/Schema.md` first. **If `audience` is `team`, stop:** this job runs only on a
+personal wiki. A shared folder is not one person's inbox.
 
 ## The one rule above all the others
 
@@ -123,15 +124,17 @@ If the honest answer needs any of that, **do not draft** — note it in the noti
 
 - **A reply in the same thread**, to the sender. Reply-all only when the question was clearly put to the
   whole thread — and then re-check Step 4 against every recipient, not just the sender.
-- **In the owner's voice.** Read `.claude/voice/profile.md` (and `.claude/voice/relationships.md` where it
-  exists). Then:
-  - **Pick the tier from the person you are writing to** — their entry in `relationships.md`; otherwise
-    the profile's tier rules applied to what the wiki knows about them; otherwise, with nothing to go on,
-    **working** tier for an internal address and **formal** for an external one. Never guess *closer* than
-    the evidence supports — too familiar costs more than too polite.
-  - **Write in the language of the thread**, using that language's section of the profile.
-  - **Apply the CC rule**: when senior or external people are copied, shift as the profile says — usually
-    one step more formal.
+- **In the owner's voice.** Read `.claude/voice/profile.md`. Then choose the tier:
+  - **Each person's tier is the `voice` property on their wiki page** — wherever the page lives (`People`,
+    `My-Team`, `Consultants`, a client's contacts). Find the page by name and email.
+  - **No page, or a page with no `voice` tag → formal.** A formal business tone is always the default for
+    anyone the owner has not been placed closer to. Never infer closeness from a friendly email — too
+    familiar costs far more than too polite.
+  - **A message is written for its most formal reader.** Take the tier of every person on it — To *and* CC
+    — and use the most formal. The least formal voice is used only when **everyone** on the message is
+    tagged for it; one unknown or formal person makes the whole message formal.
+  - **Write in the language of the thread.** Where everyone on it shares a `voice-language`, that confirms
+    it; where they differ, stay in the thread's language.
   - **Follow the tier's rules literally** — greeting, sign-off, length, opening move — and use nothing on
     the profile's **Never** list. Its examples show the register; never copy their wording.
   - If there is **no profile**, write short and plain, and add *"voice not set up — ask to set up your
@@ -182,7 +185,7 @@ what they actually sent with the draft. That difference is the most reliable voi
 the owner correcting you directly. Record the **style** differences only, never content, in
 `.claude/voice/edits.md`: shortened, greeting removed, sign-off changed, made more direct, switched
 language, made warmer or cooler for that person. When the same correction shows up **three times**, turn it
-into a rule in `profile.md` (or move that person to another tier in `relationships.md`) and say so once in
+into a rule in `profile.md` — or, if it is about one person, change the `voice` tag on their page — and say so once in
 the next notification: *"Voice: you keep dropping the greeting with Dana — I'll stop adding it."* A draft
 sent unedited is a signal too: note it, since it means the voice was right. **Drafts the
 owner has not acted on stay where they are** — this job never deletes or edits a draft except on the

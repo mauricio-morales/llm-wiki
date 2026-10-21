@@ -12,8 +12,8 @@ almost nobody reads, which makes the feature invisible to exactly the people who
 | Focus Areas — up to three topics the role is accountable for, with their own reports | `focus-areas` | 1.6.0 | Phase 2b | `focus_areas` is non-empty |
 | Objectives — the owner's KPIs or OKRs, driving reports and the brief | `objectives` | 1.15.0 | Phase 2c | `Wiki/<primary>/Objectives.md` exists |
 | News — topics to watch, scanned by its own job at a chosen cadence | `news` | 1.21.0 | Phase 3b | `news.enabled` is true |
-| Inbox responder — drafts replies to emails asking for information the wiki holds; never sends | `responder` | 1.31.0 | Phase 6b | `jobs.responder` exists |
-| Your email voice — drafts written the way the owner writes, by how close they are to the reader. **Offered only when the inbox responder is on** | `voice` | 1.32.0 | Phase 6b, "Then build their voice" | `.claude/voice/profile.md` exists |
+| Inbox responder — drafts replies to emails asking for information the wiki holds; never sends. **Personal wikis only** | `responder` | 1.31.0 | Phase 6b | `jobs.responder` exists |
+| Your email voice — drafts written the way the owner writes, by how close they are to the reader. **Offered only when the inbox responder is on; personal wikis only** | `voice` | 1.32.0 | Phase 6b, "Then build their voice" | `.claude/voice/profile.md` exists |
 
 **Maintainers: every new optional feature gets a row here, in the release that ships it.** Without one, an
 upgrade has no way to know the feature exists, and every wiki that predates it never hears about it.
@@ -23,7 +23,8 @@ upgrade has no way to know the feature exists, and every wiki that predates it n
 On an upgrade, offer every registered feature that is:
 
 - **not already on**, and
-- **not recorded as `declined`** in `feature_offers` in `llm-wiki.yml`.
+- **not recorded as `declined`** in `feature_offers` in `llm-wiki.yml`, and
+- **applicable to this wiki** — a feature marked *personal wikis only* is never offered on a `team` wiki.
 
 A feature recorded as `later` is offered again. One with no record at all is offered — including on wikis
 that have been upgraded several times since the feature shipped, because **a version number says when a

@@ -99,8 +99,15 @@ holds. **Neither it nor any session here sends email on its own initiative** —
 goes, and sending is always the owner's act, or an explicit instruction from them in this conversation.
 
 When writing any email for the owner — a responder draft, or one they ask for here — **use their voice**
-from `.claude/voice/profile.md`: the tier for that reader, the thread's language, the CC rule, and nothing
-from its Never list. Never guess a closer register than the evidence supports. `.claude/voice/` describes
+from `.claude/voice/profile.md`, if this wiki has one:
+
+- Each person's tier is the **`voice` property on their wiki page**. **Untagged means formal** — a plain,
+  formal business tone is the default for anyone not placed closer.
+- **A message is written for its most formal reader**, To and CC alike: the least formal voice only when
+  everyone on it is tagged for it; one unknown or formal person makes it formal.
+- The thread's language, and nothing from the profile's Never list.
+
+**In a team wiki there is no personal voice:** email drafted here is always formal business tone. `.claude/voice/` describes
 style only and is never quoted from, routed to, or treated as a wiki page.
 
 A draft is read by **its recipients, not the owner**: internal facts, another client's information, and

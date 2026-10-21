@@ -444,6 +444,11 @@ Do not start the backfill during setup. Write the plan, then offer to run the fi
 
 ## Phase 6b — Inbox responder (optional)
 
+**Personal wikis only.** In a `team` wiki skip this phase entirely and say nothing about it: a shared
+folder is not one person's inbox, and the responder's voice tags on people's pages would be visible to the
+very colleagues they describe. Any email drafted from a team wiki is written in a plain, formal business
+tone.
+
 Read `references/task-responder.md`. Offer it once:
 
 *"Want me to draft replies to emails that ask you for something the wiki already knows — a date, a status,
@@ -482,8 +487,8 @@ A draft in the wrong voice is one the owner has to rewrite, which defeats the po
 not switched on until the owner's voice exists.
 
 1. **Dispatch the `voice-profiler` agent** (this plugin's `agents/voice-profiler.md`) with the wiki path,
-   the owner's name, address(es) and organisation domains, the mailbox(es), the wiki's `audience`, and any
-   languages you know they write in. It reads their sent mail in its own context and returns a compact
+   the owner's name, address(es) and organisation domains, the mailbox(es), the transcript sources the wiki
+   reads (1:1s matter most), and any languages you know they write in. It reads their sent mail in its own context and returns a compact
    profile, so hundreds of emails never land in this conversation. If subagents are not available here,
    follow that file's procedure directly — it is self-contained.
 2. **Calibrate with the owner.** Show the invented example reply for each tier it found, and ask with one
@@ -491,8 +496,13 @@ not switched on until the owner's voice exists.
    I'll say why*. Apply each answer to `profile.md` as a concrete rule, not an adjective ("drop the
    greeting with peers", not "be warmer"). One round is enough; real drafts and the owner's edits refine it
    from there.
-3. **Tell them the profile is a first draft**, that it learns from how they edit drafts before sending, and
-   that "refresh my voice" rebuilds it.
+3. **People without a page.** The agent tags each person's wiki page with `voice` and `voice-language`, and
+   lists people it would place in close or working who have no page. Ask once whether to create minimal
+   pages for them — without one they are written to formally, which is safe but wrong for a close
+   colleague.
+4. **Tell them the profile is a first draft**, that it learns from how they edit drafts before sending, and
+   that "refresh my voice" rebuilds it. Untagged people always get a formal business tone, and a message to
+   a group is written for its most formal reader.
 
 If the profile cannot be built — no sent mail readable, too little of it — **do not switch the responder
 on.** Say why, and record `responder` as `later`.

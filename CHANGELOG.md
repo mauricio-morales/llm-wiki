@@ -12,6 +12,30 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.33.0 — 2026-10-21
+
+**Changed — tone lives on each person's page, defaults to formal, and a group gets its most formal reader's.**
+
+- **Each person's page carries the tone the owner uses with them** — `voice: close | working | formal` and
+  `voice-language` in its frontmatter, wherever the page lives (People, My-Team, Consultants, a client's
+  contacts). Replaces the side file `.claude/voice/relationships.md`, which is retired: one place, not two
+  that drift apart. The profiler sets properties only and never touches a page's body.
+- **Untagged means formal.** Anyone without a page or a tag gets a plain, formal business tone — replacing
+  the earlier guess of "working" for internal addresses. Closeness is never inferred from one friendly
+  email.
+- **A message is written for its most formal reader**, To and CC alike. The least formal voice is used
+  only when everyone on the message is tagged for it; one unknown or formal person makes the whole message
+  formal.
+- **Meeting transcripts, 1:1s above all, now inform the tiers** — how the owner talks to someone is strong
+  evidence of how close they are, and of which language they share. But speech is not writing: transcripts
+  set a person's tier and language, never the writing rules, which still come from sent mail alone. Names
+  matched uncertainly from machine transcripts are left untagged, i.e. formal.
+- **People the owner is clearly close to but who have no page are listed**, and setup asks whether to
+  create pages for them.
+- **Personal wikis only.** The inbox responder and the voice are never offered on a team wiki — a shared
+  folder is not one person's inbox, and tone tags on people's pages would be visible to the colleagues they
+  describe. Email drafted from a team wiki is always formal.
+
 ## 1.32.0 — 2026-10-20
 
 **Added — the inbox responder writes in the owner's voice, tiered by how close they are to the reader.**

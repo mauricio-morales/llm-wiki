@@ -74,7 +74,13 @@ updated: YYYY-MM-DD
 status: active | inactive | archived
 source: ingest | manual | import
 sensitivity-flag: high     # optional — see "Sensitivity-flagged people"
+voice: close               # optional, personal wikis with the inbox responder: close | working | formal
+voice-language: es         # optional: the language the owner uses with them
 ```
+
+`voice` says what tone the owner uses with this person when an email is drafted for them. It is set by the
+voice profiler from the owner's sent mail and 1:1 transcripts, and corrected from their edits. **Absent
+means formal.** It never appears on pages in a team wiki.
 
 ### Project
 ```yaml
