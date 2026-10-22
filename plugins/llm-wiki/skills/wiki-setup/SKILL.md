@@ -502,7 +502,10 @@ what should I do?"*
 
 Record `scheduling: move`, `draft`, or `declined` under `feature_offers`. Default 3 options per draft.
 Say what it always leaves to them: a request for a brand-new meeting, a decline of a whole series, a large
-meeting one person can't make, and a meeting it has already moved once.
+meeting one person can't make, and a meeting it has already moved once. And say how it handles a clash:
+when they accept a meeting that collides with another, the other one is rescheduled — moved if it's
+theirs, a drafted "can't make it, how about…" to its organiser if not; when they haven't answered yet, it
+recommends which to keep and waits for their "ok".
 
 ### Then build their voice — before the first draft is ever written
 
@@ -579,7 +582,7 @@ All paths relative to the wiki folder.
 7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
     `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
     ever increases, and an id is never reused once assigned.
-7c. `wiki-responder-state.json` — `{"lastRunAt": null, "drafted": [], "moved": [], "leftForOwner": []}`, only if the
+7c. `wiki-responder-state.json` — `{"lastRunAt": null, "drafted": [], "moved": [], "clashes": [], "leftForOwner": []}`, only if the
     inbox responder is enabled.
 7b. `wiki-news-state.json` — `{"lastSuccessfulRun": null, "cursor": 0, "topicLastScanned": {}, "seenStories": [], "threads": [], "pending": []}`, only if news topics were given.
 8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null, "lastShown": {}}`, only if the brief is enabled.

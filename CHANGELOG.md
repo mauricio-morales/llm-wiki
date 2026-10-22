@@ -12,6 +12,24 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.37.0 — 2026-10-21
+
+**Added — clashes, and replies that offer open slots.**
+
+- **When two of the owner's meetings collide**, the one that gives way is rescheduled. The owner's own
+  answer decides: accepting the newer invite means the older meeting moves. With no answer yet, the
+  notification recommends which to keep — the one tied to an Objective, Focus Area or client, and the
+  harder to move — and waits for "ok 60" or "keep … 60".
+- **A meeting someone else organises is never edited**: the responder drafts to its organiser that the
+  owner can't make it, with one time that works for everyone (all internal, calendars readable, timezones
+  known) or options that work for everyone visible. **Only when such a time exists** — otherwise nothing is
+  drafted and the notification says so. The draft never says what the other meeting is; the response to
+  the invite stays the owner's to send.
+- **A reply listing open slots** is read as a set of proposed times: the earliest that works for every
+  attendee, in their own timezones, is taken — moved in `move` mode, drafted as a yes otherwise. A time
+  with no readable timezone is confirmed in a draft, never moved to.
+- State files gain `clashes`, so each clash is handled once.
+
 ## 1.36.0 — 2026-10-21
 
 **Added — rescheduling moves the meeting, not just a draft about it.** A reply saying "Friday 10:00 works"

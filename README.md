@@ -169,7 +169,9 @@ Plus the scheduled jobs:
   Optionally it also handles **rescheduling**: when someone proposes a new time or declines because they
   can't make it, it checks your colleagues' calendars and **moves the meeting** — to the time proposed, or
   the earliest time everyone's free. Only when someone outside has to choose does it draft them a few
-  times, and it moves the meeting once they pick. Only meetings you organise, only their time; every move
+  times, and it moves the meeting once they pick — or picks from the times they offer. When a new meeting
+  you accept collides with another, it reschedules the other one: moving it if it's yours, drafting a
+  "can't make it — how about…" to its organiser if not. Only meetings you organise, only their time; every move
   is listed with an undo. Prefer to move meetings yourself? Choose drafts only
 
 ---
