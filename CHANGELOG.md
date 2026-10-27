@@ -12,6 +12,20 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.38.1 — 2026-10-27
+
+**Fixed — install instructions that work on Windows.** The README sent everyone to *Settings → Plugins* to
+add the marketplace. That option lives under **Cowork → Customize → Plugins**, and some Windows versions
+of the app don't show it at all. Step 1 now gives three ways, in order:
+
+- the desktop app;
+- **claude.ai in a browser**: a marketplace added there is saved to the Claude account, so it reaches the
+  Windows app (fully quit and reopen it);
+- the release zip, explained click by click: which asset, Edge's "keep" prompt, don't unzip.
+
+It also says plainly that a plugin added from the Claude Code terminal stays in the terminal and does not
+reach Cowork. Upgrade steps and the brief's weekly update nudge use the same menu path.
+
 ## 1.38.0 — 2026-10-26
 
 **Added — one-off requests: the page holds the request, the task deletes itself.** Asking the wiki for

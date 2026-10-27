@@ -18,37 +18,63 @@ from that. ([the original gist](https://gist.github.com/karpathy/442a6bf55591489
 **What you need first:** the **Claude desktop app**, and you'll be using it in **Cowork** — the mode
 where Claude works on a folder on your computer and can create and edit files in it.
 
-This won't work in Claude in a web browser, and it won't work in an ordinary chat or a Project. Your wiki
-is a real folder of files, and something has to be able to write to it. If you're reading this in a
-browser tab, install the desktop app first.
+The wiki won't run in Claude in a web browser, and it won't run in an ordinary chat or a Project. Your
+wiki is a real folder of files, and something has to be able to write to it. If you're reading this in a
+browser tab, install the desktop app first. (Adding the plugin is the one step you *can* do in a browser,
+and on Windows it's often the easiest way. Step 1 shows how.)
 
 ---
 
 ### 1. Add the plugin
 
-**In the Claude app** — open **Settings → Plugins**, choose to add a marketplace (some versions call it
-a plugin source or a repository), and paste in:
+You only do this once. Use the first way that works for you.
+
+**A. In the Claude desktop app.** Open the **Cowork** tab, then **Customize** in the left sidebar →
+**Plugins** → **Add** → **Add marketplace**. Paste this in and confirm:
 
 ```
 mauricio-morales/llm-wiki
 ```
 
-Then install **llm-wiki** from the list that appears. That's it — and because it's connected to this
-repository, you'll get updates as they're published.
+Then find **llm-wiki** in the list and click **Add**. Because it's connected to this repository, you'll
+get updates as they're published.
 
-**If you use Claude Code in a terminal**, the same thing in one line:
+**B. On Windows, if you don't see "Add marketplace": do the same thing in your web browser.** Some
+Windows versions of the app don't show that option yet. The website has it, and anything you add there is
+saved to your Claude account rather than to one computer, so it shows up in the desktop app too.
 
-```
-/plugin marketplace add mauricio-morales/llm-wiki
-```
+1. Open [claude.ai](https://claude.ai) in Edge or Chrome and sign in with the **same account** you use in
+   the desktop app.
+2. Click **Customize** in the left sidebar, then **Plugins**.
+3. Click **Add** → **Add marketplace**, paste `mauricio-morales/llm-wiki`, and confirm.
+4. Find **llm-wiki** in the list and click **Add**.
+5. **Close the Claude desktop app completely and open it again.** Closing the window isn't always enough
+   on Windows: look for the Claude icon in the bottom-right corner of the screen, next to the clock (you
+   may need to click the small **^** arrow to see it), right-click it and choose **Quit**. Then open
+   Claude from the Start menu.
 
-**If neither works**, download the `.zip` from
-[Releases](https://github.com/mauricio-morales/llm-wiki/releases) and upload it in **Settings → Plugins**.
-This works fine, but it's a one-time copy — it can't update itself, so you'd re-download each new version.
+Open **Cowork** → **Customize** → **Plugins** in the app and check that **llm-wiki** is listed. If it is,
+you're done, and updates arrive on their own, the same as way A.
+
+**C. If neither works, upload the plugin as a file.** This always works, but it's a one-time copy: it
+can't update itself, so you'll repeat these steps for each new version.
+
+1. Open the [Releases page](https://github.com/mauricio-morales/llm-wiki/releases/latest). Under
+   **Assets**, click the file named **`llm-wiki-v….zip`**. Not "Source code", which won't work.
+2. If Edge says the file "isn't commonly downloaded", click the **…** next to it and choose **Keep**.
+3. **Don't unzip it.** The app wants the `.zip` file as it is. It's in your **Downloads** folder.
+4. In the Claude app, open **Cowork** → **Customize** → **Plugins** → **Add**, choose to upload a plugin,
+   and pick the `.zip` from Downloads.
+
+**Already use Claude Code in a terminal?** `/plugin marketplace add mauricio-morales/llm-wiki` and then
+`/plugin install llm-wiki@llm-wiki` install it there. **That copy is only for the terminal, though. It
+does not reach Cowork,** because plugins only travel from your Claude account to the terminal, never the
+other way. Since the wiki runs in Cowork, use A, B or C even if you've done this.
 
 ### 2. Make a folder for the wiki
 
 A normal, empty folder on your computer — made in Finder or File Explorer, the same as any other folder.
+(On Windows: open File Explorer, go where you want it, right-click an empty spot → **New** → **Folder**.)
 Give it a real name: `Acme Wiki`, `My Work Brain`.
 
 **If you want to share it with your team, create it inside a folder that already syncs** — your OneDrive,
@@ -202,13 +228,17 @@ wiki is behind.** You can also upgrade any time.
 
 ### 1. Update the plugin
 
-In the Claude desktop app, open **Settings → Plugins**, find **llm-wiki**, and check for updates. If
-there is one, update it.
+In the Claude desktop app, open **Cowork** → **Customize** → **Plugins**, find **llm-wiki**, and check
+for updates. If there is one, update it.
 
-- **Installed from the marketplace** (`mauricio-morales/llm-wiki`) — that's the whole step.
-- **Installed by uploading a zip** — an uploaded zip can't update itself. Download the latest zip from
-  [Releases](https://github.com/mauricio-morales/llm-wiki/releases) and upload it the same way. It's worth
-  switching to the marketplace while you're at it, so next time this step is one click.
+- **Added from the marketplace** (way A or B in step 1) — that's the whole step. If the app doesn't show
+  the update yet, quit it fully and reopen it (on Windows, right-click the Claude icon by the clock →
+  **Quit**).
+- **Uploaded as a zip** (way C) — an uploaded zip can't update itself. Download the latest zip from
+  [Releases](https://github.com/mauricio-morales/llm-wiki/releases/latest) and upload it the same way.
+  If the old version is still listed afterwards, remove llm-wiki first, then upload the new zip. It's
+  worth switching to the marketplace (way B works on any Windows machine) so next time this step is one
+  click.
 
 ### 2. Upgrade your wiki
 
