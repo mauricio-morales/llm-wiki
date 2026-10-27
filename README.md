@@ -159,6 +159,10 @@ Plus the scheduled jobs:
   something your wiki knows — stories many outlets carry ranked above single-outlet ones
 - **A report per Focus Area** — if you named any: a cumulative HTML report (sidebar of every run, overview
   with trends) plus a short summary message saying what changed and what needs you
+- **One-off requests** — ask for something on a date (*"send me an agenda for my trip on the 9th, from
+  everything we say we'll discuss there"*) and it gets a page in the wiki holding the whole request, plus a
+  one-time task that delivers it and then **deletes itself**. Nothing is lost when the task goes: the page
+  keeps the ask, everything collected, and when it went out — ask for it again and a new task is made from it
 - **Inbox responder** — if you want it: once to three times a day, it finds emails asking you for something
   your wiki already knows — a date, a status, where something stands — **writes a reply draft**, and tells
   you drafts are waiting. **It never sends anything**, never marks mail read, and leaves anything asking you

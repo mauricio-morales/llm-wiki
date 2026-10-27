@@ -316,6 +316,31 @@ reusable topic emerges that doesn't fit an existing page.
 Maintain the `### Index` routing line in the hub for every page touched. Add `[[cross-references]]`
 between affected pages; never leave a page with zero outgoing links. Set `updated` on every touched page.
 
+## Open requests
+
+Read `Wiki/Reference/Requests/_index.md`, if it exists. These are one-off requests the owner made for a
+later date (see the `wiki` skill, "Something on a later date").
+
+**Collect.** For every request with `status: collecting`, apply its **Collect** rule to everything this run
+ingests, and append each match to the page's **Collected** section — an `[id]` from `nextItemId`, the
+source link, the date, who raised it, one line of what. Not twice: an item already there gets the new
+source added, not a second line. After `deliver_at`, stop collecting for it.
+
+**Clean up** — only for tasks this scheduler can see:
+
+- **`delivered` or `cancelled`, and its task still exists** (or the page says `task: pending-cleanup`) →
+  delete that task and set `task: deleted`. Only a task whose id equals the page's `task_id` **and** whose
+  prompt starts with the stamp `llm-wiki task: once` — never anything else.
+- **`deliver_at` is more than two hours past and it is not delivered** → re-arm its task once, for the
+  brief's time on the next working day (`fireAt`), and record `retries: 1`. If it misses again, set
+  `status: failed` and stop; the brief says so.
+- **`collecting` or `scheduled`, `deliver_at` still ahead, but no such task** → on a personal wiki,
+  recreate it from the page with `references/task-once.md` — that is what the page is for. On a team wiki
+  the task may live on the requester's machine; leave it alone unless `requested_by` is this machine's
+  owner.
+
+Report what was collected and cleaned up in one line each.
+
 ## Pages that have grown too large
 
 After this run's writes are complete, check the size of every page it touched. **Any page over

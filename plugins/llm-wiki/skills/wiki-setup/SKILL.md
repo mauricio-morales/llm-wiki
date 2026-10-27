@@ -77,6 +77,11 @@ Before saying anything, check the working folder:
      **Never put a new feature in the closing summary as a recommendation instead of asking.** A sentence
      at the end of a long reply is one almost nobody reads; the feature stays invisible to exactly the
      people who would want it.
+  3f. **One-off tasks made before one-off requests existed.** List the scheduled tasks for this wiki with
+     a one-time schedule (`fireAt`), or that were clearly made for a single date, and no `once` stamp.
+     For each, offer to convert it: write its request page from the prompt — the ask, what it collects,
+     what it delivers — move anything it collected onto that page, and replace the task with a thin one
+     from `references/task-once.md` at the same time. Ask once for all of them; never convert silently.
   4. Report what changed, in plain terms — what the jobs will now do differently, not a version number —
      including any feature just set up. Do not re-pitch features the owner declined or deferred.
 
@@ -649,6 +654,10 @@ moves with it.
 each task's Step 0, so a task generated today can adopt a later version of its own template without
 anyone regenerating it by hand. Without the stamp there is no way to tell which template version a
 running task came from, and it would silently run the original instructions forever.
+
+**One-off tasks (`llm-wiki task: once`) are the exception**: created by the `wiki` skill, not by setup,
+with no Step 0, and never regenerated or re-stamped — their instructions live on their request pages.
+Never give one a cron schedule.
 
 After creating them, **verify every one appears in the task list** with the right prefix, and record their
 real ids in `llm-wiki.yml`. Tell the user the tasks run while the Claude app is open, and that a task due

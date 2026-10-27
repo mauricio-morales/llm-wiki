@@ -255,6 +255,12 @@ a phishing probe — note that the link exists and was deliberately not opened, 
 
 {{JOBS_BLOCK}}
 
+**Anything asked for once, at a later date** — a report on the 9th, an agenda before a trip, a reminder
+the morning of a meeting — is a **one-off request**: a page in `Wiki/Reference/Requests/` holding the
+whole ask, and a one-time task that delivers it and deletes itself (the `wiki` skill, "Something on a
+later date"). Never put the instructions only in a task, and never use a recurring schedule for something
+wanted once.
+
 {{SHARED_BLOCK}}
 
 Their prompts are self-contained and live with the tasks, not here. To change what gets ingested, who

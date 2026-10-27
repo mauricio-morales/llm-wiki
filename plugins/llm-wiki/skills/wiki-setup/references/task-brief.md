@@ -334,6 +334,10 @@ Upcoming items from `Timeline.md`, as far ahead as it reaches (30 days): what th
 preparation, what has a hard date. Include commitments surfaced from conversations that aren't on the
 calendar — those are the ones that get missed.
 
+**One-off requests** (`Wiki/Reference/Requests/`): one line the day before one is delivered, so the owner
+can add to it in time — *"[63] Trip agenda goes out tomorrow 08:00 — 7 items so far"* — and one line, once,
+for any that `failed`. Nothing on the other days; the request itself is the delivery.
+
 ### How often an upcoming item reappears
 
 An item due next Thursday shown every single morning is noise by Wednesday, and it teaches the owner to

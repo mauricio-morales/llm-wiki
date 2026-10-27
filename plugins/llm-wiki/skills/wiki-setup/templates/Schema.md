@@ -223,6 +223,23 @@ page and presents it as outside reporting, separately from internal facts. Nothi
 main page unless the owner asks — "add that to Acme's page" — and then it is marked as sourced from outside
 reporting.
 
+### Request (one-off, in `Wiki/Reference/Requests/`)
+```yaml
+type: request
+status: collecting | scheduled | delivered | failed | cancelled
+requested: YYYY-MM-DD
+requested_by: <person>
+deliver_at: YYYY-MM-DDTHH:MM±HH:MM
+deliver_to: <channel>
+task_id: <the one-time task's id>
+task: scheduled | deleted | pending-cleanup
+```
+
+Something the owner asked for once, at a later date. **The page holds the whole request** — the ask
+verbatim, what to collect, what to deliver, what was collected, and when it went out — and a one-time task
+delivers it and deletes itself. The page stays after delivery: it is the record, and the way to run it
+again. Never delete one.
+
 ### Hub (namespace index)
 ```yaml
 type: hub

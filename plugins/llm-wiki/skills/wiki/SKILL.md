@@ -33,7 +33,8 @@ import                 Import existing notes into wiki format
 ```
 
 If the user did not name an operation, infer it: a question -> `query`; a request to record something
--> `ingest`. When genuinely ambiguous, ask in one line rather than guessing.
+-> `ingest`; a request for something to happen **once, at a later date** -> a one-off request (see
+"Something on a later date"). When genuinely ambiguous, ask in one line rather than guessing.
 
 <role>
 Wiki maintainer for a team or personal knowledge base. You process source material and distribute
@@ -348,6 +349,65 @@ reachable only by opening a spreadsheet in a dated folder is not in the knowledg
 Artifacts are the **one** thing here that is safe to delete, being derived and mostly regenerable — but
 propose, never delete unprompted, and never remove one still linked from a live page. See
 `references/artifacts.md` in the `wiki-setup` skill.
+
+## Something on a later date — one-off requests
+
+When the owner asks for something to happen **once, later** — a report on a date, a reminder, an agenda
+compiled before a trip, *"send me everything on X the morning of the board meeting"* — it gets a
+**one-off request**: a wiki page that holds the whole ask, and a one-time scheduled task that delivers it
+and then **deletes itself**.
+
+**The page is the request; the task is only its alarm clock.** A task's prompt is gone once the task is
+deleted, so nothing that matters may live only there. Everything goes on the page, and the task says
+little more than "read this page, do what it says, then delete me". To run it again — or recover after a
+mistake — a new task is made from the same page.
+
+**1. Write the request page first** — `Wiki/Reference/Requests/<delivery-date>-<slug>.md`, with a routing
+line in `Wiki/Reference/Requests/_index.md` (create the hub the first time):
+
+```yaml
+type: request
+status: collecting        # collecting | scheduled | delivered | failed | cancelled
+requested: 2026-10-26
+requested_by: <owner>     # on a team wiki, the person who asked — the only person it goes to
+deliver_at: 2026-11-09T08:00-03:00
+deliver_to: <the brief's channel, unless they named another>
+task_id: <slug>-once-<request-slug>
+task: scheduled           # scheduled | deleted | pending-cleanup
+```
+
+Then, in the body:
+
+- **Asked** — the owner's words, verbatim.
+- **Collect** — if it gathers material over time, the rule, precise enough for the ingest to apply without
+  asking: *"any item someone says should be discussed on the Kraków trip, or 'when we're there' — in
+  meetings, email or chat"*. Omit when it collects nothing.
+- **Deliver** — what to produce: format, sections, length, order.
+- **Collected** — the items, each with an `[id]` from `nextItemId`, a source link, the date and who raised
+  it. **Seed it now** from a query of what the wiki already holds — something said last week counts.
+- **Delivery log** — empty until it runs.
+
+Cross-link the page from the pages it concerns (the trip, the client, the project).
+
+**2. Pick the time.** What the owner said. *"Before X"* → the last working morning before X. No time of
+day → the brief's time, so it arrives with the brief, never before the ingest has finished. **Confirm it in
+one line**, in their timezone: *"I'll send the trip agenda Mon 9 Nov at 08:00, then delete the task."*
+
+**3. Create the task** — a **one-time** task (`fireAt`; never a cron expression), id
+`<slug>-once-<request-slug>`, title `<Wiki name> · once · <what>`, prompt from
+`references/task-once.md` in the `wiki-setup` skill, filled in: `{{REQUEST_PAGE}}`, `{{TASK_ID}}`,
+`{{WIKI_PATH}}`, `{{OWNER_NAME}}`, `{{PLUGIN_VERSION}}`, `{{DATE}}`, and `{{ONCE_DELIVERY_BLOCK}}` — the
+brief's own delivery instructions (the exact tool and destination, from `jobs.brief`), unless the owner
+named somewhere else. Check no `{{` is left before creating it. Record the real task id on the page.
+
+**Later changes go to the page**: *"add X to what it collects"*, *"make it shorter"*, *"just the open
+items"*. Only a new time touches the task, and only its `fireAt`. *"Cancel it"* → `status: cancelled`, and
+delete the task. *"Do that again"* → a new task from the same page, or a copy of the page for a new date.
+
+**Not a one-off:** anything recurring — *"every Monday"*, *"each month"* — is a job, set up by reconfiguring
+the wiki (`wiki-setup`), never a chain of one-offs.
+
+The ingest feeds collecting requests and cleans up after delivered ones; see its "Open requests".
 
 ## Web Archiving (URL sources)
 

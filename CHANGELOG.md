@@ -12,6 +12,27 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.38.0 — 2026-10-26
+
+**Added — one-off requests: the page holds the request, the task deletes itself.** Asking the wiki for
+something on a date used to leave a scheduled task behind forever, with the only copy of its instructions
+inside it.
+
+- **A request page** in `Wiki/Reference/Requests/` holds the whole ask — the owner's words verbatim, what
+  to collect, what to deliver, the items collected (with `[id]`s and sources), and a delivery log. It is
+  seeded from what the wiki already knows when the request is made.
+- **A one-time task** (`fireAt`, never cron) whose prompt only says *read that page, deliver it, delete
+  me*. After a confirmed delivery it deletes itself; deleting only ever the task whose id the page records
+  and whose prompt carries the `once` stamp. Delivery goes to the person who asked, nowhere else.
+- **The ingest feeds collecting requests** (an agenda item mentioned in a meeting lands on the page), and
+  cleans up: removes tasks left behind, re-arms a missed delivery once, recreates a missing task from its
+  page.
+- **The brief** mentions a request the day before it goes out, so there's time to add to it, and once if
+  one failed. **The lint** reports requests and tasks out of step.
+- **Upgrade** offers to convert one-off tasks made before this release into request pages.
+- Changes go to the page; only a new time touches the task. *"Do it again"* makes a new task from the
+  same page. Recurring asks remain jobs.
+
 ## 1.37.0 — 2026-10-21
 
 **Added — clashes, and replies that offer open slots.**
