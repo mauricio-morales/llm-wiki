@@ -58,6 +58,13 @@ command they have to remember correctly — *"update llm-wiki in Customize → P
 this folder and ask it to upgrade the wiki"*. That is the same instruction the README gives, word for word, so
 the brief and the documentation never disagree about how to upgrade.
 
+**On Windows the action is different.** The Windows app can't add a marketplace, so the plugin there
+was uploaded as a file and has no update button. If this machine is Windows (a `C:\` style path, or the
+platform says so), the one action is: *"download the newest llm-wiki zip from
+https://github.com/mauricio-morales/llm-wiki/releases/latest, upload it in Cowork → Customize → Plugins,
+then start a new session on this folder and ask it to upgrade the wiki."* Same as the README's Windows
+steps. Give the link in full: it is the one thing they can't find on their own.
+
 If the reason is signal 3, say the honest version: *"this wiki hasn't checked for updates in three weeks
 — check Customize → Plugins for an update, then start a new session here and ask it to upgrade the wiki."*
 

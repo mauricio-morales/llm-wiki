@@ -15,79 +15,77 @@ from that. ([the original gist](https://gist.github.com/karpathy/442a6bf55591489
 
 ## Quick start
 
-**What you need first:** the **Claude desktop app**, and you'll be using it in **Cowork** — the mode
-where Claude works on a folder on your computer and can create and edit files in it.
+**What you need first:** the **Claude desktop app** (Mac or Windows), and you'll be using it in
+**Cowork** — the mode where Claude works on a folder on your computer and can create and edit files in it.
 
 The wiki won't run in Claude in a web browser, and it won't run in an ordinary chat or a Project. Your
 wiki is a real folder of files, and something has to be able to write to it. If you're reading this in a
-browser tab, install the desktop app first. (Adding the plugin is the one step you *can* do in a browser,
-and on Windows it's often the easiest way. Step 1 shows how.)
+browser tab, install the desktop app first.
+
+Most steps are the same on both. Where they differ, look for **On a Mac** and **On Windows**.
 
 ---
 
 ### 1. Add the plugin
 
-You only do this once. Use the first way that works for you.
+You only do this once.
 
-**A. In the Claude desktop app.** Open the **Cowork** tab, then **Customize** in the left sidebar →
-**Plugins** → **Add** → **Add marketplace**. Paste this in and confirm:
+#### On a Mac
+
+Open the **Cowork** tab, then **Customize** in the left sidebar → **Plugins** → **Add** → **Add
+marketplace**. Paste this in and confirm:
 
 ```
 mauricio-morales/llm-wiki
 ```
 
-Then find **llm-wiki** in the list and click **Add**. Because it's connected to this repository, you'll
-get updates as they're published.
+Then find **llm-wiki** in the list and click **Add**. Because it's connected to this repository, updates
+arrive on their own.
 
-**B. On Windows, if you don't see "Add marketplace": do the same thing in your web browser.** Some
-Windows versions of the app don't show that option yet. The website has it, and anything you add there is
-saved to your Claude account rather than to one computer, so it shows up in the desktop app too.
+*No "Add marketplace" option? Use the Windows steps below. They work on a Mac too.*
 
-1. Open [claude.ai](https://claude.ai) in Edge or Chrome and sign in with the **same account** you use in
-   the desktop app.
-2. Click **Customize** in the left sidebar, then **Plugins**.
-3. Click **Add** → **Add marketplace**, paste `mauricio-morales/llm-wiki`, and confirm.
-4. Find **llm-wiki** in the list and click **Add**.
-5. **Close the Claude desktop app completely and open it again.** Closing the window isn't always enough
-   on Windows: look for the Claude icon in the bottom-right corner of the screen, next to the clock (you
-   may need to click the small **^** arrow to see it), right-click it and choose **Quit**. Then open
-   Claude from the Start menu.
+#### On Windows
 
-Open **Cowork** → **Customize** → **Plugins** in the app and check that **llm-wiki** is listed. If it is,
-you're done, and updates arrive on their own, the same as way A.
+The Windows app can't add a marketplace, so you add the plugin as a file instead. It takes two minutes.
 
-**C. If neither works, upload the plugin as a file.** This always works, but it's a one-time copy: it
-can't update itself, so you'll repeat these steps for each new version.
+1. **Download the file.** Open the [latest release](https://github.com/mauricio-morales/llm-wiki/releases/latest).
+   Scroll down to **Assets** and click the file named **`llm-wiki-v….zip`**. Not the ones called
+   "Source code", which won't work.
+2. **If the browser asks, keep it.** Edge sometimes says the file "isn't commonly downloaded". Click the
+   **…** next to it and choose **Keep**.
+3. **Don't open or unzip it.** The app wants the `.zip` file exactly as it downloaded. It's in your
+   **Downloads** folder.
+4. **Upload it.** In the Claude app, open the **Cowork** tab, then **Customize** in the left sidebar →
+   **Plugins** → **Add**, choose the option to upload a plugin, and pick the `.zip` from **Downloads**.
+5. **Check it's there.** **llm-wiki** now appears in your list of plugins.
 
-1. Open the [Releases page](https://github.com/mauricio-morales/llm-wiki/releases/latest). Under
-   **Assets**, click the file named **`llm-wiki-v….zip`**. Not "Source code", which won't work.
-2. If Edge says the file "isn't commonly downloaded", click the **…** next to it and choose **Keep**.
-3. **Don't unzip it.** The app wants the `.zip` file as it is. It's in your **Downloads** folder.
-4. In the Claude app, open **Cowork** → **Customize** → **Plugins** → **Add**, choose to upload a plugin,
-   and pick the `.zip` from Downloads.
+An uploaded file doesn't update itself. When there's a new version, your morning brief will say so, and
+you repeat these five steps with the new file (see [Upgrading](#upgrading)).
 
-**Already use Claude Code in a terminal?** `/plugin marketplace add mauricio-morales/llm-wiki` and then
-`/plugin install llm-wiki@llm-wiki` install it there. **That copy is only for the terminal, though. It
-does not reach Cowork,** because plugins only travel from your Claude account to the terminal, never the
-other way. Since the wiki runs in Cowork, use A, B or C even if you've done this.
+*Already use Claude Code in a terminal? A plugin installed there stays in the terminal and doesn't reach
+Cowork, so do the steps above anyway.*
 
 ### 2. Make a folder for the wiki
 
-A normal, empty folder on your computer — made in Finder or File Explorer, the same as any other folder.
-(On Windows: open File Explorer, go where you want it, right-click an empty spot → **New** → **Folder**.)
-Give it a real name: `Acme Wiki`, `My Work Brain`.
+A normal, empty folder, made the same way as any other folder. Give it a real name: `Acme Wiki`,
+`My Work Brain`.
 
-**If you want to share it with your team, create it inside a folder that already syncs** — your OneDrive,
-Dropbox or Google Drive. That sync is how everyone else gets it later. If it's just for you, anywhere is
-fine.
+- **On a Mac:** in Finder, go where you want it, then **File** → **New Folder**.
+- **On Windows:** in File Explorer, go where you want it, right-click an empty spot → **New** →
+  **Folder**.
+
+**If you want to share it with your team, create it inside a folder that already syncs**: OneDrive,
+Dropbox or Google Drive. That sync is how everyone else gets it later. (On Windows, your work OneDrive
+is in File Explorer's left-hand column, usually as **OneDrive – *your company name***.) If it's just for
+you, anywhere is fine.
 
 ### 3. Start a **Cowork session** on that folder
 
 This part matters, and it's the step people get wrong.
 
 **It has to be a Cowork session** — the kind of Claude session that works on a folder on your computer
-and can read and write the files in it. In the Claude app, start a new Cowork session and **choose the
-folder you just made** when it asks which folder to work in.
+and can read and write the files in it. In the Claude app, open the **Cowork** tab, start a new session,
+and **choose the folder you just made** when it asks which folder to work in.
 
 An ordinary chat won't do. Neither will a Project. Both can *read* things you give them, but neither can
 create and update files in a folder on your machine, and that is the entire job here — your wiki *is*
@@ -95,11 +93,14 @@ that folder.
 
 You'll know you got it right because the session shows the folder it's working in.
 
-**Star it while you're there.** In the folder picker there's a star next to each folder — clicking it
-makes that folder the default for new sessions. Worth doing: everything below assumes you're in the wiki
-folder when you ask it something, and starring it means every new session starts there instead of you
-picking it each time. If you're setting up a wiki you'll use daily, this is the difference between asking
-a question and remembering to set up a session first.
+**Make it easy to come back to.** Everything below assumes you're in the wiki folder when you ask it
+something.
+
+- **On a Mac:** in the folder picker there's a star next to each folder. Click it to make the wiki folder
+  the default, so every new session starts there.
+- **On Windows:** there's no star, so you choose the folder each time you start a session. If the wiki
+  folder is in the list of recent folders, pick it there. If not, browse to it. It's one extra click,
+  but make it a habit: a session on the wrong folder can't see your wiki.
 
 ### 4. Type `/wiki-setup` and press enter
 
@@ -120,7 +121,7 @@ Do step 1, then skip to here.
 1. **Make sure the shared folder has synced to your computer** — you should be able to open it in Finder
    or File Explorer and see a `Wiki` folder inside.
 2. **Start a Cowork session on it** (same as step 3 above — a Cowork session, not an ordinary chat, and
-   choose that folder). Star it in the picker to make it your default, so new sessions start here.
+   choose that folder). On a Mac, star it in the picker so new sessions start there.
 3. **Just start asking.**
 
 It already knows what to do: the instructions live inside the folder, so they arrive with it. Nothing to
@@ -228,17 +229,14 @@ wiki is behind.** You can also upgrade any time.
 
 ### 1. Update the plugin
 
-In the Claude desktop app, open **Cowork** → **Customize** → **Plugins**, find **llm-wiki**, and check
-for updates. If there is one, update it.
-
-- **Added from the marketplace** (way A or B in step 1) — that's the whole step. If the app doesn't show
-  the update yet, quit it fully and reopen it (on Windows, right-click the Claude icon by the clock →
-  **Quit**).
-- **Uploaded as a zip** (way C) — an uploaded zip can't update itself. Download the latest zip from
-  [Releases](https://github.com/mauricio-morales/llm-wiki/releases/latest) and upload it the same way.
-  If the old version is still listed afterwards, remove llm-wiki first, then upload the new zip. It's
-  worth switching to the marketplace (way B works on any Windows machine) so next time this step is one
-  click.
+- **On a Mac (added as a marketplace):** open **Cowork** → **Customize** → **Plugins**, find **llm-wiki**,
+  and check for updates. If there is one, update it. If it doesn't show yet, quit Claude fully and reopen
+  it.
+- **On Windows (uploaded as a file):** an uploaded file can't update itself, so you upload the new one.
+  Download the newest `llm-wiki-v….zip` from the
+  [latest release](https://github.com/mauricio-morales/llm-wiki/releases/latest) and upload it the same
+  way as in [step 1](#on-windows). If the old version is still listed afterwards, remove **llm-wiki**
+  from your plugins first, then upload the new file again.
 
 ### 2. Upgrade your wiki
 

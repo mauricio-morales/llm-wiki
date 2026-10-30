@@ -12,6 +12,22 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.38.2 — 2026-10-29
+
+**Fixed — a quick start that works on Windows.** A first Windows setup hit two walls: the Windows app
+can't add a plugin marketplace, and its folder picker has no star for a default folder. The quick start
+now splits wherever Mac and Windows differ:
+
+- **Adding the plugin.** Mac keeps the marketplace, so updates arrive on their own. Windows uploads the
+  release zip, in five numbered steps: which file to pick, Edge's "keep" prompt, don't unzip it, where to
+  upload it, how to check it worked.
+- **Making the folder** in Finder or File Explorer, and where the work OneDrive is on Windows.
+- **Coming back to the folder.** Mac stars it. Windows picks it from recent folders each session.
+- **Upgrading.** Windows re-uploads the newest zip, removing the old one first if it lingers.
+
+The browser route from 1.38.1 is gone: it was never confirmed to reach the Windows app. On Windows, the
+brief's weekly update nudge now says to download the new zip and gives the link.
+
 ## 1.38.1 — 2026-10-27
 
 **Fixed — install instructions that work on Windows.** The README sent everyone to *Settings → Plugins* to
