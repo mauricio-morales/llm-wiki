@@ -22,7 +22,7 @@ The wiki won't run in Claude in a web browser, and it won't run in an ordinary c
 wiki is a real folder of files, and something has to be able to write to it. If you're reading this in a
 browser tab, install the desktop app first.
 
-Most steps are the same on both. Where they differ, look for **On a Mac** and **On Windows**.
+The steps are the same on both. Where a click differs, it says so.
 
 ---
 
@@ -30,7 +30,11 @@ Most steps are the same on both. Where they differ, look for **On a Mac** and **
 
 You only do this once.
 
-#### On a Mac
+**First, update the Claude app.** Older versions, on Windows especially, don't have the option this step
+uses. Check for updates in the app's menu, or download the latest from
+[claude.com/download](https://claude.com/download) and install it over the old one.
+
+#### The normal way: add the marketplace
 
 Open the **Cowork** tab, then **Customize** in the left sidebar → **Plugins** → **Add** → **Add
 marketplace**. Paste this in and confirm:
@@ -42,11 +46,11 @@ mauricio-morales/llm-wiki
 Then find **llm-wiki** in the list and click **Add**. Because it's connected to this repository, updates
 arrive on their own.
 
-*No "Add marketplace" option? Use the Windows steps below. They work on a Mac too.*
+#### Backup: upload the plugin as a file
 
-#### On Windows
-
-The Windows app can't add a marketplace, so you add the plugin as a file instead. It takes two minutes.
+Only if your app has no **Add marketplace** option, even after updating. This always works, but an
+uploaded file doesn't update itself. When there's a new version your morning brief will say so, and you
+repeat these steps with the new file.
 
 1. **Download the file.** Open the [latest release](https://github.com/mauricio-morales/llm-wiki/releases/latest).
    Scroll down to **Assets** and click the file named **`llm-wiki-v….zip`**. Not the ones called
@@ -54,13 +58,14 @@ The Windows app can't add a marketplace, so you add the plugin as a file instead
 2. **If the browser asks, keep it.** Edge sometimes says the file "isn't commonly downloaded". Click the
    **…** next to it and choose **Keep**.
 3. **Don't open or unzip it.** The app wants the `.zip` file exactly as it downloaded. It's in your
-   **Downloads** folder.
+   **Downloads** folder. (On a Mac, Safari may unzip it on its own. If you find a folder instead of a
+   `.zip`, download it again in Chrome or Edge.)
 4. **Upload it.** In the Claude app, open the **Cowork** tab, then **Customize** in the left sidebar →
    **Plugins** → **Add**, choose the option to upload a plugin, and pick the `.zip` from **Downloads**.
 5. **Check it's there.** **llm-wiki** now appears in your list of plugins.
 
-An uploaded file doesn't update itself. When there's a new version, your morning brief will say so, and
-you repeat these five steps with the new file (see [Upgrading](#upgrading)).
+If a later version of the app gains **Add marketplace**, switch to it: remove the uploaded llm-wiki,
+then follow the normal way above. From then on, updates take one click.
 
 *Already use Claude Code in a terminal? A plugin installed there stays in the terminal and doesn't reach
 Cowork, so do the steps above anyway.*
@@ -93,14 +98,11 @@ that folder.
 
 You'll know you got it right because the session shows the folder it's working in.
 
-**Make it easy to come back to.** Everything below assumes you're in the wiki folder when you ask it
-something.
-
-- **On a Mac:** in the folder picker there's a star next to each folder. Click it to make the wiki folder
-  the default, so every new session starts there.
-- **On Windows:** there's no star, so you choose the folder each time you start a session. If the wiki
-  folder is in the list of recent folders, pick it there. If not, browse to it. It's one extra click,
-  but make it a habit: a session on the wrong folder can't see your wiki.
+**Star it while you're there.** In the folder picker there's a star next to each folder. Clicking it
+makes that folder the default, so every new session starts there instead of you picking it each time.
+Worth doing: everything below assumes you're in the wiki folder when you ask it something, and a session
+on the wrong folder can't see your wiki. (No star in your picker? Update the app. Until then, choose the
+wiki folder each time you start a session.)
 
 ### 4. Type `/wiki-setup` and press enter
 
@@ -121,7 +123,7 @@ Do step 1, then skip to here.
 1. **Make sure the shared folder has synced to your computer** — you should be able to open it in Finder
    or File Explorer and see a `Wiki` folder inside.
 2. **Start a Cowork session on it** (same as step 3 above — a Cowork session, not an ordinary chat, and
-   choose that folder). On a Mac, star it in the picker so new sessions start there.
+   choose that folder). Star it in the picker so new sessions start there.
 3. **Just start asking.**
 
 It already knows what to do: the instructions live inside the folder, so they arrive with it. Nothing to
@@ -229,14 +231,15 @@ wiki is behind.** You can also upgrade any time.
 
 ### 1. Update the plugin
 
-- **On a Mac (added as a marketplace):** open **Cowork** → **Customize** → **Plugins**, find **llm-wiki**,
-  and check for updates. If there is one, update it. If it doesn't show yet, quit Claude fully and reopen
-  it.
-- **On Windows (uploaded as a file):** an uploaded file can't update itself, so you upload the new one.
+- **Added as a marketplace** (the normal way): open **Cowork** → **Customize** → **Plugins**, find
+  **llm-wiki**, and check for updates. If there is one, update it. If it doesn't show yet, quit Claude
+  fully and reopen it.
+- **Uploaded as a file** (the backup): an uploaded file can't update itself, so you upload the new one.
   Download the newest `llm-wiki-v….zip` from the
   [latest release](https://github.com/mauricio-morales/llm-wiki/releases/latest) and upload it the same
-  way as in [step 1](#on-windows). If the old version is still listed afterwards, remove **llm-wiki**
-  from your plugins first, then upload the new file again.
+  way as in [step 1](#backup-upload-the-plugin-as-a-file). If the old version is still listed afterwards,
+  remove **llm-wiki** from your plugins first, then upload the new file again. If your app now has **Add
+  marketplace**, switch to it instead, and this step becomes one click from then on.
 
 ### 2. Upgrade your wiki
 

@@ -12,6 +12,22 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## 1.38.3 — 2026-11-05
+
+**Fixed — Windows does support the marketplace and the folder star; uploading a file is the backup.**
+1.38.2 told Windows users their app couldn't add a marketplace or star a folder. That was an older app
+version, not Windows: an up-to-date Windows app has both. The quick start is one path again, for Mac and
+Windows alike:
+
+- **Update the Claude app first.** That's what the missing options were.
+- **Add the marketplace.** This is the normal way, and updates arrive on their own.
+- **Upload the release zip only if "Add marketplace" still isn't there.** The click-by-click steps stay,
+  plus a note on switching to the marketplace once the app shows it.
+- **Star the folder.** If there's no star, update the app and pick the folder each time until then.
+
+On a machine with no marketplace copy of the plugin, the brief's update nudge gives both actions in one
+line: update in Customize → Plugins, or upload the newest zip from the release link.
+
 ## 1.38.2 — 2026-10-29
 
 **Fixed — a quick start that works on Windows.** A first Windows setup hit two walls: the Windows app
