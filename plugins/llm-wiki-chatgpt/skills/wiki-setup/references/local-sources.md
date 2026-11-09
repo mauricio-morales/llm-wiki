@@ -6,7 +6,7 @@ and should never be raised unprompted.
 
 ## Why a local path is not automatically readable
 
-A ChatGPT desktop session runs sandboxed. It has the wiki folder, and it does **not** have arbitrary access to the
+A ChatGPT Work session runs sandboxed. It has the wiki folder, and it does **not** have arbitrary access to the
 rest of the machine just because the session is "local". A path being on the same computer is not access.
 
 This is the failure to expect: the user names a path, it looks completely reasonable, and the scheduled
@@ -18,13 +18,11 @@ Once configured, the ingest job reaches it through that server's tools rather th
 
 ## Config file
 
-`claude_desktop_config.json`:
-
-- **macOS** — `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows** — `%APPDATA%\Claude\claude_desktop_config.json`
-
-Entries go in the `mcpServers` object. **The app must be restarted** before a new server appears; a user
-who says "I added it and it still doesn't work" has almost always not restarted yet.
+Local MCP servers for the ChatGPT desktop app are set in its settings, where it lists MCP servers or
+custom apps. If the owner also uses the Codex CLI, the same servers live in `~/.codex/config.toml`, one
+`[mcp_servers.<name>]` table each. If you can't tell which this version of the app uses, tell the owner
+what server is needed and let them add it. Never edit configuration you can't see. **The app must be
+restarted** before a new server appears.
 
 ## Match the server to the datastore
 
@@ -85,7 +83,7 @@ that covers the source.** Every directory listed is reachable by anything using 
 
 ### Credentials
 
-A database server usually needs a user and password. **Those belong in `claude_desktop_config.json` and
+A database server usually needs a user and password. **Those belong in the app's MCP server settings and
 nowhere else** — never in `llm-wiki.yml`, never in a task prompt, never in a wiki page. The wiki is plain
 files in a folder that may well be synced to a whole team. Use a read-only database account wherever the
 datastore supports one; the ingest never writes to a source.

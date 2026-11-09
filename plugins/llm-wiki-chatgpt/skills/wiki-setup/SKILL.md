@@ -3,10 +3,6 @@ name: wiki-setup
 description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's AGENTS.md so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as @wiki-setup, in a session opened on the folder the wiki should live in. Always prefer this installed plugin version over a copy inside the wiki folder when the user asks to upgrade or update — the folder copy is what is being upgraded. Also use for "set up the wiki", "upgrade the wiki", "update the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
 ---
 
-> **Running in ChatGPT.** This skill was written for Claude and translated. Read `PLATFORM.md` in this
-> skill's folder before acting: it says what the remaining Claude-specific terms mean here, and it wins
-> wherever the two disagree.
-
 # LLM Wiki — setup
 
 Turns a folder into a self-maintaining knowledge base. Everything is plain markdown on disk, so it opens
@@ -64,7 +60,7 @@ Before saying anything, check the working folder:
   3c. **If `news.enabled` is true but there is no `jobs.news`**, news is still configured the old way —
      inside the ingest — and the regenerated ingest no longer scans it, so nothing is scanning it now.
      Create the news task per Phase 3b: keep the existing topics, ask **only** how often (one
-     `AskUserQuestion`, weekday mornings recommended), derive the time, write `jobs.news`, compute
+     multiple-choice message, weekday mornings recommended), derive the time, write `jobs.news`, compute
      `topics_per_run`, and move `news.cursor` and the ingest state's `seenStories` into a new
      `wiki-news-state.json`. This one question is asked because a new job's cadence is the owner's
      choice; an update never invents a schedule.
@@ -75,14 +71,14 @@ Before saying anything, check the working folder:
   3e. **Offer every optional feature this wiki has never been asked about**, per `references/features.md`
      — every registered feature that is not already on and not recorded as `declined` in
      `feature_offers`. Not by version comparison: a wiki upgraded past a feature's release may still never
-     have been asked about it. **One `AskUserQuestion` call, one question per feature, each
+     have been asked about it. **One multiple-choice message, one question per feature, each
      answered *Set it up now*, *Not now* or *No thanks*.** Run the setup phase for every "now" straight
      away, in this session, and record the others under `feature_offers`.
      **Never put a new feature in the closing summary as a recommendation instead of asking.** A sentence
      at the end of a long reply is one almost nobody reads; the feature stays invisible to exactly the
      people who would want it.
   3f. **One-off tasks made before one-off requests existed.** List the scheduled tasks for this wiki with
-     a one-time schedule (`fireAt`), or that were clearly made for a single date, and no `once` stamp.
+     a one-time schedule, or that were clearly made for a single date, and no `once` stamp.
      For each, offer to convert it: write its request page from the prompt — the ask, what it collects,
      what it delivers — move anything it collected onto that page, and replace the task with a thin one
      from `references/task-once.md` at the same time. Ask once for all of them; never convert silently.
@@ -109,11 +105,15 @@ a few minutes — then start asking. Do not lecture them about the architecture 
 
 The people using this are not necessarily technical, and they should not have to be.
 
-- **Use `AskUserQuestion` for every choice**, not free text. Give 2-4 concrete options with a real
+- **Use multiple-choice questions for every choice**, not free text. Give 2-4 concrete options with a real
   recommendation marked, and put the recommended one first. Free text only for things that genuinely have
   no options: a name, a path, an email address.
+- **How to ask in ChatGPT.** There is no question tool, so ask in the chat. Number the questions and give
+  each lettered options, the recommended one first and marked *(recommended)*, each with its one-line
+  consequence. End with how to answer, *"Reply with the letters, like 1A 2C, or in your own words"*, then
+  stop and wait. Never assume the recommended answer.
 - **Ask in batches where the questions are related**, not one at a time across twenty turns. Four
-  questions in one call is fine and is much less tiring than four separate turns.
+  questions in one message is fine and is much less tiring than four separate turns.
 - **Always have a default.** If someone says "just do whatever's normal", you must be able to finish the
   whole setup without asking anything else. Recommended defaults: Obsidian layout, whichever namespace
   preset fits their stated purpose, a 3-month backfill, ingest daily at 06:00, brief at 07:30 on weekdays, lint monthly on the
@@ -325,7 +325,7 @@ coverage the others already have. A source enabled from today forward, with no q
 hole the wiki will answer across without noticing.
 
 5. **Local sources** (a notes directory, an exports folder, a local app's database): get the absolute
-   path and **try to read it**. A ChatGPT desktop session is sandboxed, so a local path is often *not* reachable
+   path and **try to read it**. A ChatGPT Work session is sandboxed, so a local path is often *not* reachable
    even though it is on the same machine — that is normal, not a misconfiguration.
    If it reads, record it. If it does not, **record it as pending with the reason and move on** — reaching
    it needs an MCP server configured in the desktop app, which is a detour that does not belong in the
@@ -337,7 +337,7 @@ hole the wiki will answer across without noticing.
 Read `references/news-sources.md`. **News is its own scheduled job, not a source of the ingest** — a
 story has to be opened, traced to its primary source, corroborated and followed up days later, and that
 work does not fit inside a connector sweep. So it gets its own step here, and two questions in one
-`AskUserQuestion` call:
+multiple-choice message:
 
 1. **What to watch** — up to ten topics or areas of interest, **each with why it matters in their own
    words**. Propose the obvious candidates first from what you already know — the employer, the Focus
@@ -357,8 +357,7 @@ and finishes before the brief) and show it in the Phase 8 summary.
 ## Phase 4 — Where the jobs run
 
 **They run on this machine.** There is nothing to decide and nothing to ask: the wiki is a local folder,
-the ingest writes to it, and only a local run can do that. Tasks execute while the ChatGPT desktop app is open,
-and a task due while it was closed runs on next launch. Say that once, plainly, so a quiet morning is
+the ingest writes to it, and only a local run can do that. Tasks execute while the ChatGPT desktop app is open and the computer is on. Say that once, plainly, so a quiet morning is
 never mistaken for a broken job.
 
 Two consequences worth stating at setup, because both surprise people later:
@@ -471,7 +470,7 @@ allows).
 
 **No is a complete answer.** Record `responder` as `declined` under `feature_offers` and move on.
 
-If yes, ask together, with `AskUserQuestion`:
+If yes, ask together, with multiple-choice questions:
 
 1. **How often** — once a day (default, weekday mornings), twice, or three times. Times are derived, not
    asked: the first run after the ingest has had time to finish, the others spread through the working day,
@@ -496,7 +495,7 @@ colleagues' free/busy. With no calendar, record `scheduling` as `unavailable` un
 say so in one line. Check too whether the connector has a tool that **updates an event's time**; without
 one, only the draft answer below is possible — offer just that and say why.
 
-Ask once, with `AskUserQuestion`:
+Ask once, with multiple-choice questions:
 
 *"When someone proposes a new time for one of your meetings, or declines because they can't make it,
 what should I do?"*
@@ -522,13 +521,13 @@ A draft in the wrong voice is one the owner has to rewrite, which defeats the po
 *register* — chummy to a client's CEO, stiff to a close colleague — is worse than none. So the responder is
 not switched on until the owner's voice exists.
 
-1. **Dispatch the `voice-profiler` agent** (this plugin's `voice-profiler` skill) with the wiki path,
+1. **Run the `voice-profiler` skill in a subagent** with the wiki path,
    the owner's name, address(es) and organisation domains, the mailbox(es), the transcript sources the wiki
    reads (1:1s matter most), and any languages you know they write in. It reads their sent mail in its own context and returns a compact
    profile, so hundreds of emails never land in this conversation. If subagents are not available here,
-   follow that file's procedure directly — it is self-contained.
+   follow that skill's procedure directly — it is self-contained.
 2. **Calibrate with the owner.** Show the invented example reply for each tier it found, and ask with one
-   `AskUserQuestion` — one question per tier: *Sounds like me* / *Too formal* / *Too casual* / *Not me —
+   multiple-choice message — one question per tier: *Sounds like me* / *Too formal* / *Too casual* / *Not me —
    I'll say why*. Apply each answer to `profile.md` as a concrete rule, not an adjective ("drop the
    greeting with peers", not "be warmer"). One round is enough; real drafts and the owner's edits refine it
    from there.
@@ -663,9 +662,31 @@ running task came from, and it would silently run the original instructions fore
 with no Step 0, and never regenerated or re-stamped — their instructions live on their request pages.
 Never give one a cron schedule.
 
+**Creating the tasks in ChatGPT.** They are ChatGPT scheduled tasks, listed under **Scheduled** in the
+desktop app's sidebar.
+
+- Create each one as a **local task on this folder**, running **in the project directory**, never in an
+  isolated worktree. A worktree writes to a copy, so the wiki would never see the ingest.
+- Give it **permission to edit files** in the folder. A read-only task fails at the first page it writes.
+- Use the id above as the task's **name**. ChatGPT may not let you choose an id, so record whatever it
+  shows; everywhere these skills match a task by id, match it by that name.
+- Give the schedule the way ChatGPT takes it: the cron above, in words, in local time (`30 7 * * 1-5` is
+  *every weekday at 07:30*).
+- A task runs only while the computer is on and the ChatGPT app is open. Don't promise that a missed run
+  catches up.
+
+**If you can't create a task yourself in this session**, never report it as created:
+
+1. Write its full prompt to `.agents/tasks/<id>.md`.
+2. Give the owner the exact steps: **Scheduled** → new task → the name, the schedule in words, this
+   folder, run in the project directory, allow editing files, and paste the prompt from that file.
+3. Record the job with `pending_manual: true` in `llm-wiki.yml`, and look for the task again next session
+   before clearing it.
+
+The same goes for changing or deleting a task later.
+
 After creating them, **verify every one appears in the task list** with the right prefix, and record their
-real ids in `llm-wiki.yml`. Tell the user the tasks run while the ChatGPT desktop app is open, and that a task due
-while it was closed runs on next launch.
+real ids in `llm-wiki.yml`. Tell the user the tasks run while the ChatGPT desktop app is open and the computer is on.
 
 ## Phase 11 — First run
 
@@ -785,11 +806,11 @@ requests and what each touches:
 | Request | Update |
 |---|---|
 | Add or remove a source | `llm-wiki.yml` sources, the ingest task prompt, possibly the execution location. **When adding, always ask whether to backfill it and how far back** — defaulting to the depth the wiki's other sources already have. Plan it with the same chunked protocol as the first run, appended to any in-progress plan rather than started as a second one. See `references/backfill.md` → "Backfilling a source added later" |
-| Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A ChatGPT desktop session is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am. Then ask about backfill, as for any new source |
+| Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A ChatGPT Work session is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am. Then ask about backfill, as for any new source |
 | Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
 | Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
 | Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
-| "Set up / refresh my voice" | Dispatch the `voice-profiler` agent, then calibrate as in Phase 6b. A refresh keeps `.agents/voice/edits.md` and feeds it in |
+| "Set up / refresh my voice" | Run the `voice-profiler` skill in a subagent, then calibrate as in Phase 6b. A refresh keeps `.agents/voice/edits.md` and feeds it in |
 | Turn on, tune or turn off the inbox responder | `jobs.responder` in `llm-wiki.yml` and the responder task. Turning it on runs Phase 6b; "don't draft for X" adds to its exclusions verbatim |
 | Rescheduling: move meetings, only draft, or off | `jobs.responder.scheduling` (`move` / `draft` / `off`) in `llm-wiki.yml`. The task reads it each run; switching to `move` regenerates the task so `{{RESPONDER_CALENDAR}}` names the update tool. "Don't move meetings with X" adds to the exclusions verbatim |
 | Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
@@ -813,7 +834,7 @@ Two rules that hold in every reconfigure:
 The wiki architecture this implements — the L1/L2 cache model, hub-index routing and LRU-demote, and the
 schema, hub, dashboard and access-log page formats — comes from
 **[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by **Mehmet Gökçe**, MIT licensed. This package
-is a derivative work: same architecture, rebuilt to configure itself conversationally in a chat session
+is a derivative work: same architecture, rebuilt to configure itself conversationally in a ChatGPT session
 rather than through a shell script, with scheduled ingest/brief/lint jobs, resumable backfill and Focus
 Areas added on top.
 

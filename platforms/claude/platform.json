@@ -1,0 +1,32 @@
+{
+  "name": "claude",
+  "package_dir": "plugins/llm-wiki",
+  "voice_profiler": {
+    "as": "agent",
+    "frontmatter": {
+      "model": "opus",
+      "effort": "high",
+      "color": "purple"
+    }
+  },
+  "vocab": {
+    "instructions_file": "CLAUDE.md",
+    "a_instructions": "a",
+    "dot_dir": ".claude",
+    "session": "Cowork session",
+    "the_app": "the Claude app",
+    "assistant": "Claude",
+    "setup_command": "/wiki-setup",
+    "ask_call": "`AskUserQuestion` call",
+    "ask_tool": "`AskUserQuestion`",
+    "ask_message": "`AskUserQuestion`",
+    "once_schedule": "`fireAt`",
+    "recurring_schedule": "a cron expression",
+    "once_time": "`fireAt`",
+    "plugins_menu": "Customize → Plugins",
+    "voice_dispatch": "Dispatch the `voice-profiler` agent",
+    "voice_profiler_unit": "file",
+    "ask_unit": "call",
+    "mcp_config": "`claude_desktop_config.json`"
+  }
+}

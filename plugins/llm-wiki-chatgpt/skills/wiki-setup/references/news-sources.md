@@ -15,7 +15,7 @@ in `references/task-news.md`; this file is what setup needs to ask and configure
 
 ## Asking — two questions
 
-Ask in one `AskUserQuestion` call where possible, after the sources, never folded into the source picker.
+Ask in one multiple-choice message where possible, after the sources, never folded into the source picker.
 
 ### 1. What to watch
 

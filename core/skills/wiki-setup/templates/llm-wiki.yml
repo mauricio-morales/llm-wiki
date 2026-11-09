@@ -1,0 +1,173 @@
+# llm-wiki configuration
+# Written by the wiki-setup skill on {{DATE}}. Re-run setup in reconfigure mode to change it,
+# or edit it by hand — every wiki operation reads this file fresh on each run.
+
+wiki_name: "{{WIKI_NAME}}"
+slug: {{WIKI_SLUG}}            # short handle; prefixes every scheduled task id and title
+
+# Version of the llm-wiki plugin that last set this wiki up or reconfigured it, and the version of
+# the skills copied into {{@dot_dir}}/skills/ in this folder. The monthly lint compares these against
+# whatever plugin is actually running and reports drift — on a synced folder, a teammate can
+# otherwise run last month's logic for months without any sign that anything is behind.
+wiki_version: "{{PLUGIN_VERSION}}"
+skills_version: "{{PLUGIN_VERSION}}"
+
+# Optional features offered on an upgrade, and what the owner answered: `later` is offered again next
+# upgrade, `declined` never is. Features set up at the time need no entry — being on is the record.
+feature_offers: {}
+# Last time a session checked for a newer published version. Checked at most weekly, only when the
+# plugin is present, only after a request is finished, and never during a scheduled run.
+lastUpdateCheck: null
+purpose: "{{PURPOSE}}"
+
+# Who this wiki belongs to. The scheduled jobs address this person, decide whose sent messages
+# count as outbound asks, and judge what "today" and "out of office" mean.
+#
+# These are RESOLVED from the connectors and the environment at setup — not collected from the user.
+# Nothing here is a credential. Any field may be null: a job that needs a null field resolves it at
+# run time rather than failing, and writes back what it found.
+owner:
+  name: "{{OWNER_NAME}}"
+  email: "{{OWNER_EMAIL}}"
+  timezone: "{{OWNER_TZ}}"            # IANA, from the environment — e.g. Europe/Warsaw
+  working_hours: null                 # null on purpose: the brief infers it from the calendar
+  org_domains: null                   # null: the owner's email domain, plus colleagues' domains the
+                                      # directory shows — resolved at run time and written back
+  chat_user_id: "{{OWNER_CHAT_ID}}"   # from the chat connector's current-user lookup; null is fine
+
+tool: {{TOOL}}                 # obsidian (folders, YAML frontmatter) | logseq (flat files, outliner)
+wiki_path: {{WIKI_PATH}}       # absolute path to this folder
+pages_dir: "{{PAGES_DIR}}"     # relative to wiki_path ("" for obsidian, "pages" for logseq)
+memory_path: "{{MEMORY_PATH}}" # L1 memory dir, optional
+
+audience: {{AUDIENCE}}         # personal (one reader) | team (shared — privacy filter applies)
+language: {{LANGUAGE}}         # every wiki page is written in this language
+
+namespaces:
+{{NAMESPACE_YAML}}
+
+# The scheduled jobs run on this machine, while {{@the_app}} is open. {{@claude:A job due while it was
+# closed runs on next launch. }}The wiki is a local folder, so only a local run can write to it.
+
+# On a shared (synced) wiki, exactly ONE person runs the scheduled ingest — three synced copies with
+# three ingest jobs means three runs appending to the same pages, each pulling from a different
+# person's connectors. Everyone else queries, ingests manually, and runs their own brief if they want.
+ingest_owner: "{{INGEST_OWNER}}"
+
+# Pages larger than this are split: entity/state pages into semantic sub-pages, logs by period.
+# The limit is reading cost, not disk — 1 MB of markdown is ~250k tokens, too much to read in one pass,
+# and a page read only in part gives answers that miss the rest without knowing it. 100 KB (~25k tokens)
+# keeps three pages comfortably readable in a single query.
+split_threshold_kb: 100
+
+# How long to wait before a commitment with no stated deadline shows up in the brief, in days.
+# A nudge date is the point where a reasonable person starts wondering — not the day the ask was sent.
+# Too short and the brief reminds you about an email from yesterday, which teaches you to skim the one
+# section that should be the most actionable thing in it. Applies to what you are owed and what you owe.
+# A stated deadline always overrides this.
+commitment_grace_days: 14
+
+# How long past its due date a commitment can stay unresolved before it ages out — status `aged-out`,
+# outcome unknown, no longer shown. Much gets settled where the wiki cannot see it, and waiting forever
+# for evidence turns the overdue list into a snowball. Aged-out is never counted as done, and a later
+# chase or delivery still reopens or closes it.
+commitment_ageout_days: 21
+shared_folder: {{SHARED_FOLDER}}   # true if this folder is on a synced drive
+
+# Sources the ingest job checks. status: enabled | no_connector | declined
+#
+# `backfilled_through` records the oldest date actually covered for each source — not the date requested,
+# which differs whenever a connector's retention cut it short. null means the source only has history
+# from the day it was enabled. Uneven coverage across sources is how a wiki answers confidently and wrong.
+#
+# `notes` is the user's own customization, VERBATIM — e.g. "only the sales distribution list, not my
+# inbox", "just #incidents and #releases". It is copied into the task prompt as written. Never
+# paraphrase it into a category; a paraphrase reverts to the wrong behavior on the first loose reading.
+sources:
+{{SOURCES_YAML}}
+
+# First-class topics. Up to three, or an empty list. Anything touching one of these is captured in
+# full and double-routed: its normal home AND the Focus Area's own pages.
+focus_areas:
+{{FOCUS_AREAS_YAML}}
+#  - name: Tech-Vertical
+#    statement: "the Tech vertical - its clients, their growth targets, and the AI-enabled services we sell into them"
+#    metrics: ["pipeline in the vertical", "clients with a growth plan", "AI-services deals in flight"]
+#    report: { enabled: true, task_id: "acme-focus-tech-vertical", schedule: "0 8 * * 1", delivery: slack, destination: "..." }
+
+# Web news. Its own scheduled task (jobs.news), not part of the ingest: a story is pursued — article
+# read, primary source found, consequential claims corroborated, developing stories followed up — and
+# captured only when it touches something this wiki already knows. The wiki is the filter, which is the
+# whole difference between this and a news alert. Stories carried by several independent outlets rank
+# above single-outlet ones. Up to 10 topics; `why` is required and kept in the owner's words — for an
+# area of interest it IS the relevance test. `queries` and `outlets` are optional search hints.
+# Rotation state lives in wiki-news-state.json, not here.
+news:
+  enabled: {{NEWS_ENABLED}}
+  topics_per_run: {{NEWS_TOPICS_PER_RUN}}    # computed: every topic comes round at least weekly
+  max_captured_per_run: 5
+  max_fetches_per_run: 25     # page opens per run, follow-ups and primary-source hops included
+  topics:
+{{NEWS_TOPICS_YAML}}
+
+jobs:
+  # `preferences` on each job holds what the owner asked for by replying to a brief or report —
+  # "shorter", "put what I owe first", "stop showing the age" — in their own words. They live here,
+  # not in the task prompt, because a task rebuilds its prompt when the plugin updates and anything
+  # only in that text would be lost. Each task's stamped template version is recorded alongside.
+  ingest:
+    enabled: {{INGEST_ENABLED}}
+    template_version: "{{PLUGIN_VERSION}}"
+    preferences: []
+    task_id: "{{INGEST_TASK_ID}}"
+    schedule: "{{INGEST_CRON}}"
+    state_file: "wiki-ingest-state.json"
+  brief:
+    enabled: {{BRIEF_ENABLED}}
+    # How often an upcoming item reappears, by how far ahead it is. An item due next week shown every
+    # morning is noise by midweek; the interval shrinks as the date approaches, so reminders ramp up on
+    # their own. Overdue and due-today items are unaffected — they show daily until closed.
+    reminder_cadence:
+      daily_within_days: 2          # 0-2 days ahead: every brief
+      every_other_day_within_days: 6  # 3-6 days ahead: every 2 days
+      weekly_beyond: true           # 7+ days ahead: once a week
+    template_version: "{{PLUGIN_VERSION}}"
+    preferences: []
+    task_id: "{{BRIEF_TASK_ID}}"
+    schedule: "{{BRIEF_CRON}}"
+    state_file: "wiki-brief-state.json"
+    delivery: {{BRIEF_DELIVERY}}
+    destination: "{{BRIEF_DESTINATION}}"
+    # A brief is skipped only when an entry covers the WHOLE working day. That rule is fixed.
+    # Below is what this person's calendar looked like at setup — an observation, not a rule, and
+    # safe to correct by hand. Naming conventions are personal; the coverage rule is not.
+    skip_pattern_observed: "{{SKIP_PATTERN}}"
+  # Present only when news topics are configured. Schedule chosen by the owner; time of day derived so
+  # it never overlaps the ingest and finishes before the brief.
+{{NEWS_JOB_YAML}}
+  # Present only when the inbox responder was accepted. It DRAFTS replies to emails asking the owner for
+  # information the wiki holds, and tells them drafts are waiting. It never sends, never marks mail read,
+  # never moves or deletes anything. Runs after the ingest; times derived from the chosen frequency.
+{{RESPONDER_JOB_YAML}}
+#  responder:
+#    template_version: "1.36.0"
+#    task_id: "acme-wiki-responder"
+#    schedule: ["0 8 * * 1-5"]           # once; twice adds "0 15 * * 1-5"
+#    mailboxes: ["ana@example.com"]
+#    never_draft_for: ["legal@example.com", "the CEO"]   # verbatim, owner's words
+#    notify: { via: slack, destination: "<resolved id>" }
+#    max_drafts_per_run: 5
+#    scheduling: off                      # move: move meetings the owner organises when the calendars settle
+#                                         #   it (time only, never attendees); draft where outsiders choose
+#                                         # draft: never touch the calendar, draft the replies instead
+#    slot_options: 3                      # times offered when someone external is on the meeting;
+#                                         # all-internal meetings get the earliest common slot instead
+#    state_file: "wiki-responder-state.json"
+#    preferences: []
+  lint:
+    enabled: {{LINT_ENABLED}}
+    template_version: "{{PLUGIN_VERSION}}"
+    preferences: []
+    task_id: "{{LINT_TASK_ID}}"
+    schedule: "{{LINT_CRON}}"
+    prune_months: {{PRUNE_MONTHS}}

@@ -4,8 +4,6 @@
 
 <!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
 
-Running in ChatGPT: first read `.agents/skills/wiki/PLATFORM.md` (or `PLATFORM.md` in the installed `wiki` skill). It says what this prompt's scheduler and question terms mean in ChatGPT.
-
 ## Before anything: is this the run?
 
 This task is scheduled **every Saturday** (`0 9 * * 6`) so that it can run on the **first Saturday of the

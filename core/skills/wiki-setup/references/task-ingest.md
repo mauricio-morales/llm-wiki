@@ -1,0 +1,399 @@
+# Template: the ingest task
+
+Setup fills the `{{...}}` placeholders and passes the result as the `prompt` of a scheduled task.
+Every run starts with no memory of the setup conversation, so the prompt must be **fully self-contained**:
+paths, connector names, scope, filters, destinations. Do not write "as discussed" into a task prompt.
+
+**Substitute the owner's real details from `llm-wiki.yml`'s `owner:` block when filling this template.**
+The task prompt must name them explicitly — a scheduled run has no signed-in context to infer "me" from,
+and an unqualified "me" in a task prompt resolves to nobody.
+
+---
+
+<!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
+
+## Step 0 — Adopt any pending update to this prompt
+
+{{TASK_SELF_UPDATE}}
+
+<!-- Setup fills this from references/task-self-update.md. Embed it in full — a scheduled run cannot
+     read the reference file. -->
+
+Ingest new content into the LLM Wiki at `{{WIKI_PATH}}`.
+
+Read `llm-wiki.yml` and `Wiki/Schema.md` first — do not assume the schema, read it fresh each run in
+case it changed. Then follow the `wiki` skill's `ingest` workflow.
+
+## Adaptive time window — read this before touching any source
+
+Job state lives at the storage root, next to `llm-wiki.yml`: `wiki-ingest-state.json`. It holds
+`lastSuccessfulRun` (ISO timestamp), per-source dedup cursors, `frequentContacts` (rolling interaction
+scores), `channelActivity` (per-channel post/reaction counts, used to tell conversation channels from
+announcement channels) and `commitments` (open asks in both directions). It holds cursors and
+tracking data — never
+credentials.
+
+Compute the window for **every** source below:
+
+- `windowStart = state.lastSuccessfulRun` if present.
+- If the state file or `lastSuccessfulRun` is missing (first run), default to 24 hours ago and say so
+  plainly in the report.
+- This is the entire catch-up mechanism. A normal run covers ~24h; if yesterday's run failed or was
+  skipped, `lastSuccessfulRun` is still two or more days old, so this run automatically pulls the whole
+  gap. **Do not cap or truncate a wide gap** — if it has been a week, ingest the week and say so.
+- Write a new `lastSuccessfulRun` **only at the very end**, and only if the run completed end to end (all
+  sources processed or explicitly reported unavailable). A partial or failed run must leave it untouched
+  so the next run's window widens to retry the gap.
+
+## Paged sources: drain every page, and never call a cap "quiet"
+
+Most connectors return results a page at a time. **A paged query is not finished when the first page
+comes back — it is finished when the source says there are no more pages.** Stopping early does not
+raise an error; it returns a plausible-looking result set, and the run reports a quiet window over data
+it never looked at. This has already happened once: an unscoped mail sweep returned its first 100
+records, more existed, and the run called the window quiet.
+
+**Follow the cursor to depletion.** Whatever the source calls it — `nextLink`, `@odata.nextLink`,
+`next_cursor`, `cursor`, `has_more`, `offset`, `page` — keep requesting until it is absent or false.
+Count what you actually retrieved and carry that number into the report.
+
+**Treat a round-numbered result count as truncated until proven otherwise.** Exactly 100, 50, 25, 20,
+200, 1000 records is almost never the real answer; it is the cap. A genuine count is a ragged number. If
+a sweep returns exactly the page size, assume there is more and prove otherwise before moving on.
+
+**When a source will not give you the rest** — no cursor, a hard cap, rate limiting — do not accept the
+partial result. **Narrow and re-query**: split the window in half and run both halves, recursing until
+each returns comfortably under the cap. A month that caps at 100 becomes four weeks that return 30 each.
+Tighten scope the same way, per mailbox, folder or channel, when the window cannot usefully shrink.
+
+**If it still cannot be drained, say so explicitly and precisely.** "Email: reached the 100-record cap
+for 2026-09-01..09-07 and could not page further; this window is incomplete" is a usable finding. "Email:
+nothing notable" for the same window is a false statement that no one will ever catch, because an empty
+result and a truncated one look identical in a wiki.
+
+**Report retrieved counts per source, every run**, even when the run went fine. A source reporting
+exactly its page size week after week is a capped sweep that nobody noticed, and the count is the only
+place that shows.
+
+**Never write `lastSuccessfulRun` after a run with an undrained source.** Leaving it unchanged widens the
+next window and retries the gap; advancing it past data that was never read makes the gap permanent and
+invisible.
+
+## Sources
+
+{{SOURCE_BLOCKS}}
+
+A source that is configured but has no connector authorized in this environment: **report it clearly as
+pending, do not silently skip it, and do not substitute another source for it.**
+
+Every source below that returns lists is a paged source. The drain rule above applies to all of them.
+
+## Focus Areas — first-class, every source
+
+{{FOCUS_BLOCK}}
+
+Where Focus Areas are configured, this rule outranks everything else in this job:
+
+- **Double-route.** Anything relating to a Focus Area, however loosely, is written to **both** its normal
+  home (the day's log, the client page, the person's page) **and** the Focus Area's own pages. An item
+  that exists only in a chronological log has not been captured — it is findable only by someone who
+  already knows when it happened.
+- **Never light-touch.** Other material can be a line. A Focus Area item is captured in full: what
+  happened, who was involved, what was decided or proposed, what it changes.
+- **Give every item an `[id]` as you write it**, taken from the same wiki-wide `nextItemId` counter the
+  commitments use, and written onto the line in the wiki page. Assigned once, never changed, never
+  reused. This is what lets the owner reply *"close 52"* to a report. **Ids are never minted at report
+  time** — one invented while rendering changes on the next run, so a reply naming it lands on the wrong
+  item or nothing at all.
+- **Type and attribute every item**: `decision` (with **who decided and on what authority**), `idea`
+  (who raised it), `follow-up` (owner, and date if stated), `question`, `signal`. Untyped items produce a
+  report that is a list of things that happened, which is not a report. Where authority for a decision is
+  unclear, record it as unclear — never imply it.
+- Match against the Focus Area's **statement** in its hub, not just its name. The statement is the routing
+  key and is deliberately broader than the title.
+- `Decisions.md` is a **live state page**: resolve open threads in place, mark superseded decisions
+  against what replaced them. `Log.md` is the append-only record. Keep the two distinct — conflating them
+  is what makes a report unable to say what changed.
+
+If the window held nothing for a Focus Area, **say so explicitly in the report** rather than omitting the
+section. Silence and "nothing happened" must never look the same.
+
+## News is not this job's
+
+**Do not scan the web here.** News is a separate scheduled task (`jobs.news` in `llm-wiki.yml`), with
+its own budget, cadence and state file, because pursuing a story — opening it, finding the primary
+source, corroborating it, following it up days later — does not fit inside a connector sweep.
+
+Two things still apply in this job:
+
+- **A link to a news article shared in a message** is a shared link like any other: follow it once, per
+  "Follow shared links once" below. It is not a scan.
+- **If `news.enabled` is true but there is no `jobs.news`**, the wiki was set up before news had its own
+  task, and nothing is scanning it now. Say so in one line of the report, every run, until it is fixed:
+  *"News scanning is paused — it moved to its own job; start a new session on this folder and ask it to upgrade the wiki to create it."* A capability
+  that stops without a word is worse than one that was never there.
+
+## Commitment tracking — both directions
+
+Cuts across every message-carrying source. **The purpose is that no ball gets dropped in either
+direction**: things the owner is waiting on from other people, and things other people are waiting on
+from the owner. Both live in `commitments` in the state file.
+
+### Only commitments the owner is party to
+
+**Every entry has the owner on one side of it.** Either someone owes the owner something, or the owner
+owes someone something. Nothing else goes in the ledger.
+
+Meetings, chats and threads are full of commitments between other people — "Ana will send Dana the deck",
+"the platform team owes finance a number". **Do not track those.** They are not the owner's to chase or
+deliver, the owner cannot close them, and a list padded with other people's obligations is a list that
+stops being read. If it matters to the owner, it will surface as context in the log or a Focus Area;
+it does not belong in the ledger.
+
+Two clarifications that decide the edge cases:
+
+- **Delegation does not remove a commitment.** If the owner agreed to deliver something and handed the
+  work to someone else, it stays `mine` — the owner is still the one who answers for it. What changed is
+  who is doing it, not who owes it.
+- **A commitment to the owner's team that the owner will chase counts as `theirs`.** The test is whether
+  the owner is the one who follows up or answers for it, not whose name is literally in the message.
+
+### What to capture
+
+**Outbound — they owe the owner.** Scan what the owner **sent** (sent mail, their own chat messages,
+their ticket comments) for asks that need something back: a decision, an answer, a document, an action.
+
+**Inbound — the owner owes them.** Scan what the owner **received**, and capture a commitment **only
+when the owner accepted it.** An unanswered request from someone else is not yet a commitment. Acceptance
+looks like: "I'll send that", "yes, will do", "on it", "by Friday", taking assignment of a ticket, or
+saying they'll bring something to a meeting. The agreement is the trigger, not the request.
+
+If a request was made of the owner and they **never responded at all**, that is not a commitment — but
+flag it once in the run report so it does not simply vanish. An unacknowledged ask is a decision not yet
+made, not a task.
+
+### Fields — all of them, every entry
+
+- `id` — a short integer from `nextItemId` in the state file, incremented on use. **Assigned once, never
+  changed, never reused** — this is what the owner types when replying to a brief (*"close 41"*), so an ID
+  that shifts or gets recycled sends their instruction to the wrong item. Reuse after an item closes is
+  the dangerous case; keep the counter monotonic and never reclaim.
+- `direction` — `theirs` (they owe the owner) or `mine` (the owner owes them)
+- `withWhom` — the other party, by name
+- `subject` — what was asked or agreed, specific enough to act on without opening the link
+- `stake` — what is blocked, at risk or undecided while it sits
+- `impact` — `high` · `medium` · `low`, judged from the stake **at capture**, so the brief ranks
+  consistently instead of re-deciding every morning:
+  - **high** — a client or external commitment, revenue, anything touching a person's pay, role or
+    standing, a dated external deliverable, or an objective at risk
+  - **medium** — an internal deliverable with a date, or a decision blocking someone else's work
+  - **low** — a courtesy chase, an FYI, something nobody is waiting on
+  Re-assess it when the stake changes; otherwise leave it. An item whose impact drifts upward every day it
+  stays open is just age wearing a different label.
+- `link` — a deep link to the source message, never to a wiki page summarizing it
+- `asked` — ISO date the ask was made or the commitment accepted
+- `due` — ISO date. **See below; this is never left empty.**
+- `dueIsExplicit` — `true` if a date was actually stated, `false` if defaulted
+- `status` — `open` · `fulfilled` · `withdrawn` · `superseded` · `aged-out`
+
+### Setting `due` — the rule that makes this work
+
+**If a date was stated, that is the due date.** Resolve relative wording against the **message's own
+date**, not today's: "by Friday" in a message sent on 2026-09-02 is 2026-09-04. "End of the month",
+"before the board meeting on the 12th", "next Tuesday" all resolve to an absolute ISO date at capture
+time. Set `dueIsExplicit: true`.
+
+**If no date was stated, `due` = `asked` + the grace period**, and `dueIsExplicit: false`. The grace
+period is `commitment_grace_days` in `llm-wiki.yml`, **default 14**.
+
+**Give people a chance to respond.** A nudge date is not a deadline — it is the point at which a
+reasonable person would start wondering. Set it too short and the brief reminds the owner of an email
+they sent yesterday, which is worse than useless: it trains them to skim the section that is supposed to
+be the most actionable thing in the brief. Two weeks is long enough that silence has become information.
+
+**This applies in both directions.** It is equally true of things the owner owes: a commitment accepted
+with no date does not need chasing three days later, and being nagged about your own untimed work is how
+a list gets ignored.
+
+A stated deadline overrides the grace period entirely, in either direction — that date is the date.
+
+Resolve the date **at capture time, while the message is in hand.** Deriving it later from a summary is
+how "by Friday" becomes the wrong Friday.
+
+### Closing them out
+
+Each run, check every `open` commitment for fulfilment. **Never mark one `fulfilled` on age** — only on
+evidence. But do not keep one open forever either; see "Ageing out" below.
+
+**`theirs`** is fulfilled when: a reply lands in the thread answering it, the document or decision
+arrives, a ticket transitions, or someone states it is done. Record `fulfilled` with the date and how it
+was detected.
+
+**`mine`** is fulfilled when **the owner produced the thing**: they sent the document, replied to the
+original thread with the answer, moved or closed the ticket, created the deliverable, or the other party
+acknowledged receipt. Look for this actively in the owner's sent messages and their own activity — an
+entry that stays open after the work was done trains the owner to ignore the list, which is worse than
+not having one.
+
+Also close on `withdrawn` (the other party dropped it, or the owner was released from it) and
+`superseded` (replaced by a newer ask). Record which, never silently delete.
+
+### Ageing out
+
+Much of what the owner owes and is owed gets resolved where this wiki cannot see it — on a call, in a
+hallway, in a message that never reached a connector. Waiting for evidence that will never arrive turns
+the ledger into a snowball: every unverifiable item stays open, the overdue list grows without limit, and
+the owner learns to skip the one section that should be the most actionable thing in the brief.
+
+So: **a commitment more than `commitment_ageout_days` past its due date (default 21) becomes
+`aged-out`** — meaning *outcome unknown, no longer tracked*. Record the date it aged out.
+
+- **`aged-out` is not `fulfilled`.** It must never be counted, reported or summarized as done. The wiki
+  does not know, and it must not claim to — a commitment quietly converted into a completed one is a
+  false record someone will eventually rely on.
+- **It leaves the brief and the Timeline's open sections.** That is the point.
+- **The wiki keeps listening.** Aged-out items are still matched against incoming material. Evidence it
+  was delivered → `fulfilled`, silently. Evidence it is still wanted — the other party chasing, a
+  follow-up, a reminder — → back to `open` with a fresh due date, since a chase is the clearest signal
+  that it was never actually done.
+- **Owner replies override it**: *"still open 41"* reopens it; *"done 41"* marks it fulfilled.
+
+**Capture the link at ingest time.** Slack search returns a permalink on every hit; email search on the
+Sent folder returns a web link; **Teams chat search returns a null `webUrl` whenever a date filter is
+set** — the date filter forces a per-chat scan path that omits the field, so run it with **no date
+filter** and narrow with distinctive keywords from the message text instead.
+
+Mirror the open list into `Wiki/{{PRIMARY_NS}}/Timeline.md` under **"Waiting on others"** (`theirs`) and
+**"I owe"** (`mine`).
+
+**Migration:** a wiki whose state file still has `pendingOutboundRequests` — carry those entries into
+`commitments` with `direction: theirs`, `asked` from the original date, and `due` derived by the rule
+above. Do it once, then use `commitments` only.
+
+## Objectives
+
+If `Wiki/{{PRIMARY_NS}}/Objectives.md` exists, keep it alive — a goals page nobody updates is worse than
+none, because it reports stale progress with confidence.
+
+- **A new objective appearing** in a planning deck, a quarterly review, a goals document or a manager's
+  message: add it to the page and say so in the run report.
+- **A number against an existing objective**: update the current value, record the date and **where the
+  number came from**.
+- **Never infer a target.** "Grow the pipeline" with no number stays qualitative. A fabricated target
+  produces fabricated progress, and it will be quoted back at a review.
+- Flag anything that materially threatens an objective, so the brief can surface it.
+
+## Follow shared links once
+
+If a message shares a link or carries an attachment, open it once and record what it was about — one hop
+only, no chasing links inside the linked document. Capture what it is, who sent it, roughly what it
+contains, and any figure, date, name or commitment on its face. A short paragraph is the target, not a
+deep read. Escalate to a full ingest only if it independently clears the bar (a contract, a client
+proposal, a live deliverable with a near-term date).
+
+Record the pointer even when the content is thin or unreadable — *"opened, it's the bare template with
+nothing filled in"* is a useful finding. If a file cannot be opened at all, say so and say why.
+
+Do **not** follow credential-gated third-party links, unsubscribe or tracking URLs, or anything shaped
+like a phishing probe. Note that the link exists and was deliberately not opened, and why.
+
+{{ATTACHMENT_POLICY}}
+
+## Routing
+
+Route into `Wiki/{{PRIMARY_NS}}` unless a fact clearly belongs elsewhere. Give each source its own dated
+log page, continuing its chronological log on later runs rather than duplicating structure:
+
+{{LOG_PAGE_MAP}}
+
+`Timeline.md` is **not a log** — it is rebuilt each run from the calendar pull, plus commitments
+surfaced in other sources that aren't on anyone's calendar, plus the (never date-pruned) waiting list.
+
+Create a page for a person only once a genuinely reusable pattern emerges — a recurring 1:1, an ongoing
+thread of decisions. Otherwise leave them in the log. Create new topic pages only when a genuinely new,
+reusable topic emerges that doesn't fit an existing page.
+
+Maintain the `### Index` routing line in the hub for every page touched. Add `[[cross-references]]`
+between affected pages; never leave a page with zero outgoing links. Set `updated` on every touched page.
+
+## Open requests
+
+Read `Wiki/Reference/Requests/_index.md`, if it exists. These are one-off requests the owner made for a
+later date (see the `wiki` skill, "Something on a later date").
+
+**Collect.** For every request with `status: collecting`, apply its **Collect** rule to everything this run
+ingests, and append each match to the page's **Collected** section — an `[id]` from `nextItemId`, the
+source link, the date, who raised it, one line of what. Not twice: an item already there gets the new
+source added, not a second line. After `deliver_at`, stop collecting for it.
+
+**Clean up** — only for tasks this scheduler can see:
+
+- **`delivered` or `cancelled`, and its task still exists** (or the page says `task: pending-cleanup`) →
+  delete that task and set `task: deleted`. Only a task whose id equals the page's `task_id` **and** whose
+  prompt starts with the stamp `llm-wiki task: once` — never anything else.
+- **`deliver_at` is more than two hours past and it is not delivered** → re-arm its task once, for the
+  brief's time on the next working day{{@claude: (`fireAt`)}}, and record `retries: 1`. If it misses again, set
+  `status: failed` and stop; the brief says so.
+- **`collecting` or `scheduled`, `deliver_at` still ahead, but no such task** → on a personal wiki,
+  recreate it from the page with `references/task-once.md` — that is what the page is for. On a team wiki
+  the task may live on the requester's machine; leave it alone unless `requested_by` is this machine's
+  owner.
+
+Report what was collected and cleaned up in one line each.
+
+## Pages that have grown too large
+
+After this run's writes are complete, check the size of every page it touched. **Any page over
+`split_threshold_kb` in `llm-wiki.yml` (default 100 KB, ~25k tokens) gets split** — entity and state pages
+into semantic clusters, logs by period — following the `wiki` skill's "Splitting pages that grow too
+large". **Peers before depth**: split into sibling pages in the same folder by default, and nest a folder
+deeper only for a growing collection (one page per project, per contract) — never past 4 segments below
+`Wiki/`. **Lossless or not at all**: write the new pages, verify every block landed exactly once, then
+convert the original into a short overview of its peers (or a nested collection's `_index.md`) and
+redirect inbound links. **At most one split per run**, and report it.
+
+**When a page this prompt names has become a folder, read its `_index.md` to find where material goes** —
+for a split log, that is the current period file. Never recreate the old flat file beside the folder.
+
+## Rules
+
+- **Append, never overwrite.** No version history exists — an overwrite is unrecoverable.
+- **Never run git.** This project is not a repository.
+- Never write credentials into wiki content.
+- Extract entities, facts, decisions and action items — never paste raw transcripts or message logs.
+- Figures from speech-to-text are low-confidence: the "-teen"/"-ty" pairs (15/50, 16/60, 13/30…) are
+  routinely misheard. Reconcile against context, note the artifact, and never attribute the error to the
+  speaker.
+- Write every wiki page in {{LANGUAGE}} regardless of the source's language.
+- {{PRIVACY_LINE}}
+
+## Backfill drain
+
+After the forward window is complete, check `wiki-backfill-state.json`. If it exists with
+`status: in_progress`, process **2-4 backfill units**, oldest pending first, following the backfill
+protocol: mark each `in_progress` before starting, checkpoint after each one, stop early if context gets
+heavy. Forward ingest always comes first — never let the backfill starve today's data. Report progress as
+`unitsDone / unitsTotal` with the date reached.
+
+## Is this wiki behind?
+
+{{UPDATE_NUDGE}}
+
+<!-- Setup fills this from references/update-nudge.md. Embed it in full. -->
+
+**Only nudge from here when no brief is configured.** Where there is a brief, it owns the nudge — it is
+the artifact the owner actually reads, and two jobs nudging in the same week is how a nudge becomes noise.
+
+## Report
+
+Open the summary with a **Focus Areas** section when any are configured — new decisions and who made
+them, new ideas, threads opened and closed, signals — before anything else.
+
+Then a **per-source line giving the window and how many records were actually retrieved.** This is what
+makes a capped sweep visible: a source reporting exactly its page size, especially the same number week
+after week, is a silent gap nobody would otherwise catch. Say explicitly where a source could not be
+drained and which window is therefore incomplete.
+
+Then: pages created and updated, notable decisions and action items, newly opened and newly closed
+outbound asks, any source that was unavailable, backfill progress if a backfill is running, and the
+window actually used if it was wider than 24h because of a missed run.

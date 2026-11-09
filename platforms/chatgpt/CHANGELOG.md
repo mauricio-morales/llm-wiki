@@ -1,12 +1,26 @@
 # Changelog — LLM Wiki for ChatGPT
 
-Released separately from the Claude plugin, under `chatgpt-v*` tags. Each version is built from a
-version of the Claude plugin, named in its entry. For what the wiki itself does, see the Claude
-[CHANGELOG](../../CHANGELOG.md): the behaviour is the same, and this file records only what is different
-in ChatGPT.
+Released separately from the Claude plugin, under `chatgpt-v*` tags, with its own version numbers. Both
+are built from the same wiki in `core/`. The Claude [changelog](../claude/CHANGELOG.md) has the full
+history of what the wiki does; this one records each ChatGPT release and what is different in ChatGPT.
 
 Derived from [llm-wiki](https://github.com/MehmetGoekce/llm-wiki) by Mehmet Gökçe (MIT) — see
 [LICENSE](../../LICENSE).
+
+## 0.2.0 — 2026-11-09
+
+**Preview — rebuilt natively for ChatGPT, installed from your company's plugin directory.** Still not run
+end to end in ChatGPT.
+
+- **Written for ChatGPT, not translated from Claude.** The wiki is now written once, in `core/`, with no
+  app in mind, and this package is built from it. ChatGPT's instructions say what ChatGPT does: questions
+  as numbered options in the chat, scheduled tasks under **Scheduled** (run on the folder itself, allowed
+  to edit files, with exact manual steps when a task can't be created automatically), apps for sources,
+  the voice profiler as a subagent. The `PLATFORM.md` translation page is gone.
+- **Installed like any ChatGPT plugin.** A workspace admin imports this repository once (Admin → Plugins
+  → Import marketplace); everyone then adds LLM Wiki from **Plugins**, and updates come through the same
+  way. The starter-folder download from 0.1.0 is retired.
+- Built from the same wiki as Claude **1.38.3**.
 
 ## 0.1.0 — 2026-11-09
 

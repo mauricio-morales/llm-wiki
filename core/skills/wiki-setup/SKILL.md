@@ -1,0 +1,851 @@
+---
+name: wiki-setup
+description: Set up, reconfigure or repair an LLM Wiki in this folder — builds the structure, schema and config, writes the folder's {{@instructions_file}} so questions and ingests route automatically afterwards, plans a resumable historical backfill, and creates the scheduled jobs (daily ingest, daily brief, monthly lint, and a news scan on topics the user picks, at the cadence they pick). This is the entry point: it is invoked explicitly, as {{@setup_command}}, in a session opened on the folder the wiki should live in. Always prefer this installed plugin version over a copy inside the wiki folder when the user asks to upgrade or update — the folder copy is what is being upgraded. Also use for "set up the wiki", "upgrade the wiki", "update the wiki", "reconfigure the wiki", "add a source", "change my brief", "watch the news", "add a news topic", "continue the backfill", or any request to change what gets ingested, when the jobs run, or where the brief goes.
+---
+
+# LLM Wiki — setup
+
+Turns a folder into a self-maintaining knowledge base. Everything is plain markdown on disk, so it opens
+in any editor, syncs with any drive, and is shared by sharing the folder. No CLI, no repository.
+
+**Where this runs.** A session opened on the folder the wiki should live in — a real, writable local
+folder, not a read-only project. If the folder is inside a synced drive (OneDrive, Dropbox, Google
+Drive), the wiki is shareable by sync; see "Sharing" at the end.
+
+## Which copy of these instructions to use
+
+A wiki folder keeps its own copy of this skill in `{{@dot_dir}}/skills/wiki-setup/`, so that teammates who sync
+the folder need nothing installed. **For an upgrade, that copy is the thing being upgraded** — it is the
+old version. If both it and the installed llm-wiki plugin are available, **use the plugin's version for any
+upgrade or update request**; the folder copy may predate upgrade mode entirely and would run outdated
+instructions. For everything else the two should agree, and when they don't, the newer one — the plugin's
+— wins.
+
+## Phase 0 — Work out which mode you are in
+
+This skill is invoked explicitly (`{{@setup_command}}`), so there is no ambiguity about whether to start.
+Before saying anything, check the working folder:
+
+- **No `llm-wiki.yml`** → fresh setup. Run the whole wizard.
+- **`llm-wiki.yml` exists** → reconfigure. Read it, show the user what is currently configured, and ask
+  what they want to change. Only re-ask the questions for the parts they are changing. Jump to Phase 9.
+- **`llm-wiki.yml` exists but `Wiki/` does not**, or the hub pages are missing → repair. Rebuild the
+  missing structure from the existing config without re-asking anything, then report what was rebuilt.
+- **`llm-wiki.yml` exists and the wiki predates task stamping** (no `template_version` under its jobs) →
+  the tasks are running whatever template they were generated from and cannot update themselves. Offer to
+  regenerate and stamp them from the current templates plus the existing config. This is the one-time
+  migration that puts an older wiki onto the self-updating path; say plainly what will change, since the
+  jobs will start behaving differently the next morning.
+  **This is also what gives those tasks the update nudge.** A wiki set up before nudging existed cannot
+  ask to be upgraded — it has no instruction telling it to — so it stays silently behind until someone
+  thinks to check. Running this migration once is what makes it self-managing from then on. Say that,
+  because it is the reason to do it now rather than later.
+- **A backfill is in progress and the user asked to continue it** → skip straight to `references/backfill.md`
+  and drain units. This is not a setup run.
+- **The user asked to upgrade or update the wiki** — in any wording — or arrived because a brief told them
+  to (`{{@setup_command}} upgrade` also lands here) →
+  **update mode**, not a reconfiguration. **Never re-ask a question the owner has already answered** — but
+  always ask about optional features they have never been offered (step 3e). Run, in order:
+  1. Update the folder's `{{@dot_dir}}/skills/` from the current plugin, per `references/updates.md` — replace
+     unmodified files, three-way merge modified ones, refresh the baseline, bump `skills_version` and
+     `wiki_version`, and set `lastUpdateCheck` to today.
+  2. **Regenerate and re-stamp every scheduled task** from the current templates plus `llm-wiki.yml`, per
+     `references/task-self-update.md`. Tasks normally do this themselves on their next run; doing it here
+     means the owner sees the benefit tomorrow morning rather than the day after.
+  3. **Clear `lastUpdateNudge`** so the brief stops asking.
+  3b. **If the lint is still on the old `0 9 1 * *` default, offer to move it** to the first Saturday of
+     the month. Ask; do not change it silently — the owner may have chosen the 1st deliberately, and an
+     update never changes a schedule without consent. If they agree, set the task's cron to `0 9 * * 6`
+     and `jobs.lint.schedule` to match, so the task's first-Saturday check engages.
+  3c. **If `news.enabled` is true but there is no `jobs.news`**, news is still configured the old way —
+     inside the ingest — and the regenerated ingest no longer scans it, so nothing is scanning it now.
+     Create the news task per Phase 3b: keep the existing topics, ask **only** how often (one
+     {{@ask_message}}, weekday mornings recommended), derive the time, write `jobs.news`, compute
+     `topics_per_run`, and move `news.cursor` and the ingest state's `seenStories` into a new
+     `wiki-news-state.json`. This one question is asked because a new job's cadence is the owner's
+     choice; an update never invents a schedule.
+  3d. **If any main page carries news** — a "Market and news" section on an entity page, or news `signal`
+     lines in a Focus Area's `Log.md` or in `Objectives.md` — offer to move it into the matching `News`
+     sub-namespace. Ask first, then move it under the lossless split procedure: write the news page,
+     verify every item landed exactly once, only then remove it from the main page, and redirect any links.
+  3e. **Offer every optional feature this wiki has never been asked about**, per `references/features.md`
+     — every registered feature that is not already on and not recorded as `declined` in
+     `feature_offers`. Not by version comparison: a wiki upgraded past a feature's release may still never
+     have been asked about it. **One {{@ask_call}}, one question per feature, each
+     answered *Set it up now*, *Not now* or *No thanks*.** Run the setup phase for every "now" straight
+     away, in this session, and record the others under `feature_offers`.
+     **Never put a new feature in the closing summary as a recommendation instead of asking.** A sentence
+     at the end of a long reply is one almost nobody reads; the feature stays invisible to exactly the
+     people who would want it.
+  3f. **One-off tasks made before one-off requests existed.** List the scheduled tasks for this wiki with
+     a one-time schedule{{@claude: (`fireAt`)}}, or that were clearly made for a single date, and no `once` stamp.
+     For each, offer to convert it: write its request page from the prompt — the ask, what it collects,
+     what it delivers — move anything it collected onto that page, and replace the task with a thin one
+     from `references/task-once.md` at the same time. Ask once for all of them; never convert silently.
+  4. Report what changed, in plain terms — what the jobs will now do differently, not a version number —
+     including any feature just set up. Do not re-pitch features the owner declined or deferred.
+
+  If everything is already current, say so in one line and stop. An update run that finds nothing should
+  cost the user five seconds.
+
+**Check the folder is actually usable before asking a single question.** Write a temp file and delete
+it. If the folder is read-only, this setup cannot proceed and nothing later will work — say so
+immediately and ask them to open a session on a writable local folder instead. A read-only location
+produces a wizard that runs happily for six questions and then fails at the point of writing, which is
+the worst possible moment to discover it.
+
+Also note whether the folder sits inside a synced drive (a path under OneDrive, Dropbox, Google Drive,
+iCloud). Do not treat that as a problem — it is how this wiki gets shared — but it changes two later
+answers (weight, and who runs the ingest), so establish it now.
+
+On a fresh setup, open with one short line — greet them, say what this wiki is going to be, say it takes
+a few minutes — then start asking. Do not lecture them about the architecture first.
+
+## How to run the conversation
+
+The people using this are not necessarily technical, and they should not have to be.
+
+- **Use {{@ask_tool}} for every choice**, not free text. Give 2-4 concrete options with a real
+  recommendation marked, and put the recommended one first. Free text only for things that genuinely have
+  no options: a name, a path, an email address.
+<!-- @if chatgpt -->
+- **How to ask in ChatGPT.** There is no question tool, so ask in the chat. Number the questions and give
+  each lettered options, the recommended one first and marked *(recommended)*, each with its one-line
+  consequence. End with how to answer, *"Reply with the letters, like 1A 2C, or in your own words"*, then
+  stop and wait. Never assume the recommended answer.
+<!-- @endif -->
+- **Ask in batches where the questions are related**, not one at a time across twenty turns. Four
+  questions in one {{@ask_unit}} is fine and is much less tiring than four separate turns.
+- **Always have a default.** If someone says "just do whatever's normal", you must be able to finish the
+  whole setup without asking anything else. Recommended defaults: Obsidian layout, whichever namespace
+  preset fits their stated purpose, a 3-month backfill, ingest daily at 06:00, brief at 07:30 on weekdays, lint monthly on the
+  1st, English, team audience.
+- **No jargon in questions.** Ask "should the wiki keep notes on people's pay or performance?" — not
+  "configure the privacy filter". Ask "how should the layout work — folders, or one flat list?" — not
+  "logseq or obsidian". Explain the consequence, not the term.
+- **Never ask for a credential, password, API key or token.** Connectors are authorized in {{@assistant}}'s own
+  connector settings, never here. If a connector is missing, tell them where to go and record the source
+  as pending — do not try to set it up yourself.
+- Keep the whole thing to roughly **6-8 exchanges**. It should feel like a short conversation, not a form.
+
+## Phase 1 — Work out who this is, then ask about the wiki
+
+**This plugin ships with no idea who is using it**, and the scheduled jobs it creates need to know: they
+address someone by name, judge whose sent messages count as outbound asks, and decide what "today" means.
+
+**Resolve that; do not interview them for it.** Every field below is already sitting in a connector, in
+the session, or in the environment. Asking a user to go find their own Slack member ID is asking them to
+do the connector's job, and it is exactly the kind of friction this setup exists to remove.
+
+Work in this order, and stop as soon as a field is answered:
+
+- **Name and email** — the signed-in identity, or the profile the connectors expose (most have a
+  "current user" call; the mail and calendar connectors answer both fields on their own).
+- **Timezone** — the environment's own clock and locale, corroborated by when their calendar events
+  actually cluster. Never ask.
+- **Chat user id**, only if the brief is going to a chat self-DM — **always** from the connector's
+  current-user lookup. If it cannot be resolved at setup, leave it null and have the brief task resolve
+  it at send time; the connector knows who it is authenticated as. This is never a question.
+- **Working hours** — do not derive this at setup and do not ask. Leave it null. The brief only needs it
+  for skip logic, and by then the calendar shows the real pattern far better than an answer given
+  cold on day one.
+
+Then **confirm once, in a single line, folded into the questions below** — not as a separate turn and not
+as a form: *"I've got you as Ana Ruiz (ana@example.com), Europe/Warsaw — say if that's off."* Volunteered
+as a statement they can correct, not a blank they must fill.
+
+Only ask outright for a field that genuinely could not be resolved, and only if a job actually needs it.
+A missing timezone is worth one question; a missing chat id never is — that one is a connector problem,
+so say the connector isn't reachable rather than passing the work to the user.
+
+The same principle applies to everything later in this setup: **if it can be extrapolated from a
+connector, the environment, or what they have already said, extrapolate it.** Ask only what genuinely
+cannot be known — their intent, their audience, their preferences. Those are theirs; the rest is yours
+to find out.
+
+Never ask for a password, token or API key. None of these fields is a credential.
+
+Then, about the wiki itself — ask together:
+
+1. **Name** — what to call it ("Acme Delivery Wiki", "My work brain"). Free text.
+2. **Short name** — a one-word handle, lowercase, `^[a-z][a-z0-9-]*$`, e.g. `acme`, `personal`,
+   `platform-team`. **This is not cosmetic and it is not optional.** One machine can host several wikis —
+   a personal one and a shared team one is the common case — and they would otherwise collide: two
+   scheduled tasks called `wiki-daily-ingest`, two indistinguishable rows in the task list, two briefs
+   that look identical in the same inbox. The short name prefixes every task id and title
+   (`acme-wiki-ingest`, "Acme · daily brief"), so the jobs stay tellable apart at a glance.
+   Propose one derived from the wiki name or the folder and let them accept it; only ask if they reject
+   it. If a task with that prefix already exists on this machine, the name is taken — say which wiki has
+   it and ask for another.
+3. **What it is for** — one sentence. Free text. This becomes the routing context on the Dashboard and
+   genuinely shapes how later ingests decide what matters, so don't skip it.
+4. **Audience** — *just me* or *shared with my team*. This is the most consequential answer in the whole
+   setup: it decides whether the wiki may hold compensation, performance, and personal detail. If the
+   folder is on a synced drive, lead with *shared* as the likely answer.
+5. **Language** — the language every page gets written in, regardless of the language of the sources or
+   of the conversation. Default to the user's own language.
+
+If **team**, ask the follow-up plainly: *"Some of what your sources contain isn't for everyone who can
+open this project — pay, performance cases, personal matters. Should the wiki keep that out?"* Default
+**yes**. Record the exclusions in the Schema's "Privacy and exclusions" section in their words, not as a
+generic boilerplate paragraph — a specific rule gets followed, a generic one gets interpreted away.
+
+## Phase 2 — Structure
+
+1. **Layout.** *"Folders per topic (opens nicely in Obsidian or any file browser)"* → `obsidian`, the
+   default and the right answer for almost everyone. *"One flat list of files (Logseq style)"* → `logseq`.
+   Ask it as a layout question; do not make them know either product.
+2. **Namespaces** — the top-level sections. Offer these as the choices, recommended one first:
+
+   **A. Client services / delivery org** (recommended when the purpose mentions clients, delivery,
+   accounts, consultants or staffing):
+   `Clients` · `Prospective-Clients` · `Former-Clients` · `Consultants` · `My-Team` · `People` ·
+   `Operations` · `Strategy` · `Tech` · `Reference` · `Personal`
+
+   **B. General knowledge base** (recommended otherwise):
+   `Business` · `Tech` · `Projects` · `My-Team` · `People` · `Learning` · `Reference` · `Content`
+
+   **C. Name my own.**
+
+   Whichever they pick, **propose additions from the purpose sentence they gave in Phase 1** — a wiki for
+   one named initiative usually wants a namespace for it. Adding one later is cheap; it is a hub page and
+   a config line.
+
+   Three things worth knowing when shaping the list:
+
+   - **`My-Team` is about the user's own team, and who that means depends on them.** For a manager it is
+     their direct reports and the running of the team — 1:1s, performance, hiring, workload, team
+     decisions. For an individual contributor it is the team they sit in — who does what, its rituals,
+     its decisions, what is expected of them. Ask which, in one line, and write the answer into the hub's
+     description so ingest routes to it correctly rather than guessing every run.
+
+     Keep it distinct from `People`: `My-Team` is *my team's matters*, `People` is everyone else the user
+     works with. A person can appear in both — their page lives under whichever relationship is primary,
+     and the other namespace links to it rather than duplicating it. On a manager's wiki this namespace
+     is usually the most sensitive one in the whole graph; make sure the privacy rules from Phase 1
+     explicitly cover it.
+
+   - **The client lifecycle is three namespaces, not one.** `Prospective-Clients` → `Clients` →
+     `Former-Clients`. Keeping them separate is what lets "who are we pitching?" and "who do we bill?"
+     be different questions, and it means a client that ends moves rather than disappears. Offer all
+     three together or none.
+   - **`Clients` holds one page or folder per client**, and those grow their own structure over time.
+     Do not create per-client namespaces at the top level.
+   - **Do not create a namespace you have no source for.** An empty hub is worse than a missing one: it
+     shows up in routing, matches nothing, and costs a read on every query that touches its topic. If
+     they want a section nothing currently feeds, say so and leave it out until a source exists.
+
+   Namespaces must match `^[A-Za-z][A-Za-z0-9-]*$` — no spaces, no slashes. Fix an invalid name for them
+   and say what you changed rather than making them retype it.
+
+3. Note which namespace is the **primary** one — where the daily source logs land. `Personal` on a
+   personal wiki; `Operations` (or a `Daily` namespace, offered if neither preset supplied one) on a team
+   wiki, so the raw chronological material never clutters the curated sections. The primary namespace is
+   a destination, not a topic: it is where the ingest writes by default when a fact has no better home.
+
+## Phase 2b — Focus Areas
+
+Read `references/focus-areas.md`. Ask once, plainly:
+
+*"Is there anything your role is accountable for that you need this wiki to stay on top of continuously —
+a vertical you own, a transformation you're driving, a market you're opening? Up to three. If nothing
+fits, that's completely fine."*
+
+**Zero is a real answer and must be frictionless.** If they say no, create nothing — no namespace, no
+pages, no report job — and do not raise it again. Do not talk them into one. Record it in `llm-wiki.yml`
+as `feature_offers: { focus-areas: { offered_in: setup, answer: declined } }`, so no upgrade asks again.
+
+For each Focus Area they name (cap at three; if they list more, say so and ask which three actually define
+their next two quarters):
+
+1. **A one-line statement of what it covers** — this becomes the hub's standing description and the
+   routing key for everything else. Push for specificity: "the Tech vertical" routes badly; "the Tech
+   vertical — its clients, their growth targets, and the AI-enabled services we sell into them" routes
+   well, because ingest matches against it.
+2. **What would tell you this is going well or badly?** Two to four, in their words. These become the
+   trend lines. If they name a number no connected source reports, say so now and either find the source
+   or mark it manually-updated — better than a permanently empty chart in every report.
+3. **A report, or not?** Offer it; do not assume it. If yes: which day and cadence (weekly is the default;
+   fortnightly and monthly are offered), and where the summary goes — same destinations as the brief.
+   The HTML file is always written to the wiki either way; the summary message is what they are choosing.
+
+Then tell them what changes, in one sentence, because it is the whole point: **anything that touches a
+Focus Area now gets captured in full and written to its pages as well as wherever it normally lands, so
+the report can reconstruct the thread later.**
+
+## Phase 2c — Objectives (optional)
+
+Read `references/objectives.md`. Ask once, right after Focus Areas:
+
+*"Are you measured on anything specific — OKRs this quarter, a scorecard, team targets? If so I'll report
+against them rather than just against activity."*
+
+**No is a complete answer**, and common — plenty of people have nothing written down. Accept it, record
+`objectives` as `declined` under `feature_offers`, and move on without raising it again.
+
+If yes, capture what they can give you now: the statement in their words, the measure, the target and
+baseline, the period, and where the number comes from. **Never invent a target.** "Grow the pipeline"
+with no number is a qualitative objective, recorded as such — a fabricated target produces fabricated
+progress, and it will be quoted at a review.
+
+Ask which Focus Areas each maps to, if any. That mapping is what puts objective progress at the top of
+the right report.
+
+## Phase 3 — Sources
+
+Read `references/sources.md` and follow it. The short version:
+
+1. **Detect first.** Enumerate the connectors and tools actually available in this session before asking
+   anything. An informed question ("I can see Slack, Outlook and Jira connected — which should I
+   ingest?") is worth ten generic ones.
+2. **Two questions, not fourteen.** First a multi-select over what is connected: *which of these should
+   the wiki read?* Then a second multi-select over the rest of the catalog: *any of these you want but
+   haven't connected yet?* — recorded as `no_connector`, written into the job now, activating by itself
+   the day the connector appears.
+3. **Ask about multiples** after the picks: two Slack workspaces, a second mailbox, several Jira projects.
+   Each instance gets its own entry.
+4. **Then offer a customization note on every source they picked**, in their own words, free text. This
+   is the step that makes the difference between a job that works and one they turn off after a week.
+
+   Ask it plainly and show what it is for: *"Anything I should know about how you want each of these
+   read? For example — 'only the sales distribution list, not my own inbox', 'just the #incidents and
+   #releases channels', 'skip anything from the recruiting bot', 'only the Platform board', 'ignore
+   internal-only documents'."*
+
+   **Record the note verbatim into the source's entry and paste it verbatim into the task prompt.** Do
+   not paraphrase it into a category, and do not silently narrow it — *"only monitor the group
+   distribution list, not my inbox"* is a completely different job from "ingest Outlook", and a
+   paraphrase of it ("monitor a mailbox") reverts to the wrong behavior the first time a run interprets
+   it loosely. If a note conflicts with something else they said, surface the conflict rather than
+   picking a reading.
+
+   Also capture the **noise list** here — the bot channels, automated digests and system senders worth
+   skipping. Getting it now saves the first month of runs from drowning in notification traffic.
+**Every source enabled — here or at any later point — gets a backfill question.** At setup, Phase 5
+covers all of them at once. Afterwards, adding one source asks about that source, defaulting to match the
+coverage the others already have. A source enabled from today forward, with no question asked, leaves a
+hole the wiki will answer across without noticing.
+
+5. **Local sources** (a notes directory, an exports folder, a local app's database): get the absolute
+   path and **try to read it**. A {{@session}} is sandboxed, so a local path is often *not* reachable
+   even though it is on the same machine — that is normal, not a misconfiguration.
+   If it reads, record it. If it does not, **record it as pending with the reason and move on** — reaching
+   it needs an MCP server configured in the desktop app, which is a detour that does not belong in the
+   middle of setup. Mention that it can be wired up afterwards and that `references/local-sources.md` has
+   the steps. **Never record a path you could not read**: it becomes a job that fails silently every night.
+
+## Phase 3b — News
+
+Read `references/news-sources.md`. **News is its own scheduled job, not a source of the ingest** — a
+story has to be opened, traced to its primary source, corroborated and followed up days later, and that
+work does not fit inside a connector sweep. So it gets its own step here, and two questions in one
+{{@ask_call}}:
+
+1. **What to watch** — up to ten topics or areas of interest, **each with why it matters in their own
+   words**. Propose the obvious candidates first from what you already know — the employer, the Focus
+   Areas, what the purpose sentence names — and let them add. For an area rather than a named entity,
+   offer two or three search phrasings. Push back gently on vague topics ("AI"): ask what about it they
+   care about.
+2. **How often** — every weekday morning (recommended), every day, twice a week, or once a week.
+
+**Zero topics is a complete answer** — no news job, no `News-Log`, not raised again; record `news` as
+`declined` under `feature_offers` so no upgrade re-offers it. Tell them, in one
+line, what they get: *"I only keep stories that touch something this wiki knows — and a story many
+outlets are carrying ranks above one only a single outlet has."*
+
+Do not ask what time; derive it (one hour before the ingest by default, so it never overlaps the ingest
+and finishes before the brief) and show it in the Phase 8 summary.
+
+## Phase 4 — Where the jobs run
+
+**They run on this machine.** There is nothing to decide and nothing to ask: the wiki is a local folder,
+the ingest writes to it, and only a local run can do that. Tasks execute while {{@the_app}} is open{{@claude:,
+and a task due while it was closed runs on next launch}}{{@chatgpt: and the computer is on}}. Say that once, plainly, so a quiet morning is
+never mistaken for a broken job.
+
+Two consequences worth stating at setup, because both surprise people later:
+
+- **Reading the wiki elsewhere.** The folder is on this machine. If it sits in a synced drive, the files
+  reach every other device that drive syncs to — and a session with that drive's connector can read them
+  there. That is genuine read access from elsewhere, including from a phone; it is not the full setup
+  running in the cloud, and the ingest still only happens here. Say it that precisely rather than
+  promising "query it anywhere".
+- **On a shared wiki, exactly one person runs the ingest.** See Sharing at the end of this skill. Decide
+  it now and record it — `ingest_owner` in the config — rather than discovering it when two people's jobs
+  write the same log page in the same minute.
+
+## Phase 5 — How far back
+
+Read `references/backfill.md`. Offer: none / 2 weeks / **3 months (recommended)** / 6 months / 12 months
+/ a date they name.
+
+Say two things before they choose, both of which cause confusion later if unsaid:
+
+- Most connectors do not hold a year. Transcripts are often 30-90 days, chat search is capped by the
+  workspace plan, email follows a retention policy. A 12-month request returns partial data for reasons
+  that have nothing to do with this wiki.
+- A deep backfill is **days of background work, not one run**. It is planned into small units, executed
+  one at a time, and checkpointed after every one, so running out of tokens partway through is an
+  ordinary event they simply continue from — and the daily ingest job drains 2-4 units per run on its
+  own, so it finishes without them doing anything.
+
+Do not start the backfill during setup. Write the plan, then offer to run the first few units.
+
+## Phase 6 — The daily brief
+
+1. **Where does it go?** Slack DM to themselves, a Slack channel, email, a Teams chat, or nowhere (write
+   it to a wiki page instead). Only offer destinations whose connector is actually available.
+   **Resolve the identifier yourself** — the self-DM id from the connector's current-user lookup, the
+   address from the profile you already have, a named channel from a channel search on the name they
+   said. Ask for a name if you need one ("which channel?"); never ask for an id. Verify it resolves
+   before recording it, and if it does not, say the connector could not resolve it rather than handing
+   the lookup back to them.
+2. **When?** Default 07:30 on weekdays. It must run **after** the ingest with a real gap — 90 minutes is
+   safe. If they pick a brief time within 90 minutes of the ingest, move the ingest earlier and tell them
+   why: a brief that runs before its ingest reports yesterday's news as today's.
+3. **Which days?** Default weekdays. Put this in the cron, not in the prompt.
+4. **Skip days.** *"Should it skip days you're out of office?"* Default yes — and that is the only
+   question here.
+
+   **The rule is structural and the same for everyone: an entry silences the brief when it is all-day, or
+   when it overlaps the daytime by 9 hours or more.** Take daytime as roughly 07:00–19:00 local — it does
+   not need to be exact.
+
+   **Measure overlap with daytime, not raw duration.** A recurring 18:00–07:00 protection block runs 13
+   hours but consumes no daytime, so it is not absence; 09:00–18:00 runs 9 hours of daytime and is. A
+   duration test would silence the brief every night of the week. Where several entries cover a day
+   between them, add up their daytime overlap.
+
+   Lead with that rule, because it needs no knowledge of anyone's habits. Calendar naming is personal:
+   people mark absence in ways that make sense only to them, and a rule that depends on recognizing names
+   fails on the first user who does it differently.
+
+   **Then read the calendar to see how *this* person actually works.** Sample the last couple of months
+   and look at what recurs and how much of a day it covers. You are not trying to recognize names — you
+   are measuring coverage, which is the thing the rule actually turns on.
+
+   Expect to find recurring sub-day entries that are flagged out-of-office but are not absence. Some
+   people block evenings or early mornings to stop colleagues booking outside their hours; some block
+   lunch; some block focus time. **Do not assume any of these exist, and do not go looking for a
+   particular one.** Whatever the person's calendar shows, the structural rule already handles it —
+   these are simply the cases where a name-based reading would have gone wrong.
+
+   **Write the derived pattern into the config in plain language, as an observation rather than a
+   verdict**, e.g. *"recurring 18:00-07:00 entries marked out-of-office appear on most weekdays; they do
+   not cover a working day, so they are not absence."* Two reasons: the user can see whether you read
+   them correctly and correct it in one sentence, and the brief can say which rule it applied when it
+   decides to stay silent. A brief that goes quiet without being able to say why is indistinguishable
+   from a broken one.
+
+   Their timezone you already resolved in Phase 1; working hours the brief infers from the calendar's own
+   pattern at run time. Both are better read from real data than from an answer given cold on day one.
+5. **Tone and length.** Default: assertive, short, readable — and **built to be read in five minutes**.
+   The brief shows at most five items per section, ranked by business impact first and urgency second,
+   extending to eight only for things both high-impact and due now. Everything else is a count and a
+   pointer into the wiki.
+   Say this at setup, because it sets the expectation correctly: **the brief is a triage, not an
+   inventory.** Offer "more detailed" if they want it, and record either choice in the job's
+   `preferences` — they can also change it any day by replying to a brief with "shorter" or "show me
+   more".
+6. **Tell them it is two-way.** Replying to a brief is how they steer it: *"close 41"*, *"regarding 41,
+   that's not true"*, *"stop showing the age"*, *"shorter"*. Every listed item carries a short `[ID]` for
+   exactly this, replies are read and acted on before the next brief is composed, and format preferences
+   are written into the job so they stick. Say this once at setup — a channel nobody knows is two-way
+   gets used as a broadcast.
+
+## Phase 6b — Inbox responder (optional)
+
+**Personal wikis only.** In a `team` wiki skip this phase entirely and say nothing about it: a shared
+folder is not one person's inbox, and the responder's voice tags on people's pages would be visible to the
+very colleagues they describe. Any email drafted from a team wiki is written in a plain, formal business
+tone.
+
+Read `references/task-responder.md`. Offer it once:
+
+*"Want me to draft replies to emails that ask you for something the wiki already knows — a date, a status,
+where something stands? I'd only ever create drafts and tell you they're waiting. Nothing gets sent unless
+you send it."*
+
+**Check the mail connector can create drafts first.** If it can only read, this feature cannot work — do
+not offer it; say in one line that it needs a mail connection with draft access, and record `responder` as
+`unavailable` under `feature_offers` (not `declined`, so a later upgrade can offer it once the connector
+allows).
+
+**No is a complete answer.** Record `responder` as `declined` under `feature_offers` and move on.
+
+If yes, ask together, with {{@ask_tool}}:
+
+1. **How often** — once a day (default, weekday mornings), twice, or three times. Times are derived, not
+   asked: the first run after the ingest has had time to finish, the others spread through the working day,
+   and **none inside the ingest's or news job's window**. Defaults: `0 8 * * 1-5`; twice adds 15:00;
+   three times uses 08:00, 12:30 and 16:30.
+2. **Which mailbox(es)** — from the mail sources already enabled.
+3. **Where to tell them drafts are waiting** — the same place as the brief (default), a different chat, or
+   a push notification where the platform running the task supports one. Resolve the identifier yourself,
+   as for the brief.
+4. **Anyone it should never draft for** — senders or domains to leave alone entirely (their boss, a key
+   client, legal). Free text, recorded verbatim.
+
+Say the boundary plainly, because it is what makes the feature safe to accept: **it only drafts answers to
+requests for information; anything asking them to decide, commit, approve, negotiate, price, or touch
+anything sensitive is left for them** — and it never puts internal or another client's information into a
+draft to an outside recipient.
+
+### Then offer rescheduling
+
+Only if a connected calendar can show the owner's availability — their own events at least, and ideally
+colleagues' free/busy. With no calendar, record `scheduling` as `unavailable` under `feature_offers` and
+say so in one line. Check too whether the connector has a tool that **updates an event's time**; without
+one, only the draft answer below is possible — offer just that and say why.
+
+Ask once, with {{@ask_tool}}:
+
+*"When someone proposes a new time for one of your meetings, or declines because they can't make it,
+what should I do?"*
+
+- **Move the meeting for me (Recommended)** — when everyone on it is from your organisation, I check
+  their calendars and move the meeting to the time they proposed, or the earliest time everyone's free.
+  When someone outside proposed the time and you're all free, I move it there too. Otherwise I draft them a
+  few times to choose from, and move it once they pick. Every move is listed in your notification, and
+  "undo" puts it back. Only meetings you organise, only their time — never who's invited.
+- **Just draft the replies** — I never touch the calendar; you move meetings yourself.
+- **Neither.**
+
+Record `scheduling: move`, `draft`, or `declined` under `feature_offers`. Default 3 options per draft.
+Say what it always leaves to them: a request for a brand-new meeting, a decline of a whole series, a large
+meeting one person can't make, and a meeting it has already moved once. And say how it handles a clash:
+when they accept a meeting that collides with another, the other one is rescheduled — moved if it's
+theirs, a drafted "can't make it, how about…" to its organiser if not; when they haven't answered yet, it
+recommends which to keep and waits for their "ok".
+
+### Then build their voice — before the first draft is ever written
+
+A draft in the wrong voice is one the owner has to rewrite, which defeats the point; one in the wrong
+*register* — chummy to a client's CEO, stiff to a close colleague — is worse than none. So the responder is
+not switched on until the owner's voice exists.
+
+1. **{{@voice_dispatch}}**{{@claude: (this plugin's `agents/voice-profiler.md`)}} with the wiki path,
+   the owner's name, address(es) and organisation domains, the mailbox(es), the transcript sources the wiki
+   reads (1:1s matter most), and any languages you know they write in. It reads their sent mail in its own context and returns a compact
+   profile, so hundreds of emails never land in this conversation. If subagents are not available here,
+   follow that {{@voice_profiler_unit}}'s procedure directly — it is self-contained.
+2. **Calibrate with the owner.** Show the invented example reply for each tier it found, and ask with one
+   {{@ask_message}} — one question per tier: *Sounds like me* / *Too formal* / *Too casual* / *Not me —
+   I'll say why*. Apply each answer to `profile.md` as a concrete rule, not an adjective ("drop the
+   greeting with peers", not "be warmer"). One round is enough; real drafts and the owner's edits refine it
+   from there.
+3. **People without a page.** The agent tags each person's wiki page with `voice` and `voice-language`, and
+   lists people it would place in close or working who have no page. Ask once whether to create minimal
+   pages for them — without one they are written to formally, which is safe but wrong for a close
+   colleague.
+4. **Tell them the profile is a first draft**, that it learns from how they edit drafts before sending, and
+   that "refresh my voice" rebuilds it. Untagged people always get a formal business tone, and a message to
+   a group is written for its most formal reader.
+
+If the profile cannot be built — no sent mail readable, too little of it — **do not switch the responder
+on.** Say why, and record `responder` as `later`.
+
+## Phase 7 — The monthly lint
+
+Default: **the first Saturday of the month at 09:00**, with auto-fix on for safe fixes, and
+`prune --months 6`. A weekend run spends tokens the owner is least likely to need for anything else; the
+1st of the month lands on a workday most of the time.
+
+It is scheduled **every Saturday** (`0 9 * * 6`) and the task exits immediately unless the day of the month
+is 7 or less. Do not write `0 9 1-7 * 6` instead — with both day fields set, cron fires when *either*
+matches, so that runs on days 1–7 **and** every Saturday.
+
+Ask one thing: *"Should it tidy the wiki automatically, or just report what it finds?"* If they pick
+report-only, record it — the task will run `lint` without `--fix` and list demote candidates without
+demoting them. Either way, it **never deletes a page**; say that, because "prune" sounds like it does.
+
+## Phase 8 — Confirm once
+
+Show the whole plan in one compact summary: name, audience, language, layout, namespaces, every source
+with its status and scope, the news topics with their `why` and the news cadence, where the jobs run,
+every schedule, where the brief goes, the backfill
+depth with its unit estimate. Then ask for a single yes.
+
+This is the one place to be thorough. It is much cheaper to fix a wrong answer here than after three
+weeks of ingest has been routed into the wrong namespace under the wrong privacy rule.
+
+## Phase 9 — Write the files
+
+All paths relative to the wiki folder.
+
+1. `llm-wiki.yml` — from `templates/llm-wiki.yml`, every placeholder filled, including the
+   `owner:` block from Phase 1. The jobs read the owner from here; never hardcode a name into a task.
+2. `Wiki/Schema.md` — from `templates/Schema.md`. Fill `{{PRIVACY_RULES}}` with the user's actual rules
+   from Phase 1, `{{FORMAT_RULES}}` and `{{LAYOUT_NOTE}}` per the chosen layout.
+3. `Wiki/Dashboard.md` — from `templates/Dashboard.md`, including the jobs table.
+4. A hub page per namespace — from `templates/Hub.md`. Obsidian: `Wiki/<NS>/_index.md`.
+   Logseq: `pages/Wiki___<NS>.md`. Give each a one-line description of what belongs in it; a hub whose
+   purpose is written down gets routed to correctly.
+5. `Wiki/Reference/Access-Log.md` — from `templates/Access-Log.md`.
+5a. `Wiki/<PRIMARY_NS>/Objectives.md` if any objectives were given — the canonical page. Skip entirely
+    if there are none.
+5b. For each Focus Area: its namespace hub (with the statement from Phase 2b as the hub description),
+    `Log.md`, `Decisions.md`, `Goals.md` (carrying the metrics they named), and an empty `Reports/`
+    folder. Skip entirely if there are none.
+6. `Archives/` and `Artifacts/` — create both (each with a `.keep` file so they survive sync).
+    `Archives/` holds snapshots of ingested URLs; `Artifacts/` holds derived output, one dated folder per
+    piece of work. They are opposites and worth naming as such on the Dashboard.
+7. `wiki-ingest-state.json` — `{"lastSuccessfulRun": null, "nextItemId": 1, "commitments": [], "frequentContacts": {}, "channelActivity": {}}`.
+    `nextItemId` is the wiki-wide counter for the short `[41]` IDs shown in briefs and reports — it only
+    ever increases, and an id is never reused once assigned.
+7c. `wiki-responder-state.json` — `{"lastRunAt": null, "drafted": [], "moved": [], "clashes": [], "leftForOwner": []}`, only if the
+    inbox responder is enabled.
+7b. `wiki-news-state.json` — `{"lastSuccessfulRun": null, "cursor": 0, "topicLastScanned": {}, "seenStories": [], "threads": [], "pending": []}`, only if news topics were given.
+8. `wiki-brief-state.json` — `{"lastBriefSentThroughDate": null, "lastSentMessageId": null, "lastReplyHandledAt": null, "lastUpdateNudge": null, "lastShown": {}}`, only if the brief is enabled.
+9. `wiki-backfill-state.json` — the full unit plan, only if a backfill was chosen.
+10. `{{@instructions_file}}` — from `templates/{{@instructions_file}}`. **This is the piece that makes the wiki automatic**: it is
+    what routes every future question to `query` and every "save this" to `ingest` without anyone typing
+    a command. Fill `{{PRIVACY_BLOCK}}` and `{{JOBS_BLOCK}}` with this project's real configuration.
+    If {{@a_instructions}} `{{@instructions_file}}` already exists, **append a clearly-marked LLM Wiki section — never overwrite it.**
+11. `{{@dot_dir}}/skills/wiki/SKILL.md` — **copy the `wiki` engine skill into the folder itself.** This is
+    what makes the folder self-contained: anyone who syncs it and opens a session on it gets the engine
+    and the `{{@instructions_file}}` together, with no plugin to install. Copy `wiki-setup` alongside it if the wiki
+    is shared, so a teammate can reconfigure without chasing the plugin. If the folder is not shared,
+    this copy is still worth making — it keeps the wiki working if the plugin is ever uninstalled.
+12. `{{@dot_dir}}/skills/.baseline/` — a **second, pristine copy** of every skill file just written. Never
+    edited, never read at runtime. It is what lets a later update tell a local edit apart from an upstream
+    change; without it the two are indistinguishable and no safe merge exists. Refresh it whenever the
+    live copies are refreshed — the two must always describe the same version. See `references/updates.md`.
+13. `{{@dot_dir}}/skills/.llm-wiki-version` — a single line holding the plugin version these copies came
+    from. Also write it to `wiki_version` and `skills_version` in `llm-wiki.yml`. **Re-copy the skills
+    and re-stamp this on every reconfigure**, so a plugin update actually reaches the folder — on a
+    shared wiki the folder is the distribution channel, and a copy nobody refreshes is a team quietly
+    running an old version. If you cannot read the running plugin's version, write `unknown` rather
+    than guessing; the lint reports that honestly instead of comparing against a fiction.
+
+Never write a credential into any of these. Never create a git repository.
+
+## Phase 10 — Create the scheduled tasks
+
+Use the scheduled-task tool. Fill the templates in `references/`: `task-ingest.md`, `task-brief.md`,
+`task-lint.md`, `task-news.md` when news topics were given, and `task-responder.md` when the inbox
+responder was accepted.
+
+Each prompt must be **fully self-contained** — every run starts with no memory of this conversation.
+Spell out the absolute folder path, connector names, channel ids, scope, **the verbatim customization
+note for every source**, noise filters and destinations. Never write "as discussed" or "the sources we
+chose" into a task prompt.
+
+**Name them with the wiki's short name**, every time, with no exception:
+
+| | id | title |
+|---|---|---|
+| Ingest | `<slug>-wiki-ingest` | `<Wiki name> · daily ingest` |
+| Brief | `<slug>-wiki-brief` | `<Wiki name> · daily brief` |
+| Lint | `<slug>-wiki-lint` | `<Wiki name> · monthly lint` |
+| News | `<slug>-wiki-news` | `<Wiki name> · news scan` |
+| Inbox responder | `<slug>-wiki-responder` | `<Wiki name> · inbox responder` |
+| Focus report | `<slug>-focus-<area>` | `<Wiki name> · <Area> report` |
+
+One report task **per Focus Area** that asked for one, from `references/task-focus-report.md`, scheduled
+after the ingest. None, if there are no Focus Areas.
+
+Unprefixed ids collide the moment this user sets up a second wiki, and a collision here is not a tidy
+error — it is a second wiki silently overwriting the first one's job.
+
+Defaults: ingest `0 6 * * *`, brief `30 7 * * 1-5`, lint `0 9 * * 6` (weekly, with the task itself
+running only on the first Saturday — see Phase 7), news `0 5 * * 1-5` (or the owner's cadence from Phase
+3b, at one hour before the ingest). Cron is evaluated in local time. **The news job must never overlap the
+ingest** — both write entity pages and the shared id counter — so when the ingest moves, the news job
+moves with it.
+
+**Stamp every task.** Each generated prompt opens with
+`<!-- llm-wiki task: <kind> | template version: X.Y.Z | generated: YYYY-MM-DD -->`, and its
+`template_version` is recorded under that job in `llm-wiki.yml`. Embed `references/task-self-update.md` as
+each task's Step 0, so a task generated today can adopt a later version of its own template without
+anyone regenerating it by hand. Without the stamp there is no way to tell which template version a
+running task came from, and it would silently run the original instructions forever.
+
+**One-off tasks (`llm-wiki task: once`) are the exception**: created by the `wiki` skill, not by setup,
+with no Step 0, and never regenerated or re-stamped — their instructions live on their request pages.
+Never give one a cron schedule.
+
+<!-- @if chatgpt -->
+**Creating the tasks in ChatGPT.** They are ChatGPT scheduled tasks, listed under **Scheduled** in the
+desktop app's sidebar.
+
+- Create each one as a **local task on this folder**, running **in the project directory**, never in an
+  isolated worktree. A worktree writes to a copy, so the wiki would never see the ingest.
+- Give it **permission to edit files** in the folder. A read-only task fails at the first page it writes.
+- Use the id above as the task's **name**. ChatGPT may not let you choose an id, so record whatever it
+  shows; everywhere these skills match a task by id, match it by that name.
+- Give the schedule the way ChatGPT takes it: the cron above, in words, in local time (`30 7 * * 1-5` is
+  *every weekday at 07:30*).
+- A task runs only while the computer is on and the ChatGPT app is open. Don't promise that a missed run
+  catches up.
+
+**If you can't create a task yourself in this session**, never report it as created:
+
+1. Write its full prompt to `.agents/tasks/<id>.md`.
+2. Give the owner the exact steps: **Scheduled** → new task → the name, the schedule in words, this
+   folder, run in the project directory, allow editing files, and paste the prompt from that file.
+3. Record the job with `pending_manual: true` in `llm-wiki.yml`, and look for the task again next session
+   before clearing it.
+
+The same goes for changing or deleting a task later.
+
+<!-- @endif -->
+After creating them, **verify every one appears in the task list** with the right prefix, and record their
+real ids in `llm-wiki.yml`. Tell the user the tasks run while {{@the_app}} is open{{@claude:, and that a task due
+while it was closed runs on next launch}}{{@chatgpt: and the computer is on}}.
+
+## Phase 11 — First run
+
+Offer, in this order:
+
+1. **Run the ingest once now**, so they see something in the wiki within minutes rather than tomorrow
+   morning. Strongly recommended — an empty wiki on day one is what makes people abandon this.
+2. **Start the backfill**, if they chose one: run the first 2-3 units, then stop and show progress. Do
+   not attempt the whole thing.
+3. **Run the news scan once now**, if news topics were given — so the first brief already has something in
+   it, and so a topic that returns nothing but same-name noise is caught and sharpened today.
+4. **Send a test brief**, so they can confirm it arrives where they expect and looks right.
+
+## Phase 12 — Hand over
+
+Tell them, in a few lines, in plain language:
+
+- **They never need a slash command again.** Ask a question and it searches the wiki. Say "save this" or
+  "remember this" or paste something in and it files it. That is the whole interface.
+- What each job will do and when — including the news scan's cadence and topics, if any — and that they run on this machine while the app is open.
+- Where the wiki lives — the actual folder path — and that it is plain markdown they can open in any
+  editor. If it is on a synced drive, that it reaches their other devices that way.
+- That saying **"reconfigure the wiki"** re-opens this wizard — to add a source, change the brief, or
+  move the schedule.
+- If a backfill is running: how far along, and that it finishes on its own.
+
+## Before you finish: the placeholder check
+
+Every template in `templates/` and `references/` is written with `{{PLACEHOLDER}}` markers. A file
+written out with one still in it is a silent, permanent bug — a task prompt containing `{{SKIP_LOGIC}}`
+does not error, it just behaves strangely every night forever.
+
+**After writing the files and creating the tasks, grep every written file and every task prompt for
+`{{`. If anything matches, you missed a substitution — fix it before reporting success.**
+
+The ones most often missed, because they need composing rather than copying:
+
+| Placeholder | What it holds |
+|---|---|
+| `{{SOURCE_BLOCKS}} {{LOG_PAGE_MAP}}` | One block per enabled source: connector, scope, filters, destination page |
+| `{{SKIP_LOGIC}} {{SKIP_PATTERN}}` | What this calendar actually looks like, as an observation. Never a naming rule — the whole-working-day coverage test is the rule, and it is already in the template. If nothing notable recurs, say that; do not invent a pattern to fill the space |
+| `{{DELIVERY_BLOCK}} {{REPLY_FETCH}}` | The exact send tool, channel id, and how replies get read back |
+| `{{BRIEF_SOURCE_PAGES}} {{WATCH_HUBS}}` | The specific pages the brief reads, by path |
+| `{{PRIVACY_RULES}} {{PRIVACY_BLOCK}} {{PRIVACY_LINE}} {{PRIVACY_LINT}}` | The user's own exclusions, in their words. `personal` audience: say plainly that no cross-user filter applies |
+| `{{ATTACHMENT_POLICY}}` | Whether to follow attachments during backfill (default off for deep backfills) |
+| `{{PRUNE_CONFIRM}}` | Whether the monthly job demotes automatically or only lists candidates |
+| `{{NOISE_FILTERS}}` | Their actual bot channels, digests and system senders |
+| `{{TASK_TABLE}} {{JOBS_BLOCK}} {{SOURCE_SUMMARY}}` | Composed from the final configuration, after the tasks exist |
+| `{{WIKI_SLUG}}` | The short name. Every task id and title carries it |
+| `{{PLUGIN_VERSION}}` | The running plugin's version, from its `plugin.json`. `unknown` if it cannot be read — never a guess |
+| `{{INGEST_OWNER}} {{SHARED_FOLDER}} {{SHARED_BLOCK}}` | Who owns the scheduled ingest, and the shared-folder rules in `{{@instructions_file}}`. On a solo wiki, `SHARED_BLOCK` says plainly that this wiki is not shared — do not leave it empty |
+| `{{NEWS_TOPICS_YAML}} {{NEWS_ENABLED}} {{NEWS_TOPICS_PER_RUN}}` | The owner's topics with `why` verbatim (and `queries`/`outlets` where given); `false`, an empty list and `1` when none were given |
+| `{{NEWS_JOB_YAML}}` | The `jobs.news` block from `references/news-sources.md` — task id, cadence, state file, stamp. When no topics were given, the explicit line `  # news: not configured — no topics were given` |
+| `{{NEWS_TOPICS_BLOCK}}` | In `task-news.md`: each topic's name, verbatim `why`, `queries` and `outlets`, readable as prose. The news task is only created when this is non-empty |
+| `{{RESPONDER_JOB_YAML}}` | The `jobs.responder` block, from the commented example in `llm-wiki.yml`. When the responder was not accepted, an empty string — do not ship a disabled stub |
+| `{{RESPONDER_MAILBOXES}} {{RESPONDER_EXCLUSIONS}} {{RESPONDER_TONE}} {{RESPONDER_MAX_DRAFTS}} {{RESPONDER_NOTIFY_BLOCK}}` | The responder's mailboxes, the owner's never-draft list **verbatim**, tone (default: short and plain), the per-run cap (default 5), and the exact notify tool and identifier. With no exclusions, say so explicitly rather than leaving the section empty |
+| `{{RESPONDER_CALENDAR}} {{RESPONDER_SLOT_OPTIONS}}` | The calendar connector and the exact tools that read events and look up colleagues' availability in the work calendar — plus, **only when `scheduling` is `move`**, the one tool that updates an event, named with its constraint (start and end only, never attendees). Never name a tool that creates, cancels or responds to events, and the number of options per rescheduling draft (default 3). With no calendar: *"none — rescheduling is unavailable"*. Fill both even when rescheduling is off, so switching it on is a one-line config change |
+| `{{UPDATE_NUDGE}}` | The full text of `references/update-nudge.md`, with the task's `lastUpdateNudge` state key. Goes in the **brief** (primary) and the **ingest** (fallback, only used when no brief exists) |
+| `{{TASK_SELF_UPDATE}} {{TASK_KIND}}` | The full text of `references/task-self-update.md` as each task's Step 0, and the task's kind in its stamp. Every scheduled task gets both |
+| `{{ASYNC_REPLY_PROTOCOL}}` | The full text of `references/async-replies.md`, with this task's channel, state keys and reply-fetch method filled in. **Embed it in full** — a scheduled run cannot read the reference file. Every delivering task gets it: the brief and every Focus Area report |
+| `{{FOCUS_AREA}} {{FOCUS_STATEMENT}}` | Per Focus Area. The statement is the routing key — specific, not a label |
+| source `notes` | The user's verbatim customization for each source, pasted into the task prompt as written — never paraphrased |
+
+Where a placeholder has no applicable content — no noise filters, no skip rule — write the explicit
+"none" sentence rather than deleting the section. A job that says *"no channels are filtered"* is
+unambiguous; a job with a gap where the filter section should be invites a future run to invent one.
+
+## Sharing a wiki with a team
+
+The model is: **one person sets the wiki up in a folder on a synced drive; everyone else syncs that
+folder and opens a session on it.** The `{{@instructions_file}}` and the copied skills travel with the folder, so a
+teammate's session knows how to behave the moment it opens. Nothing else is installed.
+
+Set this up correctly and it is genuinely that simple. Two things will break it if they are not decided
+at setup, and both are invisible until they have already caused damage:
+
+**1. Exactly one person runs the ingest.**
+
+The scheduled jobs are per-machine. If three people sync the folder and all three have ingest jobs, three
+runs write the same log pages at the same hour every morning — and because the pages are append-only,
+nothing errors. It just quietly triples. Worse, each run pulls from *that person's* connectors, so a
+shared wiki ends up holding a teammate's private inbox, filed under a heading that implies it is the
+team's.
+
+So: **the person who runs `{{@setup_command}}` is the ingest owner.** Record them as `ingest_owner` in
+`llm-wiki.yml`. Everyone else syncs the folder and gets query, manual ingest, and the brief if they want
+their own — but **not** the scheduled ingest. Write that into the shared `{{@instructions_file}}` explicitly, because
+a teammate who runs `{{@setup_command}}` on a folder that already has a config is one "yes" away from creating a
+duplicate job, and the wizard should tell them so instead of obliging.
+
+When a teammate opens a session on an already-configured folder and asks to set it up, say what is
+already running and who owns it, and offer only the safe options: their own brief, a one-off manual
+ingest, or taking over as ingest owner deliberately — which means the current owner disables theirs first.
+
+**2. Sync is not a merge.**
+
+OneDrive, Dropbox and Drive resolve a simultaneous edit by keeping both and renaming one
+(`Meetings-Log (Ana's conflicted copy).md`). Append-only writing makes this rare, not impossible. Two
+habits keep it that way: one ingest owner (above), and letting sync settle before a big write rather than
+editing a page that is mid-download. If conflicted copies do appear, **do not delete them** — surface
+them, and offer to merge the divergent sections into the canonical page.
+
+**What the team gets without any setup of their own:** ask a question, get an answer from the wiki with
+sources; paste something in, have it filed. That is the whole interface, and it works from the folder
+alone.
+
+**What each teammate needs their own copy of:** the brief, if they want one. It is personal — it reads
+*their* pending asks and *their* calendar and goes to *their* Slack. A shared brief addressed to one
+person is noise for everyone else. Set theirs up with the same short name plus their own suffix
+(`acme-wiki-brief-ana`) so the task list stays readable.
+
+## Reconfigure mode
+
+Read the existing `llm-wiki.yml`, show what is configured, and change only what they ask for. Common
+requests and what each touches:
+
+| Request | Update |
+|---|---|
+| Add or remove a source | `llm-wiki.yml` sources, the ingest task prompt, possibly the execution location. **When adding, always ask whether to backfill it and how far back** — defaulting to the depth the wiki's other sources already have. Plan it with the same chunked protocol as the first run, appended to any in-progress plan rather than started as a second one. See `references/backfill.md` → "Backfilling a source added later" |
+| Add a **local** source (a folder, a SQLite file, a database) | Read `references/local-sources.md` first. A {{@session}} is sandboxed, so it usually needs an MCP server configured in the desktop app. Verify access, **capture the schema or folder structure, and write it into the ingest task** so the job never rediscovers it at 6am. Then ask about backfill, as for any new source |
+| Connected a connector that was pending | Flip `no_connector` → `enabled` in config and task prompt |
+| Change brief destination or time | `llm-wiki.yml` jobs.brief, the brief task prompt and cron |
+| Add, remove or change news topics, or how often news is checked | `news.topics` and `jobs.news.schedule` in `llm-wiki.yml`, recompute `news.topics_per_run`, regenerate the news task's prompt and cron. The **first** topic creates the news task (Phase 3b); removing the **last** disables it and keeps config and state. See `references/news-sources.md` |
+| "Set up / refresh my voice" | {{@voice_dispatch}}, then calibrate as in Phase 6b. A refresh keeps `{{@dot_dir}}/voice/edits.md` and feeds it in |
+| Turn on, tune or turn off the inbox responder | `jobs.responder` in `llm-wiki.yml` and the responder task. Turning it on runs Phase 6b; "don't draft for X" adds to its exclusions verbatim |
+| Rescheduling: move meetings, only draft, or off | `jobs.responder.scheduling` (`move` / `draft` / `off`) in `llm-wiki.yml`. The task reads it each run; switching to `move` regenerates the task so `{{RESPONDER_CALENDAR}}` names the update tool. "Don't move meetings with X" adds to the exclusions verbatim |
+| Change the schedules | The task crons, the ingest/brief ordering gap, and the news job's slot before the ingest |
+| Add a namespace | `llm-wiki.yml`, a new hub page, the Schema's namespace list, the Dashboard |
+| Change the privacy rules | The Schema's exclusions section and `{{@instructions_file}}`'s privacy block |
+| Backfill further back | Extend `wiki-backfill-state.json` with new units and re-plan |
+| Stop a job | Disable the task; keep the config so it can be turned back on |
+| "Update the wiki" | Update mode — see Phase 0. Folder skills, then regenerate and re-stamp every task, then clear the nudge |
+| Tasks are behind the current plugin | Regenerate each task's prompt from the current templates plus `llm-wiki.yml`, and re-stamp it. Tasks normally do this themselves at Step 0 of their next run — do it here when the user wants it now, or when a task reported that it could not |
+
+Two rules that hold in every reconfigure:
+
+- **Adding a local-folder source flips ingest to local execution.** Say so before doing it.
+- **Never rewrite existing wiki content** to match a new convention. A schema change applies going
+  forward; retrofitting it silently rewrites history that cannot be recovered. If they want existing
+  pages migrated, do it as an explicit, confirmed, page-by-page pass.
+---
+
+## Credits
+
+The wiki architecture this implements — the L1/L2 cache model, hub-index routing and LRU-demote, and the
+schema, hub, dashboard and access-log page formats — comes from
+**[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by **Mehmet Gökçe**, MIT licensed. This package
+is a derivative work: same architecture, rebuilt to configure itself conversationally in a {{@assistant}} session
+rather than through a shell script, with scheduled ingest/brief/lint jobs, resumable backfill and Focus
+Areas added on top.
+
+The pattern itself — a persistent, LLM-maintained wiki with ingest / query / lint as its core operations
+— was proposed by **Andrej Karpathy**
+([gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)).
+
+Not affiliated with or endorsed by either.

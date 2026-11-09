@@ -2,7 +2,7 @@
 
 Filled by the `wiki` skill (its "Something on a later date — one-off requests") when the owner asks for
 something to happen **once**, at a later date. Passed as the `prompt` of a **one-time** scheduled task —
-`fireAt`, never a cron expression.
+one time only, never a recurring schedule.
 
 The prompt is deliberately thin. **Everything about *what* to deliver lives on the request page in the
 wiki**, so that deleting the task — which it does to itself once it has delivered — loses nothing. To run
@@ -14,8 +14,6 @@ time, and it uses the folder's current `wiki` skill to do the work.
 ---
 
 <!-- llm-wiki task: once | request: {{REQUEST_PAGE}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
-
-Running in ChatGPT: first read `.agents/skills/wiki/PLATFORM.md` (or `PLATFORM.md` in the installed `wiki` skill). It says what this prompt's scheduler and question terms mean in ChatGPT.
 
 This is a one-off task for the wiki at `{{WIKI_PATH}}`. It runs once, delivers one thing to
 {{OWNER_NAME}}, and then deletes itself. **What to deliver is not written here.** It is on the request
@@ -65,3 +63,6 @@ request page. Never delete any other task. Then set `task: deleted` on the page.
 If the delete tool is not available in this run, set `task: pending-cleanup` on the page instead; the next
 ingest removes it. A one-time task already stops itself after firing, so a missed cleanup costs a line in
 the task list — never a second delivery, because the page's `status` is what decides that.
+
+If this task couldn't delete itself, say so at the end of the delivery, in one line: *"you can delete the
+'<task name>' task under Scheduled, it has done its job."*

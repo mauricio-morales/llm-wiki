@@ -3,10 +3,6 @@ name: wiki
 description: Read from and write to the LLM Wiki in this folder — a structured, persistent knowledge base kept as plain files on disk. Use for ANY question whose answer might already be recorded (query), and for ANY request to ingest, add, store, save, load, learn, capture, download, file, log or remember something (ingest). Also handles prune, lint, status and import. In a project set up by wiki-setup this runs automatically, without the user naming it.
 ---
 
-> **Running in ChatGPT.** This skill was written for Claude and translated. Read `PLATFORM.md` in this
-> skill's folder before acting: it says what the remaining Claude-specific terms mean here, and it wins
-> wherever the two disagree.
-
 # LLM Wiki
 
 Persistent knowledge management. Maintains a structured wiki as plain markdown files in a working folder,
@@ -189,7 +185,7 @@ questions just as confidently as one with full history, with no hint that the re
 backfill through the same chunked, checkpointed protocol as the first run.
 
 **If the source is on their machine** — a folder, a SQLite file, an application's own database — read
-`references/local-sources.md` in the `wiki-setup` skill before promising anything. A ChatGPT desktop session is
+`references/local-sources.md` in the `wiki-setup` skill before promising anything. A ChatGPT Work session is
 sandboxed: a local path is frequently *not* readable even though it sits on the same computer, and the
 fix is an MCP server configured in the desktop app. Two things follow from that:
 
@@ -397,15 +393,18 @@ Cross-link the page from the pages it concerns (the trip, the client, the projec
 day → the brief's time, so it arrives with the brief, never before the ingest has finished. **Confirm it in
 one line**, in their timezone: *"I'll send the trip agenda Mon 9 Nov at 08:00, then delete the task."*
 
-**3. Create the task** — a **one-time** task (`fireAt`; never a cron expression), id
+**3. Create the task** — a **one-time** task (one time only; never a recurring schedule), id
 `<slug>-once-<request-slug>`, title `<Wiki name> · once · <what>`, prompt from
 `references/task-once.md` in the `wiki-setup` skill, filled in: `{{REQUEST_PAGE}}`, `{{TASK_ID}}`,
 `{{WIKI_PATH}}`, `{{OWNER_NAME}}`, `{{PLUGIN_VERSION}}`, `{{DATE}}`, and `{{ONCE_DELIVERY_BLOCK}}` — the
 brief's own delivery instructions (the exact tool and destination, from `jobs.brief`), unless the owner
 named somewhere else. Check no `{{` is left before creating it. Record the real task id on the page.
+Create it the way the `wiki-setup` skill's *Creating the tasks in ChatGPT* says: a local task on this
+folder, in the project directory, allowed to edit files, named by its id. If you can't create it yourself,
+follow the manual steps there, and set `task: pending-manual` on the page until the owner confirms.
 
 **Later changes go to the page**: *"add X to what it collects"*, *"make it shorter"*, *"just the open
-items"*. Only a new time touches the task, and only its `fireAt`. *"Cancel it"* → `status: cancelled`, and
+items"*. Only a new time touches the task, and only its run time. *"Cancel it"* → `status: cancelled`, and
 delete the task. *"Do that again"* → a new task from the same page, or a copy of the page for a new date.
 
 **Not a one-off:** anything recurring — *"every Monday"*, *"each month"* — is a job, set up by reconfiguring
@@ -749,7 +748,7 @@ Rules:
 The wiki architecture this implements — the L1/L2 cache model, hub-index routing and LRU-demote, and the
 schema, hub, dashboard and access-log page formats — comes from
 **[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by **Mehmet Gökçe**, MIT licensed. This package
-is a derivative work: same architecture, rebuilt to configure itself conversationally in a chat session
+is a derivative work: same architecture, rebuilt to configure itself conversationally in a ChatGPT session
 rather than through a shell script, with scheduled ingest/brief/lint jobs, resumable backfill and Focus
 Areas added on top.
 

@@ -12,8 +12,6 @@ and an unqualified "me" in a task prompt resolves to nobody.
 
 <!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
 
-Running in ChatGPT: first read `.agents/skills/wiki/PLATFORM.md` (or `PLATFORM.md` in the installed `wiki` skill). It says what this prompt's scheduler and question terms mean in ChatGPT.
-
 ## Step 0 — Adopt any pending update to this prompt
 
 {{TASK_SELF_UPDATE}}
@@ -334,7 +332,7 @@ source added, not a second line. After `deliver_at`, stop collecting for it.
   delete that task and set `task: deleted`. Only a task whose id equals the page's `task_id` **and** whose
   prompt starts with the stamp `llm-wiki task: once` — never anything else.
 - **`deliver_at` is more than two hours past and it is not delivered** → re-arm its task once, for the
-  brief's time on the next working day (`fireAt`), and record `retries: 1`. If it misses again, set
+  brief's time on the next working day, and record `retries: 1`. If it misses again, set
   `status: failed` and stop; the brief says so.
 - **`collecting` or `scheduled`, `deliver_at` still ahead, but no such task** → on a personal wiki,
   recreate it from the page with `references/task-once.md` — that is what the page is for. On a team wiki

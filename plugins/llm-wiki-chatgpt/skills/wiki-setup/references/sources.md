@@ -11,6 +11,14 @@ in the session. Then ask an informed question instead of a generic one:
 - Not detected → *"Slack — no connector is connected here. Do you want it? I'll record it as pending and
   you can connect it later, or we skip it entirely."*
 
+In ChatGPT the sources are **apps** (some versions say connectors), connected in ChatGPT's own settings.
+Say two things once, plainly:
+
+- **A scheduled task may not reach every app this chat can.** The first ingest report says which sources
+  it actually read. Trust that, not this conversation.
+- **Some company apps need an admin's approval**, Outlook mail and calendar especially. If one is
+  missing, record it as `no_connector` and say who can approve it.
+
 Three answers per source, always:
 
 | Answer | Recorded as | Effect |
@@ -110,7 +118,7 @@ transcript) is **re-ingested and its existing wiki entry updated in place**, not
 
 ## Local sources (14 and 15)
 
-**A local path is not automatically readable.** A ChatGPT desktop session is sandboxed: it has the wiki folder, and
+**A local path is not automatically readable.** A ChatGPT Work session is sandboxed: it has the wiki folder, and
 not the rest of the machine. Being on the same computer is not access — a perfectly reasonable-looking
 path will simply fail to read, every night, and look exactly like a quiet week.
 
@@ -144,7 +152,7 @@ Treat it with that weight.
 ## Where the jobs run
 
 **On this machine.** The wiki is a local folder and only a local run can write to it. Tasks execute while
-the ChatGPT desktop app is open; one due while it was closed runs on next launch. Say that once at setup so a
+the ChatGPT desktop app is open and the computer is on. Say that once at setup so a
 quiet morning is never mistaken for a broken job.
 
 Reading the wiki from elsewhere works through the folder, not through the jobs: if it sits on a synced

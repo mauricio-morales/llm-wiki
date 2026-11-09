@@ -19,8 +19,9 @@ The wiki runs in either app. Pick the one you use; the wiki it builds is the sam
 
 - **[Set up in Claude](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-claude.md)**: the Claude desktop app, in Cowork.
   The original, and the most tested.
-- **[Set up in ChatGPT](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md)**: the ChatGPT desktop app. *Preview:
-  built from the same instructions, not yet run end to end there.*
+- **[Set up in ChatGPT](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md)**: the ChatGPT desktop app,
+  installed from your company's ChatGPT plugin directory. *Preview: built from the same wiki, not yet run
+  end to end there.*
 
 Each page takes you from installing to your first wiki in four steps, and covers joining a wiki someone
 else set up and upgrading later.
@@ -220,21 +221,26 @@ merge; it never deletes them.
 
 ## What's in the package
 
+The same wiki, packaged for each app:
+
 ```
-.claude-plugin/plugin.json   manifest
-agents/voice-profiler.md     learns the owner's email voice from their sent mail, in its own context
-hooks/                       SessionStart check that orients a session on a wiki folder
-skills/wiki/                 the engine: query, ingest, prune, lint, status, import
-skills/wiki-setup/           the setup wizard
-  templates/                 Schema, Hub, Dashboard, Access-Log, CLAUDE.md, config, report shell
+                             Claude                      ChatGPT
+manifest                     .claude-plugin/plugin.json  plugin.json
+the engine                   skills/wiki/                skills/wiki/
+the setup wizard             skills/wiki-setup/          skills/wiki-setup/
+  templates/                 Schema, Hub, Dashboard, Access-Log, the folder's instructions
+                             (CLAUDE.md / AGENTS.md), config, report shell
   references/                source catalog, backfill protocol, scheduled-task templates, updates
+voice profiler               agents/voice-profiler.md    skills/voice-profiler/
+session-start check          hooks/                      (none)
 ```
 
-In the [repository](https://github.com/mauricio-morales/llm-wiki) this lives under `plugins/llm-wiki/`.
-The ChatGPT package, `plugins/llm-wiki-chatgpt/`, is generated from it by `scripts/build_chatgpt.py`:
-the same skills with ChatGPT's file names (`AGENTS.md`, `.agents/skills/`), a `PLATFORM.md` in each skill
-for what doesn't translate word for word, and the voice profiler as a skill instead of an agent. Everything
-else in the repository is development tooling and is not part of what you install.
+**How the repository is built.** The wiki is written once, in `core/skills/`, for no app in particular.
+`scripts/build.py` combines it with an app's definition in `platforms/<app>/` (its vocabulary, its
+manifest, its changelog) and writes that app's package: `plugins/llm-wiki/` for Claude,
+`plugins/llm-wiki-chatgpt/` for ChatGPT. Where the apps genuinely differ (how a question is asked, how a
+scheduled task is created), the core says it for each app and the build keeps only that app's version.
+Everything else in the repository is development tooling and is not part of what you install.
 
 ## Credits and license
 
@@ -268,12 +274,15 @@ This is an independent derivative work. It is not affiliated with, nor endorsed 
 ## Contributing
 
 Issues and pull requests welcome. Everything here is prompt content — Markdown skills, templates and a
-single HTML report shell — so a change is a text edit, not a build. Two things to keep in mind:
+single HTML report shell — so a change is a text edit, followed by `python3 scripts/build.py all`. Three things to keep in mind:
 
 - **No personal or organizational specifics.** This package is deliberately generic: the setup wizard
   learns who the user is from their connectors and environment. Examples use fictional names and
   `example.com`. A contribution that hardcodes one organization's calendar conventions, namespaces or
   naming habits makes the plugin worse for everyone else — that lesson is written into the skip-logic
   section for a reason.
-- **Bump the version and add a CHANGELOG entry.** Patch for wording, minor for new behavior, major for
+- **Edit `core/`, not the packages.** `plugins/llm-wiki/` and `plugins/llm-wiki-chatgpt/` are generated
+  by `scripts/build.py` and overwritten on every build. Where something only makes sense in one app, say
+  it for that app (see the top of `scripts/build.py`).
+- **Add a CHANGELOG entry** under `platforms/<app>/`. Patch for wording, minor for new behavior, major for
   anything changing how a wiki is set up or invalidating an existing one.

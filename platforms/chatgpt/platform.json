@@ -1,0 +1,27 @@
+{
+  "name": "chatgpt",
+  "package_dir": "plugins/llm-wiki-chatgpt",
+  "voice_profiler": {
+    "as": "skill"
+  },
+  "vocab": {
+    "instructions_file": "AGENTS.md",
+    "a_instructions": "an",
+    "dot_dir": ".agents",
+    "session": "ChatGPT Work session",
+    "the_app": "the ChatGPT desktop app",
+    "assistant": "ChatGPT",
+    "setup_command": "@wiki-setup",
+    "ask_call": "multiple-choice message",
+    "ask_tool": "multiple-choice questions",
+    "ask_message": "multiple-choice message",
+    "ask_unit": "message",
+    "once_schedule": "one time only",
+    "recurring_schedule": "a recurring schedule",
+    "once_time": "run time",
+    "plugins_menu": "Plugins",
+    "voice_profiler_unit": "skill",
+    "voice_dispatch": "Run the `voice-profiler` skill in a subagent",
+    "mcp_config": "the app's MCP server settings"
+  }
+}

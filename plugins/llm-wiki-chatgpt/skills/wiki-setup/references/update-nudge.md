@@ -58,12 +58,11 @@ command they have to remember correctly — *"update llm-wiki in Plugins, then s
 this folder and ask it to upgrade the wiki"*. That is the same instruction the README gives, word for word, so
 the brief and the documentation never disagree about how to upgrade.
 
-**If the plugin was uploaded as a file, the action is different.** An uploaded zip has no update button.
-That is the backup install, used when an older app (most often on Windows) had no **Add marketplace**.
-If signal 1 found no marketplace copy of the plugin on this machine, give both in the same line: *"update
-llm-wiki in Plugins, or, if you uploaded it as a file, upload the newest zip from
-https://github.com/mauricio-morales/llm-wiki/releases/tag/chatgpt-latest, then start a new session on this folder and
-ask it to upgrade the wiki."* Give the link in full: it is the one thing they can't find on their own.
+**In ChatGPT, updates come through the company's workspace marketplace**, which an admin imported from
+GitHub. A new version reaches **Plugins** only after that marketplace syncs. If the owner finds no update
+there, the one action is: *"ask your ChatGPT workspace admin to sync the LLM Wiki marketplace (Admin →
+Plugins → Marketplaces → Sync now), then update llm-wiki in Plugins and ask a new session here to upgrade
+the wiki."*
 
 If the reason is signal 3, say the honest version: *"this wiki hasn't checked for updates in three weeks
 — check Plugins for an update, then start a new session here and ask it to upgrade the wiki."*

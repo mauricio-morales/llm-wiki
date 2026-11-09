@@ -1,0 +1,19 @@
+name: Check
+
+# Every push builds every app's package from core/ into a scratch directory. It fails if a build marker
+# is unresolved or a vocabulary term is missing, so a broken core/ is caught before anyone releases it.
+# The committed packages are deliberately NOT compared here: each is rebuilt only when its app is
+# released, so between releases they are the last released snapshot. The release workflows check them.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build every app's package from core/
+        run: python3 scripts/build.py all --out "$RUNNER_TEMP/build"

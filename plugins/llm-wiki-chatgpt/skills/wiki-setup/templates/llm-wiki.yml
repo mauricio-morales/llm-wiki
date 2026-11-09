@@ -46,8 +46,7 @@ language: {{LANGUAGE}}         # every wiki page is written in this language
 namespaces:
 {{NAMESPACE_YAML}}
 
-# The scheduled jobs run on this machine, while the ChatGPT desktop app is open. A job due while it was
-# closed runs on next launch. The wiki is a local folder, so only a local run can write to it.
+# The scheduled jobs run on this machine, while the ChatGPT desktop app is open. The wiki is a local folder, so only a local run can write to it.
 
 # On a shared (synced) wiki, exactly ONE person runs the scheduled ingest — three synced copies with
 # three ingest jobs means three runs appending to the same pages, each pulling from a different

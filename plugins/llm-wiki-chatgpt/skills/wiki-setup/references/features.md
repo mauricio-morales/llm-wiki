@@ -41,7 +41,7 @@ the alternative, which is never asking at all.
 
 ## How to ask
 
-**One `AskUserQuestion` call, one question per feature**, batched — up to four in a call. Each question
+**One multiple-choice message, one question per feature**, batched — up to four in a message. Each question
 says what the feature does for *this* owner in a sentence, and offers three answers:
 
 - **Set it up now** — run its setup phase straight after the question, in this same session.

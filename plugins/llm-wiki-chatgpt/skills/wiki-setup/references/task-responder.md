@@ -14,8 +14,6 @@ times only where someone outside has to choose. **It never sends an email.**
 
 <!-- llm-wiki task: {{TASK_KIND}} | template version: {{PLUGIN_VERSION}} | generated: {{DATE}} -->
 
-Running in ChatGPT: first read `.agents/skills/wiki/PLATFORM.md` (or `PLATFORM.md` in the installed `wiki` skill). It says what this prompt's scheduler and question terms mean in ChatGPT.
-
 ## Step 0 — Adopt any pending update to this prompt
 
 {{TASK_SELF_UPDATE}}
