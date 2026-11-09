@@ -56,9 +56,10 @@ jobs:
           make_latest: false
           name: LLM Wiki for ChatGPT ${{ github.ref_name }}
           body: |
-            **LLM Wiki for ChatGPT.** Install it from your company's ChatGPT plugin directory: a workspace
-            admin imports this repository once (Admin → Plugins → Add → Import marketplace), then everyone
-            adds LLM Wiki from Plugins. Setup: https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md
+            **LLM Wiki for ChatGPT.** Company accounts: a workspace admin imports this repository once
+            (Admin → Plugins → Add → Import marketplace), then everyone adds LLM Wiki from Plugins. Personal
+            accounts: ChatGPT installs it for you from a prompt on the setup page.
+            Setup: https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md
 
             The zip is the same package, for reference. What changed: platforms/chatgpt/CHANGELOG.md.
             The Claude plugin is released separately, under `v*` tags.

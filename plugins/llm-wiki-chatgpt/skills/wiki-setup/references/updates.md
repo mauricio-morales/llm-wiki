@@ -69,6 +69,22 @@ The check itself is one file read: compare `skills_version` in `llm-wiki.yml` ag
 plugin's `plugin.json`. Same version, or the folder is newer — do nothing, silently, and update
 `lastUpdateCheck`.
 
+## Updating the plugin itself, on a personal ChatGPT account
+
+On a company account the plugin updates through the workspace marketplace: an admin syncs it, the owner
+updates it under **Plugins**. On a personal account there is no admin, so when the owner asks to
+**update the LLM Wiki plugin**, do it for them:
+
+- **If the `codex` command is available**, run `codex plugin marketplace upgrade` and report the version
+  the plugin now has.
+- **If it was installed by hand**, under `~/.codex/plugins/llm-wiki` (`%USERPROFILE%\.codex\plugins\llm-wiki`
+  on Windows): replace that folder with the `plugins/llm-wiki-chatgpt` folder from
+  https://github.com/mauricio-morales/llm-wiki/archive/refs/heads/main.zip. Leave the marketplace file
+  alone; it already points there.
+
+Change nothing else on the computer. Then tell them to restart the ChatGPT app, and to start a new
+session on the wiki folder and ask it to upgrade the wiki, which is the folder update below.
+
 ## Applying an update
 
 **Only the `ingest_owner` applies updates to a shared wiki.** Anyone else who notices one says so and

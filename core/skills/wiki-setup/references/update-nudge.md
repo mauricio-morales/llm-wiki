@@ -68,11 +68,12 @@ ask it to upgrade the wiki."* Give the link in full: it is the one thing they ca
 
 <!-- @endif -->
 <!-- @if chatgpt -->
-**In ChatGPT, updates come through the company's workspace marketplace**, which an admin imported from
-GitHub. A new version reaches **Plugins** only after that marketplace syncs. If the owner finds no update
-there, the one action is: *"ask your ChatGPT workspace admin to sync the LLM Wiki marketplace (Admin →
-Plugins → Marketplaces → Sync now), then update llm-wiki in Plugins and ask a new session here to upgrade
-the wiki."*
+**In ChatGPT, how the update arrives depends on how the plugin was added**, and you usually can't tell
+from here. Give the line that covers both:
+
+*"update llm-wiki in Plugins. If no update shows there: on a company account, ask your ChatGPT workspace
+admin to sync the LLM Wiki marketplace; on a personal account, ask ChatGPT to 'update the LLM Wiki plugin'.
+Then start a new session on this folder and ask it to upgrade the wiki."*
 
 <!-- @endif -->
 If the reason is signal 3, say the honest version: *"this wiki hasn't checked for updates in three weeks

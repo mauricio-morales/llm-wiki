@@ -7,6 +7,19 @@ history of what the wiki does; this one records each ChatGPT release and what is
 Derived from [llm-wiki](https://github.com/MehmetGoekce/llm-wiki) by Mehmet Gökçe (MIT) — see
 [LICENSE](../../LICENSE).
 
+## 0.2.1 — 2026-11-09
+
+**Personal ChatGPT accounts can install it too.** 0.2.0 assumed a company account whose workspace admin
+imports the plugin. Plus and Pro subscribers have no admin, and the desktop app has no "add marketplace"
+button for them. The setup page now has two routes:
+
+- **Company account:** add LLM Wiki from **Plugins**; if it isn't there, an admin imports it once.
+- **Personal account:** paste a prompt into ChatGPT, approve the steps, and it installs the plugin
+  itself, with the Codex command when it's available and by hand when it isn't. *"Update the LLM Wiki
+  plugin"* updates it the same way.
+
+The brief's weekly update reminder now covers both kinds of account.
+
 ## 0.2.0 — 2026-11-09
 
 **Preview — rebuilt natively for ChatGPT, installed from your company's plugin directory.** Still not run

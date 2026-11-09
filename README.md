@@ -20,8 +20,8 @@ The wiki runs in either app. Pick the one you use; the wiki it builds is the sam
 - **[Set up in Claude](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-claude.md)**: the Claude desktop app, in Cowork.
   The original, and the most tested.
 - **[Set up in ChatGPT](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md)**: the ChatGPT desktop app,
-  installed from your company's ChatGPT plugin directory. *Preview: built from the same wiki, not yet run
-  end to end there.*
+  on a personal plan or a company workspace. *Preview: built from the same wiki, not yet run end to end
+  there.*
 
 Each page takes you from installing to your first wiki in four steps, and covers joining a wiki someone
 else set up and upgrading later.

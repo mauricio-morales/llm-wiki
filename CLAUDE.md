@@ -164,8 +164,12 @@ matches its own version number. Don't run `scripts/build.py` for an app you aren
 wiki is set up or invalidates an existing one.
 
 **How each app installs it.** Claude: the repo's Claude marketplace, or the release zip uploaded in the
-app. ChatGPT: a workspace admin imports this repository once (Admin → Plugins → Import marketplace),
-which reads `.agents/plugins/marketplace.json`; users then add it from Plugins.
+app. ChatGPT, company accounts: a workspace admin imports this repository once (Admin → Plugins → Import
+marketplace), which reads `.agents/plugins/marketplace.json`; users then add it from Plugins. ChatGPT,
+personal accounts: no admin and no add-marketplace button, so the setup page gives a prompt that has
+ChatGPT run `codex plugin marketplace add mauricio-morales/llm-wiki`, or install by hand from
+`main.zip` into `~/.codex/plugins/llm-wiki` plus `~/.agents/plugins/marketplace.json`. That by-hand route
+is why a committed package must only ever be the released snapshot: `main.zip` is what people download.
 
 **Never commit a zip.** It is generated, so a committed copy goes stale on the next edit. `.gitignore`
 excludes it.
