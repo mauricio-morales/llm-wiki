@@ -84,6 +84,14 @@ plugins/llm-wiki/                  <- THE PLUGIN. Everything shipped lives here.
 
 .claude-plugin/marketplace.json    makes this repo installable; points at ./plugins/llm-wiki
 .github/workflows/release.yml      builds the zip on tag, attaches it to a Release
+
+plugins/llm-wiki-chatgpt/          GENERATED ChatGPT package. Never edit by hand (see below)
+platforms/chatgpt/                 ChatGPT-only sources: plugin.json (its version), PLATFORM.md,
+                                   CHANGELOG.md, START-HERE.txt
+scripts/build_chatgpt.py           builds plugins/llm-wiki-chatgpt from plugins/llm-wiki
+.agents/plugins/marketplace.json   ChatGPT's marketplace; points at ./plugins/llm-wiki-chatgpt
+.github/workflows/release-chatgpt.yml  builds the ChatGPT zips on chatgpt-v* tags
+docs/setup-claude.md docs/setup-chatgpt.md  the per-app setup pages the README links to
 README.md CHANGELOG.md LICENSE     repo root is the single copy; the workflow copies them into the zip
 CLAUDE.md                          this file — development only, never shipped
 .specify/ .claude/                 Spec Kit tooling — development only, never shipped
@@ -123,6 +131,44 @@ goes stale on the next edit. `.gitignore` excludes it.
 
 Repo-internal changes that do not ship — this file, workflow tweaks — need no version bump and no
 CHANGELOG entry.
+
+## The ChatGPT package
+
+**`plugins/llm-wiki` is the only source.** The ChatGPT package is generated from it, so a feature, fix or
+wording change is made once, in the Claude plugin, and reaches ChatGPT at its next release.
+
+`scripts/build_chatgpt.py` translates the Claude plugin:
+- it swaps file names (`CLAUDE.md` → `AGENTS.md`, `.claude/` → `.agents/`) and app names;
+- it turns the `voice-profiler` agent into a skill;
+- it drops the hook;
+- it puts `platforms/chatgpt/PLATFORM.md` into every skill, for what can't be swapped word for word:
+  the question tool, the scheduler, connectors and subagents.
+
+The build fails if `CLAUDE.md`, `.claude/` or `Cowork` survives outside `PLATFORM.md`.
+
+**What this means when editing the Claude plugin:**
+- Writing a new Claude-only term into a skill (a tool name, a menu path, an app name)? Either add a
+  replacement to `REPLACEMENTS` in the script, or explain it in `PLATFORM.md`. Otherwise ChatGPT gets
+  instructions it can't follow.
+- Never edit `plugins/llm-wiki-chatgpt/`. It is overwritten on every build.
+
+**It is versioned and released separately.** Its version is in `platforms/chatgpt/plugin.json` and its
+history in `platforms/chatgpt/CHANGELOG.md`, which names the Claude version each release was built from.
+The committed `plugins/llm-wiki-chatgpt/` is rebuilt **only when cutting a ChatGPT release**, so between
+releases it stays the last released snapshot and matches its own version number. To release:
+
+1. Bump `version` in `platforms/chatgpt/plugin.json`. Add a CHANGELOG entry naming the Claude version it
+   is built from.
+2. Run `python3 scripts/build_chatgpt.py`. Commit the result.
+3. `git tag chatgpt-vX.Y.Z` and push the tag.
+4. CI checks that the tag, the manifest and the built package agree and that the package is fresh
+   (`--check`). It then builds two zips (the plugin, and the "starter" wiki folder with the skills in
+   `.agents/skills/`) and publishes a release that is never marked latest, so `/releases/latest` stays
+   Claude. It also refreshes the rolling `chatgpt-latest` prerelease, whose asset names never change.
+   That is the fixed download link the setup page and `PLATFORM.md` use.
+
+`v*` tags release Claude and `chatgpt-v*` tags release ChatGPT. Neither workflow triggers on the other's
+tags.
 
 ## Conventions that are not negotiable
 

@@ -12,6 +12,14 @@ Versions your team can act on. Bumped on every repackage.
 On a shared wiki, reconfigure also re-copies the skills into the folder, so one person updating
 propagates to everyone who syncs it.
 
+## Unreleased
+
+**Docs — one setup page per app.** The README now opens with a choice between Claude and ChatGPT. The
+Claude quick start, "joining a wiki" and upgrade steps moved, unchanged, to `docs/setup-claude.md`.
+There is a new `docs/setup-chatgpt.md` for the new **LLM Wiki for ChatGPT**. That package is generated
+from this plugin, versioned and released on its own (`chatgpt-v…` tags, its own changelog under
+`platforms/chatgpt/`). Nothing changes for Claude users.
+
 ## 1.38.3 — 2026-11-05
 
 **Fixed — Windows does support the marketplace and the folder star; uploading a file is the backup.**

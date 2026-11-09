@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "llm-wiki",
+  "version": "0.1.0",
+  "description": "Self-maintaining knowledge base for a folder. One guided setup builds the wiki structure, wires your connected apps, writes the folder's AGENTS.md so questions and ingests route automatically, and creates scheduled tasks: daily ingest, daily brief, monthly lint, and an optional news scan. No install for teammates: sharing the folder shares the wiki.",
+  "author": {
+    "name": "Mauricio Morales",
+    "url": "https://github.com/mauricio-morales"
+  },
+  "homepage": "https://github.com/mauricio-morales/llm-wiki",
+  "repository": "https://github.com/mauricio-morales/llm-wiki",
+  "license": "MIT",
+  "keywords": [
+    "wiki",
+    "knowledge-base",
+    "memory",
+    "ingest",
+    "obsidian",
+    "scheduled-tasks",
+    "brief"
+  ]
+}

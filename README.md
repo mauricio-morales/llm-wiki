@@ -13,129 +13,17 @@ from that. ([the original gist](https://gist.github.com/karpathy/442a6bf55591489
 
 ---
 
-## Quick start
+## Get started
 
-**What you need first:** the **Claude desktop app** (Mac or Windows), and you'll be using it in
-**Cowork** — the mode where Claude works on a folder on your computer and can create and edit files in it.
+The wiki runs in either app. Pick the one you use; the wiki it builds is the same.
 
-The wiki won't run in Claude in a web browser, and it won't run in an ordinary chat or a Project. Your
-wiki is a real folder of files, and something has to be able to write to it. If you're reading this in a
-browser tab, install the desktop app first.
+- **[Set up in Claude](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-claude.md)**: the Claude desktop app, in Cowork.
+  The original, and the most tested.
+- **[Set up in ChatGPT](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md)**: the ChatGPT desktop app. *Preview:
+  built from the same instructions, not yet run end to end there.*
 
-The steps are the same on both. Where a click differs, it says so.
-
----
-
-### 1. Add the plugin
-
-You only do this once.
-
-**First, update the Claude app.** Older versions, on Windows especially, don't have the option this step
-uses. Check for updates in the app's menu, or download the latest from
-[claude.com/download](https://claude.com/download) and install it over the old one.
-
-#### The normal way: add the marketplace
-
-Open the **Cowork** tab, then **Customize** in the left sidebar → **Plugins** → **Add** → **Add
-marketplace**. Paste this in and confirm:
-
-```
-mauricio-morales/llm-wiki
-```
-
-Then find **llm-wiki** in the list and click **Add**. Because it's connected to this repository, updates
-arrive on their own.
-
-#### Backup: upload the plugin as a file
-
-Only if your app has no **Add marketplace** option, even after updating. This always works, but an
-uploaded file doesn't update itself. When there's a new version your morning brief will say so, and you
-repeat these steps with the new file.
-
-1. **Download the file.** Open the [latest release](https://github.com/mauricio-morales/llm-wiki/releases/latest).
-   Scroll down to **Assets** and click the file named **`llm-wiki-v….zip`**. Not the ones called
-   "Source code", which won't work.
-2. **If the browser asks, keep it.** Edge sometimes says the file "isn't commonly downloaded". Click the
-   **…** next to it and choose **Keep**.
-3. **Don't open or unzip it.** The app wants the `.zip` file exactly as it downloaded. It's in your
-   **Downloads** folder. (On a Mac, Safari may unzip it on its own. If you find a folder instead of a
-   `.zip`, download it again in Chrome or Edge.)
-4. **Upload it.** In the Claude app, open the **Cowork** tab, then **Customize** in the left sidebar →
-   **Plugins** → **Add**, choose the option to upload a plugin, and pick the `.zip` from **Downloads**.
-5. **Check it's there.** **llm-wiki** now appears in your list of plugins.
-
-If a later version of the app gains **Add marketplace**, switch to it: remove the uploaded llm-wiki,
-then follow the normal way above. From then on, updates take one click.
-
-*Already use Claude Code in a terminal? A plugin installed there stays in the terminal and doesn't reach
-Cowork, so do the steps above anyway.*
-
-### 2. Make a folder for the wiki
-
-A normal, empty folder, made the same way as any other folder. Give it a real name: `Acme Wiki`,
-`My Work Brain`.
-
-- **On a Mac:** in Finder, go where you want it, then **File** → **New Folder**.
-- **On Windows:** in File Explorer, go where you want it, right-click an empty spot → **New** →
-  **Folder**.
-
-**If you want to share it with your team, create it inside a folder that already syncs**: OneDrive,
-Dropbox or Google Drive. That sync is how everyone else gets it later. (On Windows, your work OneDrive
-is in File Explorer's left-hand column, usually as **OneDrive – *your company name***.) If it's just for
-you, anywhere is fine.
-
-### 3. Start a **Cowork session** on that folder
-
-This part matters, and it's the step people get wrong.
-
-**It has to be a Cowork session** — the kind of Claude session that works on a folder on your computer
-and can read and write the files in it. In the Claude app, open the **Cowork** tab, start a new session,
-and **choose the folder you just made** when it asks which folder to work in.
-
-An ordinary chat won't do. Neither will a Project. Both can *read* things you give them, but neither can
-create and update files in a folder on your machine, and that is the entire job here — your wiki *is*
-that folder.
-
-You'll know you got it right because the session shows the folder it's working in.
-
-**Star it while you're there.** In the folder picker there's a star next to each folder. Clicking it
-makes that folder the default, so every new session starts there instead of you picking it each time.
-Worth doing: everything below assumes you're in the wiki folder when you ask it something, and a session
-on the wrong folder can't see your wiki. (No star in your picker? Update the app. Until then, choose the
-wiki folder each time you start a session.)
-
-### 4. Type `/wiki-setup` and press enter
-
-Type it into the message box like you'd type anything else — the leading `/` is part of it.
-
-It then asks you a handful of multiple-choice questions: what to call the wiki, who can read it, which of
-your connected tools it should read, when it should run, how far back to reach. A few minutes.
-
-*"Just do whatever's normal"* is a complete answer to any of them.
-
-**That one command is the only one you ever type.** After setup, the folder takes over — ask a question
-and it searches the wiki, say "save this" and it files it, say "reconfigure the wiki" to change anything.
-
-### Joining a wiki someone else set up
-
-Do step 1, then skip to here.
-
-1. **Make sure the shared folder has synced to your computer** — you should be able to open it in Finder
-   or File Explorer and see a `Wiki` folder inside.
-2. **Start a Cowork session on it** (same as step 3 above — a Cowork session, not an ordinary chat, and
-   choose that folder). Star it in the picker so new sessions start there.
-3. **Just start asking.**
-
-It already knows what to do: the instructions live inside the folder, so they arrive with it. Nothing to
-install, nothing to set up.
-
-**Don't run `/wiki-setup` there.** Only one person runs the scheduled ingest. A second one means two jobs
-appending to the same pages every morning, each pulling from a different person's email and chat — and
-since the pages are append-only, nothing errors. It just quietly doubles, with someone's private inbox in
-a shared wiki.
-
-If you want your own morning brief, say **"set up a brief for me"** and it adds just that. A brief is
-personal: it reads your pending asks and your calendar and goes to your Slack.
+Each page takes you from installing to your first wiki in four steps, and covers joining a wiki someone
+else set up and upgrading later.
 
 > Built on the L1/L2 wiki architecture from **[llm-wiki](https://github.com/MehmetGoekce/llm-wiki)** by
 > **Mehmet Gökçe** (MIT). See [Credits](#credits-and-license).
@@ -168,7 +56,7 @@ learns them from your actual calendar.
 
 ```
 llm-wiki.yml              the configuration — everything reads this first
-CLAUDE.md                 the project's instructions (this is what makes it automatic)
+CLAUDE.md                 the project's instructions (AGENTS.md in ChatGPT); this is what makes it automatic
 Wiki/
   Schema.md               page types, conventions, your privacy rules
   Dashboard.md            what this wiki is and how it's fed
@@ -227,42 +115,12 @@ Plus the scheduled jobs:
 
 New versions add features and fix problems, and your wiki keeps working on the old one until you upgrade.
 You don't need to watch for releases: **your morning brief will tell you, about once a week, when your
-wiki is behind.** You can also upgrade any time.
+wiki is behind**, and what to do. The steps are on your app's setup page:
+[Claude](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-claude.md#upgrading) ·
+[ChatGPT](https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md#upgrading).
 
-### 1. Update the plugin
-
-- **Added as a marketplace** (the normal way): open **Cowork** → **Customize** → **Plugins**, find
-  **llm-wiki**, and check for updates. If there is one, update it. If it doesn't show yet, quit Claude
-  fully and reopen it.
-- **Uploaded as a file** (the backup): an uploaded file can't update itself, so you upload the new one.
-  Download the newest `llm-wiki-v….zip` from the
-  [latest release](https://github.com/mauricio-morales/llm-wiki/releases/latest) and upload it the same
-  way as in [step 1](#backup-upload-the-plugin-as-a-file). If the old version is still listed afterwards,
-  remove **llm-wiki** from your plugins first, then upload the new file again. If your app now has **Add
-  marketplace**, switch to it instead, and this step becomes one click from then on.
-
-### 2. Upgrade your wiki
-
-Start a **new** Cowork session on your wiki folder — a new one, so it picks up the plugin you just
-updated — and **ask it to upgrade the wiki**, in your own words. *"Upgrade the wiki"* is enough.
-
-It won't ask you the setup questions again. It:
-
-- refreshes the copy of the plugin's instructions kept inside your wiki folder, **keeping anything you've
-  customized**
-- rebuilds your scheduled jobs (ingest, brief, lint, news) so they follow the new version from the next run
-- adds any new job the version introduces, asking only what it genuinely needs from you — how often to
-  check the news, say
-- tells you in plain words what will work differently from tomorrow
-
-If your wiki is already up to date, it says so in one line and stops.
-
-**More than one wiki?** Do step 2 in each wiki's folder.
-
-**Joined someone else's wiki?** You don't need to do anything. The person who set it up runs the upgrade,
-and the updated instructions reach you through the shared folder. Please don't run it yourself on a shared
-wiki: two people upgrading the same folder from different versions is how a synced folder ends up with
-conflicting copies.
+The Claude plugin and the ChatGPT package are released separately, each with its own version number:
+`v…` releases are Claude, `chatgpt-v…` releases are ChatGPT.
 
 ## How it works, briefly
 
@@ -277,7 +135,7 @@ does the bookkeeping.
 This plugin implements that, and adds what it takes to run unattended: the ingest is scheduled and pulls
 from your connectors rather than a folder of files, and it reports to you every morning.
 
-The wiki is an **L1/L2 cache**. L1 is Claude's memory — the handful of things it must know every session.
+The wiki is an **L1/L2 cache**. L1 is the assistant's own memory — the handful of things it must know every session.
 L2 is this wiki — everything else, read on demand.
 
 Two mechanisms keep L2 fast as it grows:
@@ -308,7 +166,7 @@ you asked) a session checks whether a newer version is published and offers it i
 rather than overwrite: anything you've customized is preserved, and a genuine conflict is shown to you
 instead of guessed at. Scheduled jobs never update themselves.
 
-Keep your own rules in `CLAUDE.md` and `Wiki/Schema.md` rather than in the skill files — those two are
+Keep your own rules in `CLAUDE.md` (`AGENTS.md` in ChatGPT) and `Wiki/Schema.md` rather than in the skill files — those two are
 yours, and no update touches them.
 
 **No version history.** The folder isn't a repository. So the rule everywhere is **append, never
@@ -317,7 +175,7 @@ overwrite**, and nothing is ever deleted except on your explicit instruction.
 **Credentials never go in.** The wiki is shared storage read by automated jobs. Setup never asks for a
 password or token, and the lint scans for leaked ones.
 
-**The jobs run on your machine**, while the Claude app is open. One due while it was closed runs on next
+**The jobs run on your machine**, while the app (Claude or ChatGPT) is open. One due while it was closed runs on next
 launch — a quiet morning is usually that, not a broken job.
 
 **Reading it elsewhere** happens through the folder, not the jobs. On a synced drive the files reach
@@ -336,7 +194,7 @@ rather than quietly picking one — and never attributes the error to whoever wa
 ## Sharing it with your team
 
 One person sets the wiki up in a folder on a synced drive. Everyone else syncs that folder and starts a
-Cowork session on it. The instructions and a copy of the skills live inside the folder, so their session
+session on it in their app. The instructions and a copy of the skills live inside the folder, so their session
 knows what to do immediately — nothing to install.
 
 Two rules make the difference between that working and it quietly going wrong:
@@ -344,11 +202,15 @@ Two rules make the difference between that working and it quietly going wrong:
 **One person runs the ingest.** Scheduled jobs are per-machine. If three people sync the folder and all
 three have ingest jobs, three runs append to the same pages every morning — and since the pages are
 append-only, nothing errors, it just silently triples. Worse, each run pulls from *that person's*
-connectors, so a shared wiki ends up holding someone's private inbox. Whoever runs `/wiki-setup` is the
+connectors, so a shared wiki ends up holding someone's private inbox. Whoever runs the setup is the
 ingest owner; everyone else queries, files things manually, and runs their own brief.
 
 **Briefs are personal.** A brief reads your pending asks and your calendar and goes to your Slack. Each
 person who wants one sets up their own.
+
+**Everyone uses the same app as whoever set it up, for now.** A wiki set up in Claude keeps its
+instructions where Claude reads them, and one set up in ChatGPT where ChatGPT does. A teammate on the other
+app can still open the files, but their sessions won't know the wiki's rules.
 
 Sync isn't a merge — a simultaneous edit leaves a "conflicted copy" file rather than combining them. One
 ingest owner makes that rare. If conflict copies do show up, the monthly job surfaces them and offers to
@@ -368,8 +230,11 @@ skills/wiki-setup/           the setup wizard
   references/                source catalog, backfill protocol, scheduled-task templates, updates
 ```
 
-In the [repository](https://github.com/mauricio-morales/llm-wiki) this lives under `plugins/llm-wiki/`;
-everything beside it there is development tooling and is not part of what you install.
+In the [repository](https://github.com/mauricio-morales/llm-wiki) this lives under `plugins/llm-wiki/`.
+The ChatGPT package, `plugins/llm-wiki-chatgpt/`, is generated from it by `scripts/build_chatgpt.py`:
+the same skills with ChatGPT's file names (`AGENTS.md`, `.agents/skills/`), a `PLATFORM.md` in each skill
+for what doesn't translate word for word, and the voice profiler as a skill instead of an agent. Everything
+else in the repository is development tooling and is not part of what you install.
 
 ## Credits and license
 

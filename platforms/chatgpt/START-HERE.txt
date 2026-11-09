@@ -1,0 +1,21 @@
+LLM Wiki for ChatGPT
+====================
+
+This folder is your new wiki. It already contains everything it needs: the
+instructions live in a hidden folder called .agents, so you won't see them, and
+you don't need to install anything else.
+
+1. Move this folder to where you want your wiki to live, and rename it if you
+   like ("Acme Wiki", "My Work Brain"). To share it with your team later, put it
+   inside a folder that already syncs, such as your work OneDrive.
+
+2. Open the ChatGPT desktop app, start a new session on this folder (open a
+   folder / choose a project, then pick this one), and make sure it is allowed
+   to edit files here.
+
+3. Type  @wiki-setup  and press Enter, or just say "set up the wiki".
+   It asks a handful of multiple-choice questions and does the rest.
+
+You can delete this file once setup is done.
+
+Full instructions: https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md

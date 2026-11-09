@@ -1,0 +1,92 @@
+name: Release (ChatGPT)
+
+# The ChatGPT package is versioned and released separately from the Claude plugin.
+# It is generated from the Claude source by scripts/build_chatgpt.py and committed under
+# plugins/llm-wiki-chatgpt, so ChatGPT can install it from .agents/plugins/marketplace.json.
+#
+# To cut a release: bump "version" in platforms/chatgpt/plugin.json, add an entry to
+# platforms/chatgpt/CHANGELOG.md, run `python3 scripts/build_chatgpt.py`, commit, then:
+#     git tag chatgpt-v0.2.0 && git push origin chatgpt-v0.2.0
+#
+# Each release also refreshes the rolling "chatgpt-latest" release, whose asset names never change, so
+# the setup page and the update nudge can link one fixed download URL.
+
+on:
+  push:
+    tags: ["chatgpt-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches the ChatGPT version
+        run: |
+          TAG="${GITHUB_REF_NAME#chatgpt-v}"
+          MANIFEST=$(python3 -c "import json;print(json.load(open('platforms/chatgpt/plugin.json'))['version'])")
+          BUILT=$(python3 -c "import json;print(json.load(open('plugins/llm-wiki-chatgpt/plugin.json'))['version'])")
+          echo "tag=$TAG manifest=$MANIFEST built=$BUILT"
+          if [ "$TAG" != "$MANIFEST" ] || [ "$TAG" != "$BUILT" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME, platforms/chatgpt/plugin.json ($MANIFEST) and the built package ($BUILT) must agree."
+            exit 1
+          fi
+
+      - name: Check the committed package matches its source
+        run: python3 scripts/build_chatgpt.py --check
+
+      - name: Build the zips
+        run: |
+          V="${GITHUB_REF_NAME#chatgpt-}"
+          mkdir -p dist staging/plugin "staging/starter/LLM Wiki/.agents"
+          # The plugin package, for installing llm-wiki as a ChatGPT plugin.
+          cp -R plugins/llm-wiki-chatgpt staging/plugin/llm-wiki
+          cp README.md LICENSE staging/plugin/llm-wiki/
+          cp docs/setup-chatgpt.md staging/plugin/llm-wiki/SETUP.md
+          cp platforms/chatgpt/CHANGELOG.md staging/plugin/llm-wiki/CHANGELOG.md
+          (cd staging/plugin && zip -rq "../../dist/llm-wiki-chatgpt-$V.zip" llm-wiki -x '*.DS_Store')
+          # The starter folder: a ready wiki folder whose skills live in .agents/skills, where ChatGPT
+          # discovers them by itself. Nothing to install.
+          cp -R plugins/llm-wiki-chatgpt/skills "staging/starter/LLM Wiki/.agents/skills"
+          cp platforms/chatgpt/START-HERE.txt "staging/starter/LLM Wiki/START HERE.txt"
+          (cd staging/starter && zip -rq "../../dist/llm-wiki-chatgpt-starter-$V.zip" "LLM Wiki" -x '*.DS_Store')
+          if unzip -l "dist/*.zip" | grep -E 'speckit|\.specify|CLAUDE\.md|\.claude/'; then
+            echo "::error::Claude or development files leaked into a ChatGPT zip"; exit 1
+          fi
+          cp "dist/llm-wiki-chatgpt-$V.zip" dist/llm-wiki-chatgpt.zip
+          cp "dist/llm-wiki-chatgpt-starter-$V.zip" dist/llm-wiki-chatgpt-starter.zip
+          unzip -l "dist/llm-wiki-chatgpt-starter-$V.zip" | tail -5
+
+      - name: Publish the versioned release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/llm-wiki-chatgpt-v*.zip
+            dist/llm-wiki-chatgpt-starter-v*.zip
+          make_latest: false
+          name: LLM Wiki for ChatGPT ${{ github.ref_name }}
+          body: |
+            **LLM Wiki for ChatGPT.** Setup instructions: https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md
+
+            - `llm-wiki-chatgpt-starter-….zip`: a ready wiki folder. Unzip it, open the folder in the ChatGPT desktop app, say "set up the wiki".
+            - `llm-wiki-chatgpt-….zip`: the plugin package, for installing llm-wiki as a ChatGPT plugin.
+
+            What changed: platforms/chatgpt/CHANGELOG.md. The Claude plugin is released separately, under `v*` tags.
+
+      - name: Refresh the chatgpt-latest download links
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: chatgpt-latest
+          name: LLM Wiki for ChatGPT (latest)
+          prerelease: true
+          make_latest: false
+          files: |
+            dist/llm-wiki-chatgpt.zip
+            dist/llm-wiki-chatgpt-starter.zip
+          body: |
+            Always the newest LLM Wiki for ChatGPT, at fixed download links. Currently ${{ github.ref_name }}.
+            Setup instructions: https://github.com/mauricio-morales/llm-wiki/blob/main/docs/setup-chatgpt.md

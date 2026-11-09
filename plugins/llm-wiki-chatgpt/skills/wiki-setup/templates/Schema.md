@@ -1,0 +1,391 @@
+---
+wiki-version: "1.0"
+type: schema
+created: "{{DATE}}"
+updated: "{{DATE}}"
+maintained-by: llm-wiki
+---
+
+# Wiki Schema
+
+The conventions for this wiki. Every operation reads this page before writing. Edit it when the
+conventions change — it is the source of truth, not this plugin's defaults.
+
+## Namespace Conventions
+
+- Top-level: {{NAMESPACES}}
+- Page naming: Title Case, hyphens for multi-word (`Wiki/Projects/My-Project`)
+- Layout: {{LAYOUT_NOTE}}
+
+### Sub-namespaces
+
+A namespace can nest. An entity that accumulates its own material — a client, a person, an initiative —
+becomes a folder with its own hub, and can hold sub-namespaces of its own:
+
+```
+Wiki/Clients/_index.md                                  hub (top-level namespace)
+Wiki/Clients/Acme/_index.md                             hub (the client)
+Wiki/Clients/Acme/Overview.md                           page
+Wiki/Clients/Acme/Projects/_index.md                    hub (sub-namespace)
+Wiki/Clients/Acme/Projects/202607-Data-Migration.md     page
+```
+
+**Depth: up to 4 segments below `Wiki/`.** That is enough for namespace → entity → sub-namespace → page,
+which is the deepest structure that stays navigable. Past that, the thing you are nesting usually wants
+to be its own page with links.
+
+**Every level that contains children carries its own hub with its own `### Index`.** This is what makes
+nesting work rather than just look tidy — routing walks down through these indexes, so a folder without
+a hub is a dead end and everything beneath it becomes unroutable.
+
+**A routing line pointing at a hub says so**, with `#hub` and a description of what is under it, not of
+the entity itself:
+
+```
+- [[Wiki/Clients/Acme]] -- #hub · active client: renewal, two projects, staffing #client #active
+- [[Wiki/Clients/Acme/Projects]] -- #hub · per-project pages, dated #project
+```
+
+That `#hub` marker is what tells a query there is another level worth descending into, rather than a
+leaf page to open.
+
+**Split what grows too large — peers before depth.** A page past `split_threshold_kb` (default 100 KB,
+~25k tokens) is split, and **by default into peers in the same folder**, not a folder deeper. Nest only
+for a *collection* — instances of one category that will keep arriving, like one page per project.
+*Facets* of the same thing are peers. The depth cap above is absolute: a split that would exceed it uses
+peers regardless. Entity and state pages split into **semantic** pieces — the themes the page keeps returning
+to, never "Misc" — while logs split **by period**, since a log is its chronology and its writer and
+readers depend on that. Splits are lossless and redirect inbound links; the original stays as a short
+overview of its peers (or as the `_index.md` of a nested collection), so its name still resolves.
+
+**Promote deliberately.** A client mentioned twice belongs in a log or on one page. A client with its own
+projects, staffing and renewal history has earned a folder. When you promote a page to a folder, keep the
+page name as the folder's `_index.md` so every existing `[[link]]` still resolves — pages link by name,
+and renaming breaks every inbound reference.
+
+## Page Types and Required Properties
+
+### Entity (person, client, tool, service, technology)
+```yaml
+type: entity
+entity-type: person | client | tool | service | technology
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+status: active | inactive | archived
+source: ingest | manual | import
+sensitivity-flag: high     # optional — see "Sensitivity-flagged people"
+voice: close               # optional, personal wikis with the inbox responder: close | working | formal
+voice-language: es         # optional: the language the owner uses with them
+timezone: America/Montevideo  # optional, IANA: where they work from — set when rescheduling learns it
+```
+
+`voice` says what tone the owner uses with this person when an email is drafted for them. It is set by the
+voice profiler from the owner's sent mail and 1:1 transcripts, and corrected from their edits. **Absent
+means formal.** It never appears on pages in a team wiki.
+
+`timezone` is where the person works from, so a meeting is never moved into their evening because their
+calendar happened to be empty. Found from their calendar, directory, signature or email headers; correct
+it by hand when someone relocates.
+
+### Project
+```yaml
+type: project
+status: active | completed | on-hold | cancelled
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+started: YYYY-MM-DD
+completed: YYYY-MM-DD      # if applicable
+```
+
+### Knowledge (learning, reference)
+```yaml
+type: knowledge
+domain: tech | business | content | ops
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+confidence: high | medium | low | stale
+```
+
+### Feedback (lessons learned, gotchas)
+```yaml
+type: feedback
+severity: critical | important | nice-to-know
+created: YYYY-MM-DD
+verified: YYYY-MM-DD
+applies-to: []             # page references to affected systems
+```
+
+### Log (append-only chronological source log)
+```yaml
+type: log
+source: meetings | email | chat | tickets | documents
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+```
+Log pages carry one `## YYYY-MM-DD` section per ingest run, newest at the bottom. They are **appended
+to, never rewritten**, and they get long — read their tail, not the whole file.
+
+### Timeline (forward-looking schedule)
+```yaml
+type: timeline
+updated: YYYY-MM-DD
+```
+**Not a log.** Rebuilt each ingest from the current calendar pull, not appended to. Three sections:
+
+- `## Calendar (next 30 days)` — one line per event: `YYYY-MM-DD HH:MM -- #tag -- description`.
+  Tags: `#meeting` `#deadline` `#followup` `#ooo` `#travel`. Lines whose date has passed are dropped
+  on the next rebuild.
+- `## Commitments` — concrete future date-bound commitments surfaced in meetings/email/chat that are
+  **not** on anyone's calendar (a stated deadline, a "follow up next week" promise, a target date
+  mentioned in passing), each linking back to the log entry it came from. Pruned once the date passes.
+- `## Waiting on others` and `## I owe` — open commitments in both directions. **Not pruned by date.**
+  Each line carries the ask, the stake, the due date (and whether it was stated or defaulted), and a deep
+  link. See "Commitment tracking".
+
+### Focus-Area item (inside Log.md / Decisions.md)
+
+Not a page type — a line format. Every item captured for a Focus Area is typed:
+
+```
+- [52] 2026-09-12 -- decision -- <what was settled> -- decided by <who>, <authority> -- [[source]]
+- [53] 2026-09-12 -- idea -- <the proposal> -- raised by <who> -- [[source]]
+- [54] 2026-09-12 -- follow-up -- <what is owed> -- owner <who>, due <date|none> -- [[source]]
+- [55] 2026-09-12 -- question -- <what is open> -- blocks <what> -- [[source]]
+- [56] 2026-09-12 -- signal -- <the external fact> -- [[source]]
+```
+
+**The `[id]` is written here, at ingest, from the same wiki-wide `nextItemId` counter the commitments
+use.** It lives on the line in the wiki page — it is not a rendering detail. Reports read it; they never
+invent it. An id minted while rendering would differ on every run, so a reply naming it would resolve to
+the wrong thing or to nothing.
+
+`decision` without a named decider and authority is incomplete. Where authority is unclear, write
+`authority unclear` — never imply it.
+
+### Objectives (the owner's own KPIs / OKRs)
+
+```yaml
+type: objectives
+updated: YYYY-MM-DD
+```
+
+One page, the canonical copy of what the owner is measured on. Each objective records: the statement in
+the owner's own words, the measure, baseline and target, the period's start and end, the current value
+with the date and **where it came from**, the source (connector, page, person, or `manual`), and which
+Focus Areas it maps to.
+
+**Never infer a target.** An objective with no stated number is qualitative and reports as a judgement,
+not a percentage. **An objective with no feeding source reports as "not tracked", never as zero** — and
+that gap is worth reporting, since an objective nobody can measure is one that gets argued about at
+review time.
+
+**At period end, close objectives out with their final attainment and keep them.** Start the new period
+below. That history is the most useful thing on the page at the next planning round, and the first thing
+anyone is tempted to delete.
+
+### News item (inside `News/` sub-namespaces and News-Log.md — never on main pages)
+
+```
+- [id] YYYY-MM-DD -- <headline> -- <outlet> -- touches [[Wiki/Clients/Acme]] (direct)
+  -- reports: 3 (<outlet>, <outlet>, <primary source>)
+  -- <one or two sentences on what it says and why it matters here>
+  -- [source](url) · [primary](url) ([archived](../../Archives/...))
+  -- single-source | not read — paywalled          (only when they apply)
+  -- YYYY-MM-DD update: <development, appended by a later run — never rewrite the original>
+```
+
+**`reports` counts independent outlets** — syndicated copies of one wire story are one report. A story
+carried by many outlets ranks above one carried by a single outlet, in the brief and when the per-run cap
+forces a choice; it never substitutes for the connection below.
+
+**The connection is mandatory**: which entity in this wiki the story touches, and whether that link is
+`direct` (it names them) or `indirect` (it plainly bears on them — a regulator in their industry, an
+acquisition in their market). An indirect item with the connection unstated reads as a random headline
+and gets ignored.
+
+A story that touches nothing this wiki knows is **not captured**, however interesting. That filter is
+what separates this from a news feed.
+
+**News lives in a `News` sub-namespace, never on main pages.** Main pages — a client, a person, a Focus
+Area's `Log.md` and `Decisions.md`, `Objectives.md` — record what the organisation itself knows. Outside
+reporting is a different kind of fact, of different reliability, and mixing it in means nobody reading the
+client page can tell what was agreed from what a newspaper said.
+
+- One `News` sub-namespace per namespace that has any: `Wiki/Clients/News/Acme.md`,
+  `Wiki/People/News/<Name>.md`, `Wiki/<Focus-Area>/News/<topic>.md`. News about a client that is a folder
+  still goes in `Wiki/Clients/News/`, never inside the client's folder.
+- Topics with no entity here (an industry, a regulator) go in `Wiki/<primary>/News/`.
+- `News-Log.md` in the primary namespace stays the chronological record the brief reads.
+- Created on first capture, never in advance, with an `_index.md` and a `#hub` line in the parent hub.
+
+**News is pulled in at read time.** A question about Acme reads `Clients/News/Acme` alongside the client
+page and presents it as outside reporting, separately from internal facts. Nothing is written onto the
+main page unless the owner asks — "add that to Acme's page" — and then it is marked as sourced from outside
+reporting.
+
+### Request (one-off, in `Wiki/Reference/Requests/`)
+```yaml
+type: request
+status: collecting | scheduled | delivered | failed | cancelled
+requested: YYYY-MM-DD
+requested_by: <person>
+deliver_at: YYYY-MM-DDTHH:MM±HH:MM
+deliver_to: <channel>
+task_id: <the one-time task's id>
+task: scheduled | deleted | pending-cleanup
+```
+
+Something the owner asked for once, at a later date. **The page holds the whole request** — the ask
+verbatim, what to collect, what to deliver, what was collected, and when it went out — and a one-time task
+delivers it and deletes itself. The page stays after delivery: it is the record, and the way to run it
+again. Never delete one.
+
+### Hub (namespace index)
+```yaml
+type: hub
+namespace: Wiki/NamespaceName
+```
+
+## Cross-Reference Rules
+
+- Every page MUST have at least one outgoing `[[Wiki/...]]` link
+- Every active page MUST have exactly one routing line in its namespace hub's `### Index`
+- When a page mentions an entity that has its own page, link it
+- Tags: `#tag` for lightweight categorization
+- External links: `[Text](URL)`. For an archived URL, link both: `[Original](URL) ([archived copy](../../Archives/...))`
+
+## Routing-Line Format
+
+`[[Wiki/NS/Page]] -- one-sentence description, under 120 chars #tag #tag`
+
+A line pointing at a sub-hub carries `#hub` and describes what is underneath it, so a query knows to
+descend rather than to open a leaf.
+
+The description is the **routing key** — `query` reads only these lines to decide which pages to open.
+Terse and distinctive beats complete. "Notes about the client" routes nothing; "Acme renewal — rates,
+2027 scope, the open SOW question" routes precisely.
+
+## Content Format Rules
+
+{{FORMAT_RULES}}
+
+- NEVER store credentials, passwords or API tokens in wiki pages
+- Dates: ISO 8601 (YYYY-MM-DD)
+- Language: {{LANGUAGE}} — every page is written in this language regardless of the source's language
+
+## Folder layout
+
+The wiki root holds exactly: `llm-wiki.yml`, `AGENTS.md`, `Wiki/`, `Archives/`, `Artifacts/`, `.agents/`
+and the `wiki-*-state.json` files. **Nothing else is ever written there.**
+
+- **`Archives/`** — snapshots of URLs that were ingested. Things from elsewhere, saved.
+- **`Artifacts/`** — output produced here: analyses, exports, generated documents. One dated folder per
+  piece of work, `YYYY-MM-DD-<scope>-<what>/`, each carrying an `_about.md`. Facts an artifact establishes
+  are ingested into `Wiki/` with the artifact linked as the source. Artifacts are the only thing in this
+  folder that may be deleted — they are derived — but only on a proposal a person accepts.
+
+## Privacy and exclusions
+
+**Audience: {{AUDIENCE}}**
+
+{{PRIVACY_RULES}}
+
+## Sensitivity-flagged people
+
+Individuals where a single new item usually connects to a long-running thread, so treating it as a
+standalone event is how expectations get broken. Their page carries `sensitivity-flag: high`.
+
+When a source surfaces one: read their full page first, route the fact into the right existing section
+(the page is a dossier, not a log), re-evaluate its "Open items", surface it at the top of the run
+report, and flag any contradiction rather than overwriting it.
+
+### Sensitivity-flagged list
+
+_(none yet — add people here deliberately; ingest runs never add or remove them on their own)_
+
+## Commitment tracking
+
+An ask that goes out and never comes back, or one accepted and never delivered, is the most expensive
+thing a wiki can lose. Both directions are tracked in the ingest state file until closed, and rendered in
+the daily brief.
+
+**The owner is always one of the two parties.** Commitments between other people are not tracked — the
+owner can neither chase nor close them, and a ledger padded with other people's obligations stops being
+read. Delegation is the exception that proves it: work handed to someone else is still the owner's
+commitment, because the owner still answers for it.
+
+**Two directions, never merged:**
+
+- `theirs` — someone owes the owner something
+- `mine` — the owner owes someone something, **and agreed to it**. A request nobody accepted is not a
+  commitment; the agreement is the trigger.
+
+**Every entry carries:** `id`, `direction`, `withWhom`, `subject` (what was asked or agreed), `stake`
+(what is blocked while it sits), `impact` (`high`/`medium`/`low`, judged at capture), `link` (to the
+source message, never to a summary), `asked`, `due`, `dueIsExplicit`, `status`.
+
+**The brief ranks by impact first, then urgency**, and shows at most five per section — a high-impact item
+due Thursday outranks a low-impact one a month overdue. Age alone measures how long something has been
+ignorable.
+
+**`due` is never empty.** If a date was stated, that is it — resolved to an absolute date against the
+*message's* date, at capture time. If none was stated, `due` = `asked` + the grace period
+(`commitment_grace_days` in `llm-wiki.yml`, **default 14 days**) and `dueIsExplicit` is `false`: a nudge
+date, not a promise, and the brief must say which it is.
+
+**The grace period exists to give people a chance to respond.** A nudge date is the point at which a
+reasonable person starts wondering, not the point at which an ask was sent. Too short and the brief
+reminds the owner of an email from yesterday, which trains them to skim the one section that should be
+the most actionable thing in it. The same applies to what the owner owes.
+
+**Surfacing:** an open commitment appears in the brief when `due` is today or earlier, and **every day
+after until it closes or ages out. Never before** — not for something sent yesterday, not for a deadline next week,
+in either direction.
+
+**Ageing out:** a commitment more than `commitment_ageout_days` past due (default 21) with no evidence
+either way becomes `aged-out` — *outcome unknown, no longer tracked* — and leaves the brief. It is **never
+counted as done**. Later evidence still updates it: delivered → `fulfilled`; chased again → reopened.
+
+**Closing:** `fulfilled` only on evidence, never on age. `theirs` closes when the answer or artifact arrives; `mine`
+closes when the owner produced it. Also `withdrawn` or `superseded`, recorded as such rather than deleted.
+
+## Timeline sections
+
+`Timeline.md` carries **"Waiting on others"** and **"I owe"**, mirroring the two directions. Neither is
+pruned by date — unlike the calendar and commitment lines, an open commitment stays until it is closed or ages out.
+
+## L1/L2 Architecture
+
+**L1 = ChatGPT Memory** (auto-loaded every session): feedback rules, quick gotchas, identity,
+credentials. Everything ChatGPT must know at the START of every session.
+
+**L2 = this wiki** (on-demand): projects, workflows, research, deep knowledge, business intelligence.
+
+Routing rule: *"Would a mistake without this knowledge be dangerous or embarrassing? -> L1. Merely
+inconvenient? -> L2."* Credentials are always L1 — this wiki is plain files in a folder that may be
+synced and shared.
+
+## Lint Rules
+
+Orphans · stale (`updated` > 90d with `confidence: high`) · missing properties · broken refs · hub
+completeness · index drift · missing index description · archived-in-live-index · credential leak ·
+privacy leak · empty pages · cross-ref minimum · L1/L2 duplicates · `Archives/` size.
+
+## No version control
+
+This wiki is plain files in a folder. There is no git and no history, so:
+
+- **Append, never overwrite.** An overwrite is unrecoverable.
+- **Never delete a page** outside an explicit instruction. `prune` demotes; it does not delete.
+
+---
+
+## Credits
+
+This schema — its page types, hub-index routing lines and access-log format — derives from
+[llm-wiki](https://github.com/MehmetGoekce/llm-wiki) by Mehmet Gökçe, MIT licensed, via the
+[llm-wiki plugin](https://github.com/mauricio-morales/llm-wiki) that generated this wiki.
+The pattern it implements — a persistent, LLM-maintained wiki with ingest, query and lint as its core
+operations — was proposed by [Andrej Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+
+Edit this page freely; it is yours now.
